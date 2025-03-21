@@ -62,9 +62,11 @@ class WhatsappApiIntegration
                 "number" => '55' . $formatted_number,
                 "options" => [
                     "delay" => 1200,
+                    "presence" => "composing"
                 ],
                 "mediaMessage" => [
-                    "mediatype" => $media_type,
+                    "mediaType" => ucfirst($media_type), // Corrigido para "Image" (com a primeira letra maiúscula)
+                    "fileName" => basename($image_url), // Extrai o nome do arquivo da URL
                     "caption" => $caption,
                     "media" => $image_url
                 ]
