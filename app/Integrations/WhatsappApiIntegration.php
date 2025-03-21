@@ -50,6 +50,9 @@ class WhatsappApiIntegration
             $image_url = $content['media']; // Caminho da imagem
             $caption = $content['message'] ?? ''; // Legenda opcional
 
+            \Log::info('WhatsApp API Integration - Sending media message: ' . $image_url);
+            \Log::info('WhatsApp API Integration - Media type: ' . $media_type);
+
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
                 "apikey" => $whatsapp_token,
@@ -57,8 +60,6 @@ class WhatsappApiIntegration
                 "number" => '55' . $formatted_number,
                 "options" => [
                     "delay" => 1200,
-                    "presence" => "composing",
-                    "linkPreview" => true
                 ],
                 "mediaMessage" => [
                     "mediatype" => $media_type,

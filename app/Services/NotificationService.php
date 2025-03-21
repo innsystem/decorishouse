@@ -78,7 +78,7 @@ class NotificationService
             'recipient' => $recipient,
             'message' => $message,
         ];
-
+        
         // Se houver imagem, adiciona os dados necessários
         if (!empty($data['image'])) {
             $content['media'] = $data['image']; 
