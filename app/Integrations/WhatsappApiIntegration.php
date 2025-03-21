@@ -49,14 +49,16 @@ class WhatsappApiIntegration
             $media_type = $content['media_type'] ?? 'image'; // Tipo de mídia (image, video, etc.)
             $image_url = $content['media']; // Caminho da imagem
             $caption = $content['message'] ?? ''; // Legenda opcional
+            $url_send_media = str_replace('sendText', 'sendMedia', $whatsapp_host);
 
+            \Log::info('WhatsApp API Integration - Url Sending: ' . $url_send_media);
             \Log::info('WhatsApp API Integration - Sending media message: ' . $image_url);
             \Log::info('WhatsApp API Integration - Media type: ' . $media_type);
 
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
                 "apikey" => $whatsapp_token,
-            ])->post(str_replace('sendText', 'sendMedia', $whatsapp_host), [
+            ])->post($url_send_media, [
                 "number" => '55' . $formatted_number,
                 "options" => [
                     "delay" => 1200,
