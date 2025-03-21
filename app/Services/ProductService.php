@@ -148,7 +148,13 @@ class ProductService
 		});
 
 		// Salva a imagem gerada
-		$background->save($outputPath);
+		// $background->save($outputPath);
+
+		// Salva a imagem no storage de forma pública
+		Storage::disk('public')->put("products/{$product->id}{$nameOutput}", $background->encode());
+
+		$url_image_created = Storage::disk('public')->url("products/{$product->id}{$nameOutput}");
+
 
 		// Registra no banco para evitar duplicação
 		ProductImageGenerate::create(['product_id' => $product->id]);
