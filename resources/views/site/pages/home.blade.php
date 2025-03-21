@@ -3,69 +3,111 @@
 @section('title', 'Página Inicial')
 
 @section('content')
-<h1>@yield('title')</h1>
-<hr>
-@if(isset($pages) && count($pages) > 0)
-<div>
-    <p><b>Páginas</b></p>
-    <ul>
-        @foreach($pages as $page)
-        <li><a href="{{route('site.pages.show', [$page->slug])}}">{{$page->title}}</a></li>
-        @endforeach
-    </ul>
-</div>
-@endif
+<section class="recommended py-60">
+    <div class="container container-lg">
+        <div class="section-heading flex-between flex-wrap gap-16">
+            <h5 class="mb-0">Promoções Recentes</h5>
+        </div>
 
-@if(isset($services) && count($services) > 0)
-<div>
-    <p><b>Serviços</b></p>
-    <ul>
-        @foreach($services as $service)
-        <li><a href="{{route('site.services.show', [$service->slug])}}">{{$service->title}}</a></li>
-        @endforeach
-    </ul>
-</div>
-@endif
+        <div class="row g-12">
+            @foreach($promotionsRecents as $product_link)
+            <div class="col-xxl-2 col-lg-3 col-sm-4 col-6">
+                <div class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
+                    <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__thumb flex-center">
+                        <img src="{{ $product_link->product->images[0] }}" alt="">
+                    </a>
+                    <div class="product-card__content p-sm-2">
+                        <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                            <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href link text-line-2">{{$product_link->product->name}}</a>
+                        </h6>
+                        <div class="flex-align gap-4">
+                            <span class="text-main-600 text-md d-flex"><img src="{{ asset('/galerias/icons/marketplaces/'.$product_link->integration->slug.'.png') }}" alt="" class="avatar-marketplace"></span>
+                            <span class="text-gray-500 text-xs"><b>{{$product_link->integration->name}}</b> <i class="text-muted">{{ $product_link->product->created_at->diffForHumans() }}</i></span>
+                        </div>
 
-@if(isset($portfolios) && count($portfolios) > 0)
-<div>
-    <p><b>Portfólios</b></p>
-    <ul>
-        @foreach($portfolios as $portfolio)
-        <li><a href="{{route('site.portfolios.show', [$portfolio->slug])}}">{{$portfolio->title}}</a></li>
-        @endforeach
-    </ul>
-</div>
-@endif
-
-@if(isset($testimonials) && count($testimonials) > 0)
-<div>
-    <p><b>Depoimentos</b></p>
-    <ul>
-        @foreach($testimonials as $testimonial)
-        <li>
-            <img src="{{ $testimonial->image ? asset('storage/' . $testimonial->image) : asset('galerias/avatares/sem_foto.jpg') }}" alt="{{$testimonial->name}}" style="width:50px;height:50px;">
-            {{$testimonial->name}} - {{ Str::limit($testimonial->content, 80) }}
-            <div>
-                @for ($i = 0; $i < 5; $i++)
-                    @if ($i < $testimonial->rating)
-                        ★
-                    @else
-                        ☆
-                    @endif
-                @endfor
+                        <div class="product-card__content mt-12">
+                            <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center">
+                                Obter Promoção <i class="ph ph-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </li>
-        @endforeach
-    </ul>
-</div>
-@endif
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="recommended py-60">
+    <div class="container container-lg">
+        <div class="section-heading flex-between flex-wrap gap-16">
+            <h5 class="mb-0">Momento Descontão!</h5>
+        </div>
+
+        <div class="row g-12">
+            @foreach($promotionsRandoms as $product_link)
+            <div class="col-xxl-2 col-lg-3 col-sm-4 col-6">
+                <div class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
+                    <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__thumb flex-center">
+                        <img src="{{ $product_link->product->images[0] }}" alt="">
+                    </a>
+                    <div class="product-card__content p-sm-2">
+                        <h6 class="title text-lg fw-semibold mt-12 mb-8">
+                            <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href link text-line-2">{{$product_link->product->name}}</a>
+                        </h6>
+                        <div class="flex-align gap-4">
+                            <span class="text-main-600 text-md d-flex"><img src="{{ asset('/galerias/icons/marketplaces/'.$product_link->integration->slug.'.png') }}" alt="" class="avatar-marketplace"></span>
+                            <span class="text-gray-500 text-xs"><b>{{$product_link->integration->name}}</b> <i class="text-muted">{{ $product_link->product->created_at->diffForHumans() }}</i></span>
+                        </div>
+
+                        <div class="product-card__content mt-12">
+                            <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center">
+                                Obter Promoção <i class="ph ph-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+@endsection
 
 @section('pageMODAL')
 @endsection
 
-@section('pageJS')
+@section('pageCSS')
 @endsection
 
-@section('pageCSS')
+@section('pageJS')
+<script>
+    // Save
+    $(document).on('click', '.product-link-href', function(e) {
+        e.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            }
+        });
+
+        let productLinkId = $(this).data('product-link-id');
+        let affiliateLink = $(this).data('affiliate-link');
+
+        $.ajax({
+            url: "{{ route('site.product.trackClick') }}",
+            type: "POST",
+            data: {
+                product_link_id: productLinkId,
+            },
+            success: function(response) {
+                window.open(affiliateLink, '_blank');
+            },
+            error: function(xhr) {
+                console.error("Erro ao registrar clique", xhr);
+            }
+        });
+    });
+</script>
 @endsection

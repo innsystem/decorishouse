@@ -77,3 +77,13 @@ Route::apiResource('invoices', InvoiceController::class);
 use App\Http\Controllers\Api\TransactionController;
 
 Route::apiResource('transactions', TransactionController::class);
+
+// Category
+use App\Http\Controllers\Api\CategoryController;
+
+Route::apiResource('categories', CategoryController::class);
+
+// Product
+use App\Http\Controllers\Api\ProductController;
+
+Route::apiResource('products', ProductController::class);

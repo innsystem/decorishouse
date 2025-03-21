@@ -154,6 +154,50 @@
 
         <div class="py-2 d-flex align-items-sm-center flex-sm-row flex-column">
             <div class="flex-grow-1">
+                <h4 class="fs-18 fw-semibold m-0">Redes Sociais</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Facebook</label>
+                                    <input type="text" class="form-control" id="facebook" name="facebook" value="{{ $result['facebook'] ?? '' }}" placeholder="https://facebook.com/sua_pagina">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Instagram</label>
+                                    <input type="text" class="form-control" id="instagram" name="instagram" value="{{ $result['instagram'] ?? '' }}" placeholder="https://instagram.com/sua_pagina">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>TikTok</label>
+                                    <input type="text" class="form-control" id="tiktok" name="tiktok" value="{{ $result['tiktok'] ?? '' }}" placeholder="https://tiktok.com/sua_pagina">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Youtube</label>
+                                    <input type="text" class="form-control" id="youtube" name="youtube" value="{{ $result['youtube'] ?? '' }}" placeholder="https://youtube.com/sua_pagina">
+                                </div>
+                            </div><!-- col -->
+
+                        </div><!-- row -->
+
+                        <!-- Row Buttons -->
+                        <div class="row">
+                            <div class="col-12 border-top pt-3 mt-3">
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-success button-settings-update"><i class="fa fa-check"></i> Salvar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-2 d-flex align-items-sm-center flex-sm-row flex-column">
+            <div class="flex-grow-1">
                 <h4 class="fs-18 fw-semibold m-0">Configuração da API (avançado)</h4>
             </div>
         </div>

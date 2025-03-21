@@ -140,6 +140,22 @@ class PermissionsSeeder extends Seeder
             ['title' => 'Editar transaction', 'key' => 'admin.transactions.edit', 'type' => 'transactions', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'Atualizar transaction', 'key' => 'admin.transactions.update', 'type' => 'transactions', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'Excluir transaction', 'key' => 'admin.transactions.delete', 'type' => 'transactions', 'created_at' => now(), 'updated_at' => now()],
+            // categories
+            ['title' => 'Visualizar categories', 'key' => 'admin.categories.index', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Carregar categories', 'key' => 'admin.categories.load', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Criar category', 'key' => 'admin.categories.create', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Salvar category', 'key' => 'admin.categories.store', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Editar category', 'key' => 'admin.categories.edit', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Atualizar category', 'key' => 'admin.categories.update', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Excluir category', 'key' => 'admin.categories.delete', 'type' => 'categories', 'created_at' => now(), 'updated_at' => now()],
+            // products
+            ['title' => 'Visualizar products', 'key' => 'admin.products.index', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Carregar products', 'key' => 'admin.products.load', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Criar product', 'key' => 'admin.products.create', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Salvar product', 'key' => 'admin.products.store', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Editar product', 'key' => 'admin.products.edit', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Atualizar product', 'key' => 'admin.products.update', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Excluir product', 'key' => 'admin.products.delete', 'type' => 'products', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $countPermissions = Permission::count();

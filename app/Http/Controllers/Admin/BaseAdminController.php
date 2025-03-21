@@ -36,6 +36,10 @@ class BaseAdminController extends Controller
             'cellphone' => $getSetting->getValue(('cellphone')),
             'address' => $getSetting->getValue(('address')),
             'hour_open' => $getSetting->getValue(('hour_open')),
+            'facebook' => $getSetting->getValue(('facebook')),
+            'instagram' => $getSetting->getValue(('instagram')),
+            'tiktok' => $getSetting->getValue(('tiktok')),
+            'youtube' => $getSetting->getValue(('youtube')),
             'client_id' => $getSetting->getValue(('client_id')),
             'client_secret' => $getSetting->getValue(('client_secret')),
         ];

@@ -22,7 +22,7 @@ class ServicesController extends Controller
     {
         $this->serviceService = $serviceService;
     }
-    
+
     public function index()
     {
         return view($this->folder . '.index');
@@ -41,7 +41,7 @@ class ServicesController extends Controller
             $query['status'] = $filters['status'];
         }
 
-        if (!empty($filters['date_range'])) {            
+        if (!empty($filters['date_range'])) {
             [$startDate, $endDate] = explode(' até ', $filters['date_range']);
             $query['start_date'] = Carbon::createFromFormat('d/m/Y', $startDate)->format('Y-m-d');
             $query['end_date'] = Carbon::createFromFormat('d/m/Y', $endDate)->format('Y-m-d');
@@ -63,21 +63,21 @@ class ServicesController extends Controller
     {
         $result = $request->all();
 
-        $rules = array (
-  'title' => 'required',
-  'slug' => 'required',
-  'description' => 'nullable',
-  'status' => 'required',
-  'sort_order' => 'required',
-);
-        $messages = array (
-  'title.required' => 'title é obrigatório',
-  'slug.required' => 'slug é obrigatório',
-  'description.required' => 'description é obrigatório',
-  'description.nullable' => 'description pode ser nulo',
-  'status.required' => 'status é obrigatório',
-  'sort_order.required' => 'sort_order é obrigatório',
-);
+        $rules = array(
+            'title' => 'required',
+            'slug' => 'required',
+            'description' => 'nullable',
+            'status' => 'required',
+            'sort_order' => 'required',
+        );
+        $messages = array(
+            'title.required' => 'title é obrigatório',
+            'slug.required' => 'slug é obrigatório',
+            'description.required' => 'description é obrigatório',
+            'description.nullable' => 'description pode ser nulo',
+            'status.required' => 'status é obrigatório',
+            'sort_order.required' => 'sort_order é obrigatório',
+        );
 
         $validator = Validator::make($result, $rules, $messages);
 
@@ -91,33 +91,33 @@ class ServicesController extends Controller
     }
 
     public function edit($id)
-    {  
+    {
         $result = $this->serviceService->getServiceById($id);
         $statuses = Status::default();
 
-        return view($this->folder . '.form', compact('result', 'statuses'));                
+        return view($this->folder . '.form', compact('result', 'statuses'));
     }
 
     public function update(Request $request, $id)
     {
         $result = $request->all();
-        
+
         // 'email'         => "unique:services,email,$id,id",
-        $rules = array (
-  'title' => 'required',
-  'slug' => 'required',
-  'description' => 'nullable',
-  'status' => 'required',
-  'sort_order' => 'required',
-);
-        $messages = array (
-  'title.required' => 'title é obrigatório',
-  'slug.required' => 'slug é obrigatório',
-  'description.required' => 'description é obrigatório',
-  'description.nullable' => 'description pode ser nulo',
-  'status.required' => 'status é obrigatório',
-  'sort_order.required' => 'sort_order é obrigatório',
-);
+        $rules = array(
+            'title' => 'required',
+            'slug' => 'required',
+            'description' => 'nullable',
+            'status' => 'required',
+            'sort_order' => 'required',
+        );
+        $messages = array(
+            'title.required' => 'title é obrigatório',
+            'slug.required' => 'slug é obrigatório',
+            'description.required' => 'description é obrigatório',
+            'description.nullable' => 'description pode ser nulo',
+            'status.required' => 'status é obrigatório',
+            'sort_order.required' => 'sort_order é obrigatório',
+        );
 
         $validator = Validator::make($result, $rules, $messages);
 

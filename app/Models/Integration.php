@@ -43,6 +43,8 @@ class Integration extends Model
         switch ($this->type) {
             case 'communication':
                 return 'Comunicação';
+            case 'marketplaces':
+                return 'Marketplaces';
             case 'analytics':
                 return 'Análise';
             case 'crm':

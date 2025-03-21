@@ -25,6 +25,31 @@ class IntegrationsSeeder extends Seeder
             ],
 
             [
+                'name' => 'Amazon',
+                'slug' => 'amazon',
+                'description' => 'Integração com Amazon para obter links de produtos e afiliados.',
+                'type' => 'marketplaces',
+                'settings' => null,
+                'status' => 1
+            ],
+            [
+                'name' => 'Shopee',
+                'slug' => 'shopee',
+                'description' => 'Integração com Shopee para obter links de produtos e afiliados.',
+                'type' => 'marketplaces',
+                'settings' => null,
+                'status' => 1
+            ],
+            [
+                'name' => 'Mercado Livre',
+                'slug' => 'mercado-livre',
+                'description' => 'Integração com Mercado Livre para obter links de produtos e afiliados.',
+                'type' => 'marketplaces',
+                'settings' => null,
+                'status' => 1
+            ],
+
+            [
                 'name' => 'Google Analytics',
                 'slug' => 'google-analytics',
                 'description' => 'Ferramenta de Análise para obter números e relatórios do site.',
@@ -32,6 +57,7 @@ class IntegrationsSeeder extends Seeder
                 'settings' => null,
                 'status' => 2
             ],
+
             [
                 'name' => 'WhatsApp API',
                 'slug' => 'whatsapp-api',

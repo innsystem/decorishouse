@@ -14,12 +14,7 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
-    {
-        // Processamento dos WebHooks Pendentes (table: webhooks where status = 23)
-        $schedule->job(new ProcessWebhookJob())->everyMinute();
-
-
-        
+    {        
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();
     }

@@ -43,21 +43,46 @@ class WhatsappApiIntegration
 
         $formatted_number = self::formatNumber($content['recipient']);
 
-        $response = Http::withHeaders([
-            "Content-Type" => "application/json",
-            "apikey" => $whatsapp_token,
-        ])->post($whatsapp_host, [
-            // "access_token" => $whatsapp_token,
-            "number" => '55' . $formatted_number,
-            "options" => [
-                "delay" => 1200,
-                "presence" => "composing",
-                "linkPreview" => true
-            ],
-            "textMessage" => [
-                'text' => $content['message'],
-            ]
-        ]);
+        // Verifica se há mídia na mensagem
+        if (!empty($content['media'])) {
+            // Envio de imagem
+            $media_type = $content['media_type'] ?? 'image'; // Tipo de mídia (image, video, etc.)
+            $image_url = $content['media']; // Caminho da imagem
+            $caption = $content['message'] ?? ''; // Legenda opcional
+
+            $response = Http::withHeaders([
+                "Content-Type" => "application/json",
+                "apikey" => $whatsapp_token,
+            ])->post(str_replace('sendText', 'sendMedia', $whatsapp_host), [
+                "number" => '55' . $formatted_number,
+                "options" => [
+                    "delay" => 1200,
+                    "presence" => "composing",
+                    "linkPreview" => true
+                ],
+                "mediaMessage" => [
+                    "mediatype" => $media_type,
+                    "caption" => $caption,
+                    "media" => $image_url
+                ]
+            ]);
+        } else {
+            // Envio de texto
+            $response = Http::withHeaders([
+                "Content-Type" => "application/json",
+                "apikey" => $whatsapp_token,
+            ])->post($whatsapp_host, [
+                "number" => '55' . $formatted_number,
+                "options" => [
+                    "delay" => 1200,
+                    "presence" => "composing",
+                    "linkPreview" => true
+                ],
+                "textMessage" => [
+                    'text' => $content['message'],
+                ]
+            ]);
+        }
 
         $result = json_decode($response->getBody(), true);
         $resultEncode   = json_encode($result);

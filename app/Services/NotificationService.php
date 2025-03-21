@@ -79,6 +79,12 @@ class NotificationService
             'message' => $message,
         ];
 
+        // Se houver imagem, adiciona os dados necessários
+        if (!empty($data['image'])) {
+            $content['media'] = $data['image']; 
+            $content['media_type'] = 'image'; // Tipo da mídia (pode ser ajustado para outros tipos se necessário)
+        }
+
         return $this->whatsappApiIntegration::sendMessage($content);
     }
 }

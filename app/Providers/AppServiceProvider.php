@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Setting;
-use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +24,16 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('*', function ($view) {
             $getSettings = Setting::pluck('value', 'key')->toArray();
             $view->with('getSettings', $getSettings);
+
+            $getCategories = Category::whereNull('parent_id')
+                ->with(['children' => function ($query) {
+                    $query->orderBy('name', 'ASC'); // Ordenando as subcategorias
+                }])
+                ->where('status', 1) // Filtrando apenas as categorias ativas
+                ->orderBy('name', 'ASC') // Ordenando as categorias principais
+                ->get();
+
+            $view->with('getCategories', $getCategories);
         });
     }
 }

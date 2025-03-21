@@ -134,3 +134,21 @@
     </div>
 </li>
 @endif
+
+@if (auth()->user()->hasPermission('admin.categories.index'))
+<li class="side-nav-item">
+    <a href="{{ route('admin.categories.index') }}" class="side-nav-link">
+        <i class="ri-bar-chart-horizontal-fill"></i>
+        <span> Categorias </span>
+    </a>
+</li>
+@endif
+
+@if (auth()->user()->hasPermission('admin.products.index'))
+<li class="side-nav-item">
+    <a href="{{ route('admin.products.index') }}" class="side-nav-link">
+        <i class="ri-price-tag-2-line"></i>
+        <span> Produtos </span>
+    </a>
+</li>
+@endif

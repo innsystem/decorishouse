@@ -10,6 +10,7 @@
                     <option value="communication">Comunicação</option>
                     <option value="crm">CRM</option>
                     <option value="ecommerce">E-commerce</option>
+                    <option value="marketplaces">Marketplaces</option>
                     <option value="finance">Finanças</option>
                     <option value="payments">Pagamentos</option>
                     <option value="projects">Projetos</option>

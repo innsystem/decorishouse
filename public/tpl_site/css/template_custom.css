@@ -1,0 +1,58 @@
+.fs-7 {
+    font-size: 0.8rem !important;
+}
+
+.fs-8 {
+    font-size: 0.7rem !important;
+}
+
+.fs-9 {
+    font-size: 0.6rem !important;
+}
+
+.avatar-marketplace {
+    width: 16px;
+    height: 16px;
+    display: block;
+    border-radius: 100%;
+}
+
+.progress-wrap {
+    inset-inline-end: 50px !important;
+    inset-block-end: 90px !important;
+}
+
+.common-input {
+    border-radius: 30px !important;
+}
+
+.search-results-container {
+    position: absolute;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 5px;
+    margin-top: 5px;
+    z-index: 99;
+    display: none;
+}
+
+.search-results-container a {
+    display: block;
+    padding: 6px;
+    text-decoration: none;
+    color: black;
+    font-size: 13px;
+}
+
+.search-results-container a:hover {
+    background: #f0f0f0;
+}
+
+.search-results-container .highlight {
+    color: var(--main-600) !important;
+    font-weight: bold;
+}
