@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
                 dispatch(new GenerateProductImageJob($product));
                 Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
             }
-        })->everyTenMinutes()->between('09:00', '19:00')->name('generate_product_image')->withoutOverlapping();
+        })->everyFiveMinutes()->between('09:00', '19:00')->name('generate_product_image')->withoutOverlapping();
 
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();
