@@ -51,10 +51,6 @@ class WhatsappApiIntegration
             $caption = $content['message'] ?? ''; // Legenda opcional
             $url_send_media = str_replace('sendText', 'sendMedia', $whatsapp_host);
 
-            \Log::info('WhatsApp API Integration - Url Sending: ' . $url_send_media);
-            \Log::info('WhatsApp API Integration - Sending media message: ' . $image_url);
-            \Log::info('WhatsApp API Integration - Media type: ' . $media_type);
-
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
                 "apikey" => $whatsapp_token,

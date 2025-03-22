@@ -73,13 +73,13 @@ class ProductService
 			'template_modelo_1.png' => [
 				'image_x' => 80,
 				'image_y' => 110,
-				'image_width' => 945,
-				'image_height' => 945,
+				'image_width' => 940,
+				'image_height' => 940,
 				'text_x' => 200,
-				'text_y' => 720,
-				'text_size' => 40,
+				'text_y' => 320,
+				'text_size' => 45,
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
-				'text_color' => '#555',
+				'text_color' => '#333',
 			],
 		];
 
