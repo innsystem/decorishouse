@@ -198,7 +198,7 @@ class ProductService
 					$path = "{$directory}/{$filename}";
 
 					// Salva a imagem localmente
-					Storage::put($path, $response->body());
+					Storage::disk('public')->put($path, $response->body());
 
 					// Adiciona ao array local
 					$localImages[] = Storage::url($path);
