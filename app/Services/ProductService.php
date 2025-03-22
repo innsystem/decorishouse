@@ -71,21 +71,31 @@ class ProductService
 	{
 		$configs = [
 			'template_modelo_1.png' => [
-				'image_x' => 80,
-				'image_y' => 110,
-				'image_width' => 940,
-				'image_height' => 940,
-				'text_x' => 200,
-				'text_y' => 320,
-				'text_size' => 45,
+				'image_x' => 140,
+				'image_y' => 0,
+				'image_width' => 800,
+				'image_height' => 800,
+				'text_x' => 525,
+				'text_y' => 1500,
+				'text_size' => 52,
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
-				'text_color' => '#333',
+				'text_color' => '#4c3018',
+			],
+			'template_modelo_2.png' => [
+				'image_x' => 140,
+				'image_y' => 0,
+				'image_width' => 800,
+				'image_height' => 800,
+				'text_x' => 525,
+				'text_y' => 1500,
+				'text_size' => 52,
+				'font' => public_path('/galerias/fonts/nyala.ttf'),
+				'text_color' => '#FFFFFF',
 			],
 		];
 
 		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
 	}
-
 
 	public function generateProductImage($product_id)
 	{
@@ -156,7 +166,8 @@ class ProductService
 			$font->filename($config['font']);
 			$font->size($config['text_size']);
 			$font->color($config['text_color']);
-			$font->wrap(400);
+			$font->align('center');
+			$font->wrap(700);
 		});
 
 		// Salva a imagem gerada

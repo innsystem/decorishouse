@@ -44,4 +44,9 @@ class Product extends Model
             ->where('integration_id', $integration->id)
             ->value('affiliate_link'); // Pega apenas o campo do link
     }
+
+    public function generatedImages()
+    {
+        return $this->hasMany(ProductImageGenerate::class, 'product_id');
+    }
 }
