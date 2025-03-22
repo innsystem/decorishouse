@@ -97,8 +97,7 @@ class ProductService
 
 		$directory = storage_path("app/public/products/{$product->id}");
 		Storage::makeDirectory("public/products/{$product->id}");
-		chmod(storage_path("app/{$directory}"), 0775);
-
+		
 		$imagePath = public_path($product->images[0]);
 
 		if (!file_exists($imagePath)) {
@@ -188,8 +187,7 @@ class ProductService
 
 		// Garante que a pasta do produto existe
 		Storage::makeDirectory($directory);
-		chmod(storage_path("app/{$directory}"), 0775);
-
+		
 		foreach ($product->images as $index => $imageUrl) {
 			try {
 				// Faz o download da imagem
