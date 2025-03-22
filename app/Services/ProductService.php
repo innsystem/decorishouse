@@ -155,7 +155,6 @@ class ProductService
 
 		$url_image_created = Storage::disk('public')->url("products/{$product->id}{$nameOutput}");
 
-
 		// Registra no banco para evitar duplicação
 		ProductImageGenerate::create(['product_id' => $product->id]);
 
