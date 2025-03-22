@@ -94,7 +94,7 @@ class ProductService
 		if (!is_array($product->images) || empty($product->images)) {
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
-
+		
 		$directory = "public/products/{$product->id}";
 
 		// Verifica se a pasta já existe antes de criá-la
@@ -180,8 +180,8 @@ class ProductService
 			'link' => $link_product,
 		];
 
-		dispatch(new ProcessNotificationJob('whatsapp', '22988280129', 'General', 'whatsapp', 'product_send_image', $notificationDataImage));
-		dispatch(new ProcessNotificationJob('whatsapp', '22988280129', 'General', 'whatsapp', 'product_send_link', $notificationDataLink));
+		dispatch(new ProcessNotificationJob('whatsapp', '16992747526', 'General', 'whatsapp', 'product_send_image', $notificationDataImage));
+		dispatch(new ProcessNotificationJob('whatsapp', '16992747526', 'General', 'whatsapp', 'product_send_link', $notificationDataLink));
 
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 	}
