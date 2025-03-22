@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductImageGenerate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class ProductService
 {
