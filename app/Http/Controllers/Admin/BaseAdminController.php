@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Integrations\ShopeeIntegration;
 use App\Jobs\ProcessNotificationJob;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -13,6 +14,11 @@ class BaseAdminController extends Controller
 {
     public function index()
     {
+        $shopee = new ShopeeIntegration();
+        $response = $shopee->getBrandOffers();
+
+        dd($response);
+
         return view('admin.pages.home');
     }
 
