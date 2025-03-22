@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Integrations\ShopeeIntegration;
 use App\Jobs\ProcessNotificationJob;
+use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -14,12 +15,18 @@ class BaseAdminController extends Controller
 {
     public function index()
     {
-        $shopee = new ShopeeIntegration();
-        $response = $shopee->getBrandOffers();
-
-        dd($response);
-
         return view('admin.pages.home');
+    }
+
+    public function useShopeeIntegration()
+    {
+        $shopee = new ShopeeIntegration();
+
+        $keyword = ''; // nome do produto para pesquisar
+        $productCatId = null; // id da categoria https://seller.shopee.com.br/edu/category-guide
+
+        $response = $shopee->getProductsOffers($keyword, $productCatId, 1, 2);
+        dd($response);
     }
 
     public function settings()

@@ -51,30 +51,36 @@ class ShopeeIntegration
 
     private function generateSignature($payload, $timestamp)
     {
-        // Garante que o JSON está bem formatado
-        $payload = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $signatureString = $this->appId . $timestamp . $payload . $this->secret;
+        // JSON corretamente formatado para assinatura
+        $payloadString = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        // String de assinatura seguindo a documentação
+        $signatureString = $this->appId . $timestamp . $payloadString . $this->secret;
+
+        // Hash SHA256
         return hash('sha256', $signatureString);
     }
 
     public function sendRequest($query, $operationName = null, $variables = [])
     {
-        $timestamp = time();
         $payload = [
             'query' => $query,
-            'operationName' => $operationName,
-            'variables' => $variables
+            'operationName' => "GetProductsOffers",
+            'variables' => (object) $variables
         ];
 
+        $timestamp = time();
         $signature = $this->generateSignature($payload, $timestamp);
+
         $headers = [
             'Authorization' => "SHA256 Credential={$this->appId}, Timestamp={$timestamp}, Signature={$signature}",
+            'Content-Type'  => 'application/json'
         ];
 
         try {
             $response = $this->client->request('POST', '', [
                 'headers' => $headers,
-                'json' => $payload // <-- Ajuste para enviar JSON corretamente
+                'body'    => json_encode($payload) // Garante que o corpo seja JSON válido
             ]);
 
             return json_decode($response->getBody(), true);
@@ -87,11 +93,91 @@ class ShopeeIntegration
         }
     }
 
-    public function getBrandOffers()
+    public function getShopeeOffers($keyword = "", $sortType = 1, $page = 1, $limit = 10)
     {
-        $query = "{ brandOffer { nodes { commissionRate offerName } } }";
-        return $this->sendRequest($query);
+        $query = <<<GQL
+        query GetShopeeOffers(\$keyword: String, \$sortType: Int, \$page: Int, \$limit: Int) {
+            shopeeOfferV2(keyword: \$keyword, sortType: \$sortType, page: \$page, limit: \$limit) {
+                nodes {
+                    commissionRate
+                    imageUrl
+                    offerLink
+                    originalLink
+                    offerName
+                    offerType
+                    categoryId
+                    collectionId
+                    periodStartTime
+                    periodEndTime
+                }
+                pageInfo {
+                    page
+                    limit
+                    hasNextPage
+                }
+            }
+        }
+        GQL;
+
+        $variables = [
+            "keyword" => $keyword,
+            "sortType" => $sortType,
+            "page" => $page,
+            "limit" => $limit
+        ];
+
+        return $this->sendRequest($query, "GetShopeeOffers", $variables);
     }
+
+    public function getProductsOffers($keyword = '', $productCatId = null, $page = 1, $limit = 10)
+    {
+        $query = <<<GQL
+        query GetProductsOffers(\$keyword: String, \$productCatId: Int, \$page: Int, \$limit: Int) {
+            productOfferV2(keyword: \$keyword, productCatId: \$productCatId, page: \$page, limit: \$limit) {
+                nodes {
+                    itemId
+                    productCatIds
+                    productName
+                    imageUrl
+                    priceMin
+                    priceMax
+                    commissionRate
+                    productLink
+                    offerLink
+                }
+                pageInfo {
+                    page
+                    limit
+                    hasNextPage
+                }
+            }
+        }
+        GQL;
+    
+        // Criar array de variáveis sem incluir `productCatId` se for `null`
+        $variables = [
+            "keyword" => $keyword,
+            "page" => $page,
+            "limit" => $limit
+        ];
+    
+        if (!is_null($productCatId)) {
+            $variables["productCatId"] = (int) $productCatId; // Garante que seja um Int
+        }
+    
+        return $this->sendRequest($query, "GetProductsOffers", $variables);
+    }
+    
+
+
+
+
+
+
+
+
+
+
 
     private function handleClientException(ClientException $e)
     {
