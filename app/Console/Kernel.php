@@ -18,17 +18,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-       /*  $schedule->call(function () {
-           // Busca um produto que ainda não teve a imagem gerada
-            $product = Product::whereDoesntHave('generatedImages')->inRandomOrder()->first();
+        /*  
+            $schedule->call(function () {
+            // Busca um produto que ainda não teve a imagem gerada
+                $product = Product::whereDoesntHave('generatedImages')->inRandomOrder()->first();
 
-            if ($product) {
-              dispatch(new GenerateProductImageJob($product));
-          
-              Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
-            }
-        })->everyFifteenMinutes()->between('09:00', '19:00')->name('generate_product_image')->withoutOverlapping();
-*/
+                if ($product) {
+                dispatch(new GenerateProductImageJob($product));
+            
+                Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
+                }
+            })->everyFifteenMinutes()->between('09:00', '19:00')->name('generate_product_image')->withoutOverlapping();
+        */
+
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();
     }
