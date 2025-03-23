@@ -158,7 +158,7 @@ class ProductService
 		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
 
 		// Adiciona título do produto
-		$text = Str::limit($product->name, 100, '...');
+		$text = Str::limit($product->name, 60, '...');
 		$text_x = $config['text_x'];
 		$text_y = $config['text_y'];
 		$text_size = $config['text_size'];
