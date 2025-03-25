@@ -230,7 +230,8 @@ class ProductService
 				if ($response->successful()) {
 					$extension = pathinfo($imageUrl, PATHINFO_EXTENSION) ?: 'jpg';
 					$filename = "product_{$product->id}_{$index}." . $extension;
-					$path = "{$directory}/{$filename}";
+					$directoryPublic = str_replace('/public', '', $directory);
+					$path = "{$directoryPublic}/{$filename}";
 
 					// Salva a imagem localmente
 					Storage::put($path, $response->body());
