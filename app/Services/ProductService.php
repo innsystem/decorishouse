@@ -106,7 +106,7 @@ class ProductService
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
 		
-		$directory = "public/products/{$product->id}";
+		$directory = "products/{$product->id}";
 
 		// Verifica se a pasta já existe antes de criá-la
 		if (!Storage::exists($directory)) {
@@ -210,12 +210,21 @@ class ProductService
 		}
 
 		$localImages = [];
-		$directory = "public/products/{$product->id}";
+		$directory = "products/{$product->id}";
 
 		// Cria o diretório se ele não existir
 		if (!Storage::exists($directory)) {
 			Storage::disk('public')->makeDirectory($directory);
 		}
+
+				// Converte para o caminho físico real no servidor
+		$storagePath = storage_path("app/{$directory}");
+
+		// Garante que a pasta foi realmente criada antes de aplicar permissões
+		if (file_exists($storagePath)) {
+			chmod($storagePath, 0775); // Permissão para leitura/escrita pelo proprietário e grupo
+		}
+				
 
 		// Verifica se a pasta foi realmente criada antes de aplicar permissões
 		$storagePath = storage_path("app/{$directory}");
