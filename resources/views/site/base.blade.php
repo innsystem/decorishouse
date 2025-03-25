@@ -41,9 +41,9 @@
     <!-- Wow -->
     <link rel="stylesheet" href="{{ asset('/tpl_site/css/jquery-ui.css') }}">
     <!-- Main css -->
-    <link rel="stylesheet" href="{{ asset('/tpl_site/css/main.css?'.rand()) }}">
+    <link rel="stylesheet" href="{{ asset('/tpl_site/css/main.css?1') }}">
     <!-- Templace Custom -->
-    <link rel="stylesheet" href="{{ asset('/tpl_site/css/template_custom.css?'.rand()) }}">
+    <link rel="stylesheet" href="{{ asset('/tpl_site/css/template_custom.css?1') }}">
     <!-- Font Awesome -->
     <link href="{{ asset('/plugins/fontawesome/css/all.min.css') }}" rel="stylesheet">
 
