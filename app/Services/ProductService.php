@@ -192,8 +192,11 @@ class ProductService
 			'link' => $link_product,
 		];
 
-		dispatch(new ProcessNotificationJob('whatsapp', '16992747526', 'General', 'whatsapp', 'product_send_image', $notificationDataImage));
-		dispatch(new ProcessNotificationJob('whatsapp', '16992747526', 'General', 'whatsapp', 'product_send_link', $notificationDataLink));
+		$numbers = ['16992747526', '16992747526']; // Lista de números
+		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
+
+		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_image', $notificationDataImage));
+		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_link', $notificationDataLink));
 
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 	}
