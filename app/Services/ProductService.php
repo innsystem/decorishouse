@@ -210,7 +210,7 @@ class ProductService
 		}
 
 		$localImages = [];
-		$directory = "public/products/{$product->id}";
+		$directory = "/public/products/{$product->id}";
 
 		// Cria o diretório se ele não existir
 		if (!Storage::exists($directory)) {
