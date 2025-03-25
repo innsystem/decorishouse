@@ -73,6 +73,8 @@ class ProductController extends Controller
 
         $this->productService->downloadAndStoreImages($product->id);
 
+        $this->productService->generateProductImage($product->id);
+
         return response()->json(['message' => 'Produto adicionado com sucesso'], 201);
     }
 
