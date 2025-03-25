@@ -106,7 +106,7 @@ class ProductService
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
 		
-		$directory = "public/products/{$product->id}";
+		$directory = "/public/products/{$product->id}";
 
 		// Verifica se a pasta já existe antes de criá-la
 		if (!Storage::exists($directory)) {
