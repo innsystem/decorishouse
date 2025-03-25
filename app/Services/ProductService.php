@@ -106,7 +106,7 @@ class ProductService
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
 		
-		$directory = "/public/products/{$product->id}";
+		$directory = "public/products/{$product->id}";
 
 		// Verifica se a pasta já existe antes de criá-la
 		if (!Storage::exists($directory)) {
@@ -175,7 +175,7 @@ class ProductService
 		// $background->save($outputPath);
 
 		// Salva a imagem no storage de forma pública
-		Storage::put("/public/products/{$product->id}{$nameOutput}", $background->encode());
+		Storage::put("public/products/{$product->id}{$nameOutput}", $background->encode());
 
 		$url_image_created = Storage::url("products/{$product->id}{$nameOutput}");
 
@@ -210,7 +210,7 @@ class ProductService
 		}
 
 		$localImages = [];
-		$directory = "/public/products/{$product->id}";
+		$directory = "public/products/{$product->id}";
 
 		// Cria o diretório se ele não existir
 		if (!Storage::exists($directory)) {
