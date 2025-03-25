@@ -106,11 +106,11 @@ class ProductService
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
 		
-		$directory = "products/{$product->id}";
+		$directory = "public/products/{$product->id}";
 
 		// Verifica se a pasta já existe antes de criá-la
 		if (!Storage::exists($directory)) {
-			Storage::disk('public')->makeDirectory($directory);
+			Storage::makeDirectory($directory);
 		}
 		
 		// Converte para o caminho físico real no servidor
@@ -175,9 +175,9 @@ class ProductService
 		// $background->save($outputPath);
 
 		// Salva a imagem no storage de forma pública
-		Storage::disk('public')->put("products/{$product->id}{$nameOutput}", $background->encode());
+		Storage::put("products/{$product->id}{$nameOutput}", $background->encode());
 
-		$url_image_created = Storage::disk('public')->url("products/{$product->id}{$nameOutput}");
+		$url_image_created = Storage::url("products/{$product->id}{$nameOutput}");
 
 		// Registra no banco para evitar duplicação
 		ProductImageGenerate::create(['product_id' => $product->id]);
@@ -210,21 +210,12 @@ class ProductService
 		}
 
 		$localImages = [];
-		$directory = "products/{$product->id}";
+		$directory = "public/products/{$product->id}";
 
 		// Cria o diretório se ele não existir
 		if (!Storage::exists($directory)) {
-			Storage::disk('public')->makeDirectory($directory);
+			Storage::makeDirectory($directory);
 		}
-
-				// Converte para o caminho físico real no servidor
-		$storagePath = storage_path("app/{$directory}");
-
-		// Garante que a pasta foi realmente criada antes de aplicar permissões
-		if (file_exists($storagePath)) {
-			chmod($storagePath, 0775); // Permissão para leitura/escrita pelo proprietário e grupo
-		}
-				
 
 		// Verifica se a pasta foi realmente criada antes de aplicar permissões
 		$storagePath = storage_path("app/{$directory}");
@@ -242,7 +233,7 @@ class ProductService
 					$path = "{$directory}/{$filename}";
 
 					// Salva a imagem localmente
-					Storage::disk('public')->put($path, $response->body());
+					Storage::put($path, $response->body());
 
 					// Adiciona ao array local
 					$localImages[] = Storage::url($path);
