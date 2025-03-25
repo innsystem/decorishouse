@@ -175,7 +175,7 @@ class ProductService
 		// $background->save($outputPath);
 
 		// Salva a imagem no storage de forma pública
-		Storage::put("products/{$product->id}{$nameOutput}", $background->encode());
+		Storage::put("/public/products/{$product->id}{$nameOutput}", $background->encode());
 
 		$url_image_created = Storage::url("products/{$product->id}{$nameOutput}");
 
