@@ -110,7 +110,7 @@ class ProductService
 
 		// Verifica se a pasta já existe antes de criá-la
 		if (!Storage::exists($directory)) {
-			Storage::makeDirectory($directory);
+			Storage::disk('public')->makeDirectory($directory);
 		}
 		
 		// Converte para o caminho físico real no servidor
@@ -211,7 +211,7 @@ class ProductService
 
 		// Cria o diretório se ele não existir
 		if (!Storage::exists($directory)) {
-			Storage::makeDirectory($directory);
+			Storage::disk('public')->makeDirectory($directory);
 		}
 
 		// Verifica se a pasta foi realmente criada antes de aplicar permissões

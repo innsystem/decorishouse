@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Integration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -169,7 +170,7 @@ class ProductsController extends Controller
         // Relacionando categorias (Many-to-Many)
         $product->categories()->sync($result['categories']);
 
-        $product->affiliateLinks()->delete(); 
+        $product->affiliateLinks()->delete();
 
         if (!empty($result['marketplace']) && !empty($result['affiliate_links'])) {
             foreach ($result['marketplace'] as $index => $marketplaceId) {
@@ -201,27 +202,48 @@ class ProductsController extends Controller
     }
 
     public function checkImages()
-	{
-		// Busca todos os produtos
-		$products = Product::all();
+    {
+        // Busca todos os produtos
+        $products = Product::all();
 
-		foreach ($products as $product) {
-			// Verifica se a coluna images é válida
-			if (!is_array($product->images) || empty($product->images)) {
-				continue; // Pula para o próximo produto
-			}
+        foreach ($products as $product) {
+            // Verifica se a coluna images é válida
+            if (!is_array($product->images) || empty($product->images)) {
+                continue; // Pula para o próximo produto
+            }
 
-			// Verifica se alguma das imagens ainda está com URL externa (não salva localmente)
-			$hasExternalImage = collect($product->images)->contains(function ($image) {
-				return !Str::startsWith($image, '/storage'); // Verifica se NÃO começa com "/storage"
-			});
+            // Verifica se alguma das imagens ainda está com URL externa (não salva localmente)
+            $hasExternalImage = collect($product->images)->contains(function ($image) {
+                return !Str::startsWith($image, '/storage'); // Verifica se NÃO começa com "/storage"
+            });
 
-			// Se tiver alguma imagem externa, chama a função de download
-			if ($hasExternalImage) {
-				$this->productService->downloadAndStoreImages($product->id);
-			}
-		}
+            // Se tiver alguma imagem externa, chama a função de download
+            if ($hasExternalImage) {
+                $this->productService->downloadAndStoreImages($product->id);
+            }
+        }
 
-		return response()->json(['message' => 'Verificação concluída!']);
-	}
+        return response()->json(['message' => 'Verificação concluída!']);
+    }
+
+    public function sugestions()
+    {
+        $category = Category::with('products.affiliateLinks')->whereNotNull('parent_id')->inRandomOrder()->first();
+
+        if (!$category || $category->products->isEmpty()) {
+            return response()->json('Nenhuma categoria com produtos encontrada.', 422);
+        }
+
+        $products = $category->products->map(function ($product) {
+            return [
+                'name' => $product->name,
+                'link' => $product->getAffiliateLinkByIntegration('shopee') ?? '#',
+            ];
+        });
+
+        return response()->json([
+            'category' => $category->name,
+            'products' => $products
+        ]);
+    }
 }

@@ -228,6 +228,7 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/delete', 'delete')->name('admin.products.delete')->middleware('permission:admin.products.delete');
             Route::post('/{id}/generate-image', 'generateImage')->name('admin.products.generateImage')->middleware('permission:admin.products.generateImage');
             Route::get('/checkImages', 'checkImages')->name('admin.products.checkImages')->middleware('permission:admin.products.checkImages');
+            Route::get('/sugestions', 'sugestions')->name('admin.products.sugestions');
         });
     });
 });

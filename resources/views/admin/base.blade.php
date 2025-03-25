@@ -293,6 +293,53 @@
         });
     </script>
 
+    <script>
+        $(document).on('click', '#suggestProductsBtn', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '/admin/products/sugestions',
+                type: 'GET',
+                success: function(response) {
+                    if (response.error) {
+                        Swal.fire('Ops!', response.error, 'error');
+                        return;
+                    }
+
+                    let productList = response.products.map(p =>
+                        `<li><strong>${p.name}</strong><br><a href="${p.link}" target="_blank">${p.link}</a></li>`
+                    ).join('');
+
+                    Swal.fire({
+                        title: `📌 ${response.category}`,
+                        html: `<ul style="text-align: left;">${productList}</ul>`,
+                        confirmButtonText: 'Fechar',
+                        width: '600px'
+                    });
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        Swal.fire({
+                            text: xhr.responseJSON,
+                            icon: 'warning',
+                            showClass: {
+                                popup: 'animate__animated animate__headShake'
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            text: xhr.responseJSON,
+                            icon: 'error',
+                            showClass: {
+                                popup: 'animate__animated animate__headShake'
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

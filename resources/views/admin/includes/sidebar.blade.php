@@ -1,5 +1,12 @@
 <li class="side-nav-title">Menu</li>
 
+<li class="side-nav-item">
+    <a href="{{ route('site.index') }}" class="side-nav-link" target="_Blank">
+        <i class="ri-home-2-line"></i>
+        <span> Meu Site </span>
+    </a>
+</li>
+
 @if (auth()->user()->hasPermission('admin.index'))
 <li class="side-nav-item">
     <a href="{{ route('admin.index') }}" class="side-nav-link">
@@ -152,3 +159,11 @@
     </a>
 </li>
 @endif
+
+
+<li class="side-nav-item">
+    <a href="#" class="side-nav-link" id="suggestProductsBtn">
+        <i class="ri-price-tag-2-line"></i>
+        <span> Gerar Roteiro </span>
+    </a>
+</li>
