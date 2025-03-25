@@ -1,6 +1,6 @@
 @extends('site.base')
 
-@section('title', 'Página Inicial')
+@section('title', 'Transforme sua Casa')
 
 @section('content')
 <section class="recommended py-60">
@@ -14,14 +14,14 @@
             <div class="col-xxl-2 col-lg-3 col-sm-4 col-6">
                 <div class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                     <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__thumb flex-center">
-                        <img src="{{ $product_link->product->images[0] }}" alt="">
+                        <img src="{{ asset('/galerias/img_loading.gif') }}" data-src="{{ $product_link->product->images[0] }}" alt="" class="lazy-load" loading="lazy">
                     </a>
                     <div class="product-card__content p-sm-2">
                         <h6 class="title text-lg fw-semibold mt-12 mb-8">
                             <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href link text-line-2">{{$product_link->product->name}}</a>
                         </h6>
                         <div class="flex-align gap-4">
-                            <span class="text-main-600 text-md d-flex"><img src="{{ asset('/galerias/icons/marketplaces/'.$product_link->integration->slug.'.png') }}" alt="" class="avatar-marketplace"></span>
+                            <span class="text-main-600 text-md d-flex"><img src="{{ asset('/galerias/img_loading.gif') }}" data-src="{{ asset('/galerias/icons/marketplaces/'.$product_link->integration->slug.'.png') }}" alt="" class="avatar-marketplace lazy-load" loading="lazy"></span>
                             <span class="text-gray-500 text-xs"><b>{{$product_link->integration->name}}</b> <i class="text-muted">{{ $product_link->product->created_at->diffForHumans() }}</i></span>
                         </div>
 
@@ -49,14 +49,14 @@
             <div class="col-xxl-2 col-lg-3 col-sm-4 col-6">
                 <div class="product-card h-100 p-8 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                     <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__thumb flex-center">
-                        <img src="{{ $product_link->product->images[0] }}" alt="">
+                        <img src="{{ asset('/galerias/img_loading.gif') }}" data-src="{{ $product_link->product->images[0] }}" alt="" class="lazy-load" loading="lazy">
                     </a>
                     <div class="product-card__content p-sm-2">
                         <h6 class="title text-lg fw-semibold mt-12 mb-8">
                             <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href link text-line-2">{{$product_link->product->name}}</a>
                         </h6>
                         <div class="flex-align gap-4">
-                            <span class="text-main-600 text-md d-flex"><img src="{{ asset('/galerias/icons/marketplaces/'.$product_link->integration->slug.'.png') }}" alt="" class="avatar-marketplace"></span>
+                            <span class="text-main-600 text-md d-flex"><img src="{{ asset('/galerias/img_loading.gif') }}" data-src="{{ asset('/galerias/icons/marketplaces/'.$product_link->integration->slug.'.png') }}" alt="" class="avatar-marketplace lazy-load" loading="lazy"></span>
                             <span class="text-gray-500 text-xs"><b>{{$product_link->integration->name}}</b> <i class="text-muted">{{ $product_link->product->created_at->diffForHumans() }}</i></span>
                         </div>
 

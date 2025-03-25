@@ -7,6 +7,28 @@
     <meta name="description" content="@yield('title')">
     <!-- Title-->
     <title>@yield('title') | {{$getSettings['site_name']}}</title>
+    
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- Open Graph (OG) Meta Tags -->
+    <meta property="og:title" content="@yield('title', $getSettings['site_name'])">
+    <meta property="og:description" content="@yield('description', $getSettings['meta_description'])">
+    <meta property="og:image" content="@yield('image', asset('/galerias/facebook_decorishouse.png'))">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{$getSettings['site_name']}}">
+    <meta property="og:locale" content="pt_BR">
+
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="@yield('keywords', $getSettings['meta_keywords'])">
+    <meta name="description" content="@yield('description', $getSettings['meta_description'])">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', $getSettings['site_name'])">
+    <meta name="twitter:description" content="@yield('description', $getSettings['meta_description'])">
+    <meta name="twitter:image" content="@yield('image', asset($getSettings['logo']))">
+
     <!-- Favicon-->
     <link rel="shortcut icon" href="{{ asset('/galerias/favicon.ico') }}" type="image/x-icon">
 
@@ -30,20 +52,19 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZH92GES8SL"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
 
-    gtag('config', 'G-ZH92GES8SL');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-ZH92GES8SL');
     </script>
 </head>
 
 <body>
-    <!--==================== Preloader Start ====================-->
-    <div class="preloader">
-        <img src="{{ asset('/tpl_site/images/icon/preloader.gif') }}" alt="">
-        <!-- <div class="loader"></div> -->
-    </div>
+
     <div class="overlay"></div>
     <div class="side-overlay"></div>
     <div class="progress-wrap">
@@ -218,7 +239,6 @@
     @yield('content')
 
     <footer class="footer py-60">
-        <img src="assets/images/bg/body-bottom-bg.png" alt="BG" class="body-bottom-bg">
         <div class="container container-lg">
             <div class="footer-item-wrapper d-flex flex-wrap align-items-start justify-content-center">
                 <div class="col-12 text-center footer-logo">
@@ -337,6 +357,29 @@
                 if (!$(e.target).closest('.search-form__wrapper').length) {
                     $('#search-results').hide();
                 }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const images = document.querySelectorAll('img.lazy-load');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('data-src'); // Defina o src com o valor de data-src
+                        img.classList.remove('lazy-load'); // Remova a classe de lazy-load
+                        observer.unobserve(img); // Pare de observar a imagem
+                    }
+                });
+            }, {
+                threshold: 0.1 // A imagem será carregada quando 10% da sua área for visível
+            });
+
+            images.forEach(image => {
+                observer.observe(image); // Comece a observar as imagens
             });
         });
     </script>
