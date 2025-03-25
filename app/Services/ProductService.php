@@ -106,7 +106,7 @@ class ProductService
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
 		
-		$directory = "public/products/{$product->id}";
+		$directory = "products/{$product->id}";
 
 		// Verifica se a pasta já existe antes de criá-la
 		if (!Storage::exists($directory)) {
@@ -134,7 +134,7 @@ class ProductService
 		}
 
 		// Escolhe um template aleatório
-		$templatePath = storage_path('app/public/templates/');
+		$templatePath = storage_path('app/templates/');
 		$templates = glob($templatePath . '*.png');
 		$randomTemplate = basename($templates[array_rand($templates)]); // Obtém apenas o nome do arquivo
 
@@ -210,7 +210,7 @@ class ProductService
 		}
 
 		$localImages = [];
-		$directory = "public/products/{$product->id}";
+		$directory = "products/{$product->id}";
 
 		// Cria o diretório se ele não existir
 		if (!Storage::exists($directory)) {
