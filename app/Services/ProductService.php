@@ -105,6 +105,10 @@ class ProductService
 		if (!is_array($product->images) || empty($product->images)) {
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
+
+		$product->created_at = now();
+		$product->updated_at = now();
+		$product->save();
 		
 		$directory = "public/products/{$product->id}";
 

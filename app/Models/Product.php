@@ -38,11 +38,18 @@ class Product extends Model
         if (!$integration) {
             return null; // Retorna null se a integração não existir
         }
-
         // Busca o link de afiliado para este produto na integração correspondente
-        return $this->affiliateLinks()
+        $affiliateLink = $this->affiliateLinks()
             ->where('integration_id', $integration->id)
-            ->value('affiliate_link'); // Pega apenas o campo do link
+            ->first();
+
+        if ($affiliateLink) {
+            $affiliateLink->created_at = now(); // Atualiza os timestamps (created_at e updated_at)
+            $affiliateLink->updated_at = now(); // Atualiza os timestamps (created_at e updated_at)
+            $affiliateLink->save(); // Salva as alterações no banco de dados
+            
+            return $affiliateLink->affiliate_link;
+        }
     }
 
     public function generatedImages()
