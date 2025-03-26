@@ -264,7 +264,7 @@ class ProductsController extends Controller
         $product = Product::whereDoesntHave('generatedImages')->inRandomOrder()->first();
 
         if ($product) {
-            dispatch(new GenerateProductImageJob($product));
+            new GenerateProductImageJob($product);
 
             Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
         }

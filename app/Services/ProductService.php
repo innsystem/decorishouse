@@ -192,7 +192,7 @@ class ProductService
 			'link' => $link_product,
 		];
 
-		$numbers = ['16992747526', '16992747526']; // Lista de números
+		$numbers = ['16992747526', '16994646551']; // Lista de números
 		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
 
 		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_image', $notificationDataImage));
