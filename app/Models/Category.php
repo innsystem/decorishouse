@@ -17,6 +17,11 @@ class Category extends Model
         return $this->belongsToMany(Product::class, 'category_product');
     }
 
+    public function randomProduct()
+    {
+        return $this->products()->inRandomOrder()->first();
+    }
+
     public function productAffiliateLinks()
     {
         return $this->products()->with('affiliateLinks');

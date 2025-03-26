@@ -14,6 +14,8 @@ use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
 use Carbon\Carbon;
+use App\Jobs\GenerateProductImageJob;
+use Illuminate\Support\Facades\Log;
 
 class ProductsController extends Controller
 {
@@ -228,22 +230,46 @@ class ProductsController extends Controller
 
     public function sugestions()
     {
-        $category = Category::with('products.affiliateLinks')->whereNotNull('parent_id')->inRandomOrder()->first();
-
-        if (!$category || $category->products->isEmpty()) {
-            return response()->json('Nenhuma categoria com produtos encontrada.', 422);
+        // Busca uma categoria pai aleatória e carrega as subcategorias e os produtos
+        $category = Category::with(['products.affiliateLinks', 'children.products'])->whereNull('parent_id')->inRandomOrder()->first();
+    
+        if (!$category) {
+            return response()->json(['error' => 'Nenhuma categoria encontrada.'], 404);
         }
-
-        $products = $category->products->map(function ($product) {
-            return [
-                'name' => $product->name,
-                'link' => $product->getAffiliateLinkByIntegration('shopee') ?? '#',
-            ];
-        });
-
+    
+        $products = [];
+    
+        foreach ($category->children as $child) {
+            $product = $child->randomProduct();
+    
+            if ($product) {
+                $product_name = $product->name;
+                $product_link = $product->getAffiliateLinkByIntegration('shopee') ?? '#';
+                $products[] = [
+                    'name' => $product_name,
+                    'link' => $product_link,
+                ];
+            }
+        }
+    
         return response()->json([
             'category' => $category->name,
             'products' => $products
         ]);
     }
+
+    public function randomCreate()
+    {
+        // Busca um produto que ainda não teve a imagem gerada
+        $product = Product::whereDoesntHave('generatedImages')->inRandomOrder()->first();
+
+        if ($product) {
+            dispatch(new GenerateProductImageJob($product));
+
+            Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
+        }
+
+        return redirect()->route('admin.products.index');
+    }
+    
 }

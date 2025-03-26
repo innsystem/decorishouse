@@ -306,15 +306,55 @@
                         return;
                     }
 
+                    if (response.products.length === 0) {
+                        Swal.fire('Ops!', 'Nenhum produto encontrado para essa categoria.', 'warning');
+                        return;
+                    }
+
                     let productList = response.products.map(p =>
-                        `<li><strong>${p.name}</strong><br><a href="${p.link}" target="_blank">${p.link}</a></li>`
+                        `<li class="pb-2"><strong>${p.name}</strong><a href="${p.link}" target="_blank">${p.link}</a></li>`
                     ).join('');
 
                     Swal.fire({
-                        title: `📌 ${response.category}`,
+                        title: `${response.category}`,
                         html: `<ul style="text-align: left;">${productList}</ul>`,
                         confirmButtonText: 'Fechar',
                         width: '600px'
+                    });
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        Swal.fire({
+                            text: xhr.responseJSON,
+                            icon: 'warning',
+                            showClass: {
+                                popup: 'animate__animated animate__headShake'
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            text: xhr.responseJSON,
+                            icon: 'error',
+                            showClass: {
+                                popup: 'animate__animated animate__headShake'
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '#randomProductsBtn', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '/admin/products/randomCreate',
+                type: 'GET',
+                success: function(response) {
+                   Swal.fire({
+                        title: 'Imagem do Produto criado com sucesso!',
+                        icon: 'success',
+                        confirmButtonText: 'Fechar'
                     });
                 },
                 error: function(xhr) {

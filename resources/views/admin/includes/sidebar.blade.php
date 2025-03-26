@@ -163,7 +163,13 @@
 
 <li class="side-nav-item">
     <a href="#" class="side-nav-link" id="suggestProductsBtn">
-        <i class="ri-price-tag-2-line"></i>
+        <i class="ri-price-tag-line"></i>
         <span> Gerar Roteiro </span>
+    </a>
+</li>
+<li class="side-nav-item">
+    <a href="#" class="side-nav-link" id="randomProductsBtn">
+        <i class="ri-image-line"></i>
+        <span> Gerar Imagem </span>
     </a>
 </li>
