@@ -93,11 +93,11 @@
                 <!-- Logo End  -->
 
                 <!-- form location Start -->
-                <form action="#" class="flex-align flex-wrap form-location-wrapper">
+                <form action="https://shopee.com.br/search" method="GET" class="flex-align flex-wrap form-location-wrapper">
                     <div class="search-category d-flex h-48 select-border-end-0 radius-end-0 search-form d-sm-flex d-none">
                         <div class="search-form__wrapper position-relative">
-                            <input type="text" id="search-input" class="search-form__input common-input py-13 ps-16 pe-18 rounded-end-pill pe-44" placeholder="Procure por nome do produto">
-                            <button type="button" class="w-32 h-32 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8">
+                            <input type="text" id="search-input" name="keyword" class="search-form__input common-input py-13 ps-16 pe-18 rounded-end-pill pe-44" placeholder="Procure por nome do produto">
+                            <button type="submit" class="w-32 h-32 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8">
                                 <i class="ph ph-magnifying-glass"></i>
                             </button>
                             <div id="search-results" class="search-results-container"></div>
