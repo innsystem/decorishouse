@@ -288,7 +288,7 @@ class ProductsController extends Controller
             'name'              => $product->title,
             'facebook_meta_id'  => 60,
             'content'           => $product->title,
-            'media'             => asset($social_image),
+            'media'             => url($social_image),
             'local'             => ['instagram_post', 'facebook_post'],
             'mark_product'      => false,
             // 'catalog_id'        => '942956091094461',
