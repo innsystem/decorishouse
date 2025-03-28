@@ -232,16 +232,16 @@ class ProductsController extends Controller
     {
         // Busca uma categoria pai aleatória e carrega as subcategorias e os produtos
         $category = Category::with(['products.affiliateLinks', 'children.products'])->whereNull('parent_id')->inRandomOrder()->first();
-    
+
         if (!$category) {
             return response()->json(['error' => 'Nenhuma categoria encontrada.'], 404);
         }
-    
+
         $products = [];
-    
+
         foreach ($category->children as $child) {
             $product = $child->randomProduct();
-    
+
             if ($product) {
                 $product_name = $product->name;
                 $product_link = $product->getAffiliateLinkByIntegration('shopee') ?? '#';
@@ -251,7 +251,7 @@ class ProductsController extends Controller
                 ];
             }
         }
-    
+
         return response()->json([
             'category' => $category->name,
             'products' => $products
@@ -279,17 +279,17 @@ class ProductsController extends Controller
 
         $social_image = asset($product->images[0]);
 
-        \Log::info('Social Image: ' . $social_image);
+        // \Log::info('Social Image: ' . $social_image);
 
         //$baseUrl = 'http://mayofertas.local:8090/api/facebook';
         $baseUrl = "https://multisocial.chat/api/facebook";
         $queryParams = [
             'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
             'facebook_meta_id'  => 60,
-            'name'              => $product->title,
-            'content'           => $product->title,
+            'name'              => $product->name,
+            'content'           => $product->name,
             'media'             => $social_image,
-            'local'             => ['instagram_post','facebook_post'],
+            'local'             => ['instagram_post', 'facebook_post'],
             'mark_product'      => 0,
             'catalog_id'        => '',
             'retailer_id'       => $product_id,
@@ -299,21 +299,28 @@ class ProductsController extends Controller
         // Constrói a URL com query strings automaticamente
         $urlWithParams = $baseUrl . '?' . http_build_query($queryParams);
 
-        \Log::info('UrlParams: ' . $urlWithParams);
+        // \Log::info('UrlParams: ' . $urlWithParams);
 
         // Fazer a requisição
         $response = Http::post($urlWithParams);
 
-        \Log::info('Response:' . json_encode($response));
+        //dd($response->body());
+
+        \Log::info('Response:' . json_encode($response->body()));
 
         if ($response->successful()) {
             // Product::where('id', $product_id)->update(['posted' => true]);
         }
 
+        if (!$response->successful()) {
+            \Log::info('badRequest:' . $response->body());
+
+            return response()->json($response->body(), 422);
+        }
+
         // Verificar se a requisição foi bem-sucedida
         if ($response->failed()) {
-            return ['error' => 'Erro ao postar nas redes sociais'];
+            return response()->json('Erro ao postar nas redes sociais', 422);
         }
     }
-    
 }

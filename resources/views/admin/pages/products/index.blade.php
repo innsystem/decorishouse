@@ -410,6 +410,7 @@
                 }).then((result) => {});
             },
             error: function(xhr) {
+            console.log(xhr);
                 if (xhr.status === 422) {
                     Swal.fire({
                         text: xhr.responseJSON,
