@@ -289,10 +289,10 @@ class ProductsController extends Controller
             'name'              => $product->title,
             'content'           => $product->title,
             'media'             => $social_image,
-            'local'             => json_encode(['instagram_post', 'facebook_post']),
+            'local'             => ['instagram_post','facebook_post'],
             'mark_product'      => 0,
-            // 'catalog_id'        => '942956091094461',
-            // 'retailer_id'       => $product_id,
+            'catalog_id'        => '',
+            'retailer_id'       => $product_id,
 
         ];
 
