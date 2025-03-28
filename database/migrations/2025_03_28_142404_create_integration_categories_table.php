@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('integration_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('integration_id')->constrained('integrations')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('api_category_id')->unique();
             $table->string('api_category_name');
-            $table->string('api_category_link_affiliate');
-            $table->string('api_category_commission');
-            $table->foreignId('parent_id')->nullable()->constrained('integration_categories')->onDelete('cascade');
+            $table->string('api_category_link_affiliate')->nullable();
+            $table->string('api_category_commission')->nullable();
             $table->timestamps();
         });        
     }

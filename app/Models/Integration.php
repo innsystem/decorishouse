@@ -70,6 +70,6 @@ class Integration extends Model
 
     public function integrationCategories()
     {
-        return $this->hasMany(IntegrationCategory::class);
+        return $this->hasMany(IntegrationCategory::class)->orderBy('api_category_name', 'ASC');
     }
 }

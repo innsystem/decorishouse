@@ -167,6 +167,7 @@ Route::prefix('admin')->group(function () {
             Route::prefix('{slug}/playground')->controller(IntegrationsPlaygroundController::class)->group(function () {
                 Route::get('/', 'index')->name('admin.integrations.playground.index');
                 Route::get('/load', 'load')->name('admin.integrations.playground.load');
+                Route::post('/createProduct', 'createProduct')->name('admin.integrations.playground.createProduct');
 
             });
         });

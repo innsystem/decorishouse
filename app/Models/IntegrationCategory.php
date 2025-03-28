@@ -11,6 +11,7 @@ class IntegrationCategory extends Model
 
     protected $fillable = [
         'integration_id',
+        'category_id',
         'api_category_id',
         'api_category_name',
         'api_category_link_affiliate',

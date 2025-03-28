@@ -4,6 +4,7 @@ namespace App\Integrations;
 
 use Illuminate\Support\Facades\Validator;
 use App\Models\Integration;
+use App\Models\ProductAffiliateLink;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
@@ -14,6 +15,7 @@ class ShopeeIntegration
     protected $appId;
     protected $secret;
     protected $baseUri;
+    protected $baseUriSeller;
 
     public function __construct()
     {
@@ -29,9 +31,10 @@ class ShopeeIntegration
         $this->appId = $settings['app_id'];
         $this->secret = $settings['secret_key'];
         $this->baseUri = 'https://open-api.affiliate.shopee.com.br/graphql';
+        $this->baseUriSeller = 'https://partner.shopeemobile.com/api/v2';
 
         $this->client = new Client([
-            'base_uri' => $this->baseUri,
+            // 'base_uri' => $this->baseUri,
             'headers' => [
                 'Content-Type' => 'application/json'
             ]
@@ -61,7 +64,7 @@ class ShopeeIntegration
         return hash('sha256', $signatureString);
     }
 
-    public function sendRequest($query, $operationName = null, $variables = [])
+    public function sendRequestAffiliate($query, $operationName = null, $variables = [])
     {
         $payload = [
             'query' => $query,
@@ -78,7 +81,7 @@ class ShopeeIntegration
         ];
 
         try {
-            $response = $this->client->request('POST', '', [
+            $response = $this->client->request('POST', $this->baseUri, [
                 'headers' => $headers,
                 'body'    => json_encode($payload) // Garante que o corpo seja JSON válido
             ]);
@@ -125,7 +128,7 @@ class ShopeeIntegration
             "limit" => $limit
         ];
 
-        return $this->sendRequest($query, "GetShopeeOffers", $variables);
+        return $this->sendRequestAffiliate($query, "GetShopeeOffers", $variables);
     }
 
     public function getShopOffers($keyword = "", $shopId = null, $shopType = [1, 2, 4], $isKeySeller = null, $sortType = 1, $sellerCommCoveRatio = "", $page = 1, $limit = 10)
@@ -179,7 +182,7 @@ class ShopeeIntegration
             "limit" => $limit
         ];
 
-        return $this->sendRequest($query, "GetShopOffers", $variables);
+        return $this->sendRequestAffiliate($query, "GetShopOffers", $variables);
     }
 
     public function getProductsOffers($keyword = null, $itemId = null, $productCatId = null, $page = 1, $limit = 10)
@@ -233,17 +236,8 @@ class ShopeeIntegration
             $variables["productCatId"] = (int) $productCatId; // Garante que seja um Int
         }
 
-        return $this->sendRequest($query, "GetProductsOffers", $variables);
+        return $this->sendRequestAffiliate($query, "GetProductsOffers", $variables);
     }
-
-
-
-
-
-
-
-
-
 
     public function normalizeInCategories($results)
     {
@@ -321,6 +315,7 @@ class ShopeeIntegration
         }
 
         return array_map(function ($item) {
+            $existyItem = ProductAffiliateLink::where('api_id', $item['itemId'])->exists();
             return [
                 'id' => $item['itemId'] ?? null,
                 'name' => $item['productName'] ?? 'Sem nome',
@@ -331,8 +326,60 @@ class ShopeeIntegration
                 'product_link' => $item['productLink'] ?? '',
                 'offer_link' => $item['offerLink'] ?? '',
                 'categories' => $item['productCatIds'] ?? [],
+                'existyItem' => $existyItem,
             ];
         }, $results['data']['productOfferV2']['nodes']);
+    }
+
+
+    // SELLERs
+    private function generateSellerSignature($path, $timestamp, $accessToken, $shopId)
+    {
+        $baseString = $this->appId . $path . $timestamp . $accessToken . $shopId . $this->secret;
+        return hash_hmac('sha256', $baseString, $this->secret);
+    }
+
+    public function sendRequestSeller($endpoint, $params = [])
+    {
+        $settings = $this->getSettings();
+        $timestamp = time();
+        $parter_id = $settings['parter_id'];
+        $shopId = $settings['shop_id'];
+        $accessToken = $settings['parter_key'];
+
+        $sign = $this->generateSellerSignature($endpoint, $timestamp, $accessToken, $shopId);
+
+        $queryParams = [
+            'partner_id' => $parter_id,
+            'timestamp'  => $timestamp,
+            'access_token' => $accessToken,
+            'shop_id'    => $shopId,
+            'sign'       => $sign
+        ];
+
+        try {
+            $response = $this->client->request('GET', $this->baseUriSeller . $endpoint, [
+                'query' => array_merge($queryParams, $params)
+            ]);
+
+            return json_decode($response->getBody(), true);
+        } catch (ClientException $e) {
+            return $this->handleClientException($e);
+        } catch (RequestException $e) {
+            return $this->handleRequestException($e);
+        } catch (\Exception $e) {
+            return $this->handleGeneralException($e);
+        }
+    }
+
+    public function getShopeeCategories($language = 'en')
+    {
+        $endpoint = '/product/get_category';
+        $params = [
+            'language' => $language
+        ];
+
+        return $this->sendRequestSeller($endpoint, $params);
     }
 
 

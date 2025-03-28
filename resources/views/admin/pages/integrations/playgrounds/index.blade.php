@@ -31,7 +31,7 @@
                             </div>
                             <div class="col-md-3 input_products_offers d-none">
                                 <label for="category_id">Category ID <a href="https://seller.shopee.com.br/edu/category-guide" target="_Blank"><i class="fa fa-link"></i></a>:</label>
-                                <select name="category_id" id="category_id" class="form-select">
+                                <select name="category_id" id="category_id" class="form-select select2">
                                     <option value=""></option>
                                     @foreach($categoriesShopee as $category_shopee)
                                     <option value="{{ $category_shopee['api_category_id'] }}">{{ str_replace('20221014 -  KOL - 2022 - ', '', $category_shopee['api_category_name']) }}</option>
@@ -98,11 +98,16 @@
 @endsection
 
 @section('pageCSS')
+<link href="{{ asset('/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+
 <!-- Flatpickr Timepicker css -->
 <link href="{{ asset('/tpl_dashboard/vendor/flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('pageJS')
+<script src="{{ asset('/plugins/select2/js/select2.min.js') }}"></script>
+
+
 <!-- Query String ToSlug - Transforma o titulo em URL amigavel sem acentos ou espaço -->
 <script type="text/javascript" src="{{ asset('/plugins/stringToSlug/jquery.stringToSlug.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('/plugins/stringToSlug/speakingurl.js') }}"></script>
@@ -112,13 +117,21 @@
 <script src="{{ asset('/tpl_dashboard/vendor/flatpickr/l10n/pt.js') }}"></script>
 
 <script>
+    $(document).ready(function() {
+        $('#category_id').select2({
+            width: '100%', // Garante que ocupe todo o espaço disponível
+            placeholder: "Selecione uma categoria",
+            allowClear: true
+        });
+    });
+
     function loadContentPage() {
         $("#content-load-page").html('');
         var url = `{{ route('admin.integrations.playground.load', $slug) }}`;
         var filters = $('#filter-form').serialize();
 
         var button = $('#button-integrations-filters');
-        
+
         // Exibe o spinner de carregamento
         $("#content-load-page").html('<h3><i class="fa fa-spinner fa-spin"></i> Carregando dados...</h3>');
 
@@ -184,6 +197,71 @@
         } else {
             $('.input_products_offers').addClass('d-none');
         }
+    });
+
+    $(document).on('click', '.button-create-product', function(e) {
+        e.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            }
+        });
+
+        let button = $(this);
+        let slug_integration = `{{$slug}}`;
+        var url = `{{ url('/admin/integrations/${slug_integration}/playground/createProduct') }}`;
+
+        $.ajax({
+            url: url,
+            data: {
+                slug_integration: slug_integration,
+                product_id: button.data('product-id'),
+                product_name: button.data('product-name'),
+                product_images: button.data('product-images'),
+                product_categories: button.data('product-categories'),
+                product_price_min: button.data('product-price-min'),
+                product_price_max: button.data('product-price-max'),
+                product_link: button.data('product-link'),
+            },
+            method: 'POST',
+            beforeSend: function() {
+                //disable the submit button
+                button.attr("disabled", true);
+                button.append('<i class="fa fa-spinner fa-spin ml-3"></i>');
+            },
+            complete: function() {
+                button.prop("disabled", false);
+                button.find('.fa-spinner').addClass('d-none');
+            },
+            success: function(data) {
+                Swal.fire({
+                    text: data,
+                    icon: 'success',
+                    showClass: {
+                        popup: 'animate_animated animate_backInUp'
+                    },
+                });
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    Swal.fire({
+                        text: 'Validação: ' + xhr.responseJSON,
+                        icon: 'warning',
+                        showClass: {
+                            popup: 'animate_animated animate_wobble'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        text: 'Erro Interno: ' + xhr.responseJSON,
+                        icon: 'error',
+                        showClass: {
+                            popup: 'animate_animated animate_wobble'
+                        }
+                    });
+                }
+            }
+        });
     });
 </script>
 @endsection

@@ -26,9 +26,22 @@
                             <span class="text-gray-500 text-xs"><b>{{$product_link->integration->name}}</b> <i class="text-muted">{{ $product_link->product->created_at->diffForHumans() }}</i></span>
                         </div>
 
+                        <div class="product-card__price mb-8 d-flex align-items-center gap-8 mt-10">
+                            @if($product_link->product->price_promotion > $product_link->product->price)
+                            <span class="text-heading text-md fw-semibold">
+                                R$ {{ number_format($product_link->product->price, 2, ',', '.') }}
+                            </span>
+                            <span class="text-gray-500 fw-normal">~</span>
+                            @endif
+
+                            <span class="text-heading text-md fw-semibold">
+                                R$ {{ number_format($product_link->product->price_promotion, 2, ',', '.') }}
+                            </span>
+                        </div>
+
                         <div class="product-card__content mt-12">
                             <a href="{{ $product_link->affiliate_link }}" data-product-link-id="{{$product_link->id}}" data-affiliate-link="{{ $product_link->affiliate_link }}" class="product-link-href product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center">
-                                Obter Promoção <i class="ph ph-heart"></i>
+                                Ver Promoção <i class="ph ph-heart"></i>
                             </a>
                         </div>
                     </div>

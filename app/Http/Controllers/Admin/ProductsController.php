@@ -272,55 +272,10 @@ class ProductsController extends Controller
         return redirect()->route('admin.products.index');
     }
 
-    protected function generateImageFeed($product_id)
+    public function generateImageFeed($product_id)
     {
+        $response = $this->productService->publishProductImage($product_id);
 
-        $product = Product::find($product_id);
-
-        $social_image = asset($product->images[0]);
-
-        // \Log::info('Social Image: ' . $social_image);
-
-        //$baseUrl = 'http://mayofertas.local:8090/api/facebook';
-        $baseUrl = "https://multisocial.chat/api/facebook";
-        $queryParams = [
-            'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
-            'facebook_meta_id'  => 60,
-            'name'              => $product->name,
-            'content'           => $product->name,
-            'media'             => $social_image,
-            'local'             => ['instagram_post', 'facebook_post'],
-            'mark_product'      => 0,
-            'catalog_id'        => '',
-            'retailer_id'       => $product_id,
-
-        ];
-
-        // Constrói a URL com query strings automaticamente
-        $urlWithParams = $baseUrl . '?' . http_build_query($queryParams);
-
-        // \Log::info('UrlParams: ' . $urlWithParams);
-
-        // Fazer a requisição
-        $response = Http::post($urlWithParams);
-
-        //dd($response->body());
-
-        \Log::info('Response:' . json_encode($response->body()));
-
-        if ($response->successful()) {
-            return response()->json('Postagem publicada com sucesso!', 200);
-        }
-
-        if (!$response->successful()) {
-            \Log::info('badRequest:' . $response->body());
-
-            return response()->json($response->body(), 422);
-        }
-
-        // Verificar se a requisição foi bem-sucedida
-        if ($response->failed()) {
-            return response()->json('Erro ao postar nas redes sociais', 422);
-        }
+        return response()->json($response['title'], $response['status']);
     }
 }
