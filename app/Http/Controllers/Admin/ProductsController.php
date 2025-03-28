@@ -309,7 +309,7 @@ class ProductsController extends Controller
         \Log::info('Response:' . json_encode($response->body()));
 
         if ($response->successful()) {
-            // Product::where('id', $product_id)->update(['posted' => true]);
+            return response()->json('Postagem automatica realizada com sucesso!', 200);
         }
 
         if (!$response->successful()) {
