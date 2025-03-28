@@ -18,17 +18,6 @@ class BaseAdminController extends Controller
         return view('admin.pages.home');
     }
 
-    public function useShopeeIntegration()
-    {
-        $shopee = new ShopeeIntegration();
-
-        $keyword = ''; // nome do produto para pesquisar
-        $productCatId = null; // id da categoria https://seller.shopee.com.br/edu/category-guide
-
-        $response = $shopee->getProductsOffers($keyword, $productCatId, 1, 2);
-        dd($response);
-    }
-
     public function settings()
     {
         $getSetting = new Setting;

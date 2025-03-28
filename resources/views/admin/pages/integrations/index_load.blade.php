@@ -28,6 +28,10 @@
                             </div>
                         </div>
                         <div>
+                            @if($integration->type == 'marketplaces')
+                            <a href="{{ route('admin.integrations.playground.index', $integration->slug) }}" class="btn btn-sm btn-primary" target="_Blank"><i class="fa fa-cogs"></i> Playground</a>
+                            <button type="button" class="btn btn-sm btn-info button-integrations-categories" data-integration-id="{{$integration->id}}"><i class="fa fa-refresh"></i> Categorias</button>
+                            @endif
                             <button type="button" class="btn btn-sm btn-info button-integrations-edit" data-integration-id="{{$integration->id}}">Configurar</button>
                         </div>
                     </div>

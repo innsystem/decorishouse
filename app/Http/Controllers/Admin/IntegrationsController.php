@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Integrations\ShopeeIntegration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 use App\Models\Status;
 use App\Models\Integration;
+use App\Models\IntegrationCategory;
 use Carbon\Carbon;
 use App\Services\IntegrationService;
 use Illuminate\Support\Facades\Cache;
@@ -17,10 +19,12 @@ class IntegrationsController extends Controller
     public $name = 'Integração'; //  singular
     public $folder = 'admin.pages.integrations';
 
+    protected $shopeeIntegration;
     protected $integrationService;
 
-    public function __construct(IntegrationService $integrationService)
+    public function __construct(IntegrationService $integrationService, ShopeeIntegration $shopeeIntegration)
     {
+        $this->shopeeIntegration = $shopeeIntegration;
         $this->integrationService = $integrationService;
     }
 
@@ -44,7 +48,7 @@ class IntegrationsController extends Controller
 
         if (!empty($filters['type'])) {
             $query['type'] = $filters['type'];
-        }        
+        }
 
         $results = $this->integrationService->getAllIntegrationsGroupedByType($filters);
 
@@ -111,7 +115,7 @@ class IntegrationsController extends Controller
             return response()->json($validator->errors()->first(), 422);
         }
 
-        $result['settings'] = $request->except(['status','description']);
+        $result['settings'] = $request->except(['status', 'description']);
 
         $integration = $this->integrationService->updateIntegration($id, $result);
 
@@ -130,5 +134,27 @@ class IntegrationsController extends Controller
         $this->integrationService->deleteIntegration($id);
 
         return response()->json($this->name . ' excluído com sucesso', 200);
+    }
+
+    public function categories(Request $request, $id)
+    {
+        $integration = $this->integrationService->getIntegrationById($id);
+
+        $results = $this->shopeeIntegration->normalizeShopeeOffers($this->shopeeIntegration->getShopeeOffers('', 1, 50));
+
+        foreach ($results as $result) {
+            $getIntegrationCategory = IntegrationCategory::where('api_category_id', $result['category_id'])->first();
+            if (!$getIntegrationCategory) {
+                $integration_category = new IntegrationCategory();
+                $integration_category->integration_id = $integration->id;
+                $integration_category->api_category_id = $result['category_id'];
+                $integration_category->api_category_name = $result['name'];
+                $integration_category->api_category_link_affiliate = $result['offer_link'];
+                $integration_category->api_category_commission = $result['commission'];
+                $integration_category->save();
+            }
+        }
+
+        return response()->json('Categorias importadas com sucesso', 200);
     }
 }

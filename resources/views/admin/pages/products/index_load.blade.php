@@ -13,7 +13,7 @@
 
         {{-- Informações do produto --}}
         <div class="flex-grow-1">
-            <h5 class="h5 mb-1 fw-bold">{{ $product->name }}</h5>
+            <h5 class="h5 mb-1 fw-bold">{{ Str::limit($product->name, '40', '...') }}</h5>
             <p class="mb-1 d-none">
                 <span class="text-muted">Preço: </span>
                 <strong class="text-dark">{{ number_format($product->price, 2, ',', '.') }}</strong>
@@ -43,10 +43,10 @@
         {{-- Botões de ação --}}
         <div>
             <button type="button" class="btn btn-sm btn-secondary button-products-generate-image-feed" data-product-id="{{$product->id}}">
-                <i class="fas fa-magic"></i> Gerar Imagem Feed
+                <i class="fab fa-facebook me-1"></i> <i class="fab fa-instagram"></i> Postar Feed
             </button>
             <button type="button" class="btn btn-sm btn-secondary button-products-generate-image" data-product-id="{{$product->id}}">
-                <i class="fas fa-magic"></i> Gerar Imagem
+                <i class="fas fa-magic"></i> Gerar Story
             </button>
             <button type="button" class="btn btn-sm btn-info button-products-edit" data-product-id="{{$product->id}}">
                 <i class="fa fa-edit"></i> Editar

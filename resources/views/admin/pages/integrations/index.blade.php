@@ -264,6 +264,61 @@
         });
     });
 
+    $(document).on('click', '.button-integrations-categories', function(e) {
+        e.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            }
+        });
+
+        let button = $(this);
+        let integration_id = button.data('integration-id');
+        var url = `{{ url('/admin/integrations/${integration_id}/categories') }}`;
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            beforeSend: function() {
+                //disable the submit button
+                button.attr("disabled", true);
+                button.append('<i class="fa fa-spinner fa-spin ml-3"></i>');
+            },
+            complete: function() {
+                button.prop("disabled", false);
+                button.find('.fa-spinner').addClass('d-none');
+            },
+            success: function(data) {
+                Swal.fire({
+                    text: data,
+                    icon: 'success',
+                    showClass: {
+                        popup: 'animate_animated animate_backInUp'
+                    },
+                });
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    Swal.fire({
+                        text: 'Validação: ' + xhr.responseJSON,
+                        icon: 'warning',
+                        showClass: {
+                            popup: 'animate_animated animate_wobble'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        text: 'Erro Interno: ' + xhr.responseJSON,
+                        icon: 'error',
+                        showClass: {
+                            popup: 'animate_animated animate_wobble'
+                        }
+                    });
+                }
+            }
+        });
+    });
+
     // Delete
     $(document).on('click', '.button-integrations-delete', function(e) {
         e.preventDefault();

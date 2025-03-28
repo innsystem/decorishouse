@@ -65,7 +65,7 @@ class ShopeeIntegration
     {
         $payload = [
             'query' => $query,
-            'operationName' => "GetProductsOffers",
+            'operationName' => $operationName,
             'variables' => (object) $variables
         ];
 
@@ -93,11 +93,11 @@ class ShopeeIntegration
         }
     }
 
-    public function getShopeeOffers($keyword = "", $sortType = 1, $page = 1, $limit = 10)
+    public function getShopeeOffers($keyword = "", $page = 1, $limit = 10)
     {
         $query = <<<GQL
-        query GetShopeeOffers(\$keyword: String, \$sortType: Int, \$page: Int, \$limit: Int) {
-            shopeeOfferV2(keyword: \$keyword, sortType: \$sortType, page: \$page, limit: \$limit) {
+        query GetShopeeOffers(\$keyword: String, \$page: Int, \$limit: Int) {
+            shopeeOfferV2(keyword: \$keyword, page: \$page, limit: \$limit) {
                 nodes {
                     commissionRate
                     imageUrl
@@ -121,7 +121,6 @@ class ShopeeIntegration
 
         $variables = [
             "keyword" => $keyword,
-            "sortType" => $sortType,
             "page" => $page,
             "limit" => $limit
         ];
@@ -129,11 +128,74 @@ class ShopeeIntegration
         return $this->sendRequest($query, "GetShopeeOffers", $variables);
     }
 
-    public function getProductsOffers($keyword = '', $productCatId = null, $page = 1, $limit = 10)
+    public function getShopOffers($keyword = "", $shopId = null, $shopType = [1, 2, 4], $isKeySeller = null, $sortType = 1, $sellerCommCoveRatio = "", $page = 1, $limit = 10)
     {
         $query = <<<GQL
-        query GetProductsOffers(\$keyword: String, \$productCatId: Int, \$page: Int, \$limit: Int) {
-            productOfferV2(keyword: \$keyword, productCatId: \$productCatId, page: \$page, limit: \$limit) {
+        query GetShopOffers(\$keyword: String, \$shopId: Int64, \$shopType: [Int!], \$isKeySeller: Boolean, \$sortType: Int, \$sellerCommCoveRatio: String, \$page: Int, \$limit: Int) {
+            shopOfferV2(
+                keyword: \$keyword,
+                shopId: \$shopId,
+                shopType: \$shopType,
+                isKeySeller: \$isKeySeller,
+                sortType: \$sortType,
+                sellerCommCoveRatio: \$sellerCommCoveRatio,
+                page: \$page,
+                limit: \$limit
+            ) {
+                nodes {
+                    shopId
+                    shopName
+                    imageUrl
+                    commissionRate
+                    offerLink
+                    originalLink
+                    ratingStar
+                    shopType
+                    remainingBudget
+                    periodStartTime
+                    periodEndTime
+                    sellerCommCoveRatio
+                }
+                pageInfo {
+                    page
+                    limit
+                    hasNextPage
+                }
+            }
+        }
+        GQL;
+
+        // Certificar que shopType sempre é um array válido
+        $shopType = array_values(array_filter($shopType, fn($value) => !is_null($value)));
+
+        $variables = [
+            "keyword" => $keyword,
+            "shopId" => $shopId,
+            "shopType" => $shopType,
+            "isKeySeller" => $isKeySeller,
+            "sortType" => $sortType,
+            "sellerCommCoveRatio" => $sellerCommCoveRatio,
+            "page" => $page,
+            "limit" => $limit
+        ];
+
+        return $this->sendRequest($query, "GetShopOffers", $variables);
+    }
+
+    public function getProductsOffers($keyword = null, $itemId = null, $productCatId = null, $page = 1, $limit = 10)
+    {
+        // Converte itemId para string
+        if ($itemId) {
+            $itemId = (string) $itemId; // Passa como string para garantir que seja um número grande
+        }
+
+        if (empty($itemId)) {
+            $itemId = null; // Deixa null se não for fornecido um itemId
+        }
+
+        $query = <<<GQL
+        query GetProductsOffers(\$keyword: String, \$itemId: Int64, \$productCatId: Int, \$page: Int, \$limit: Int) {
+            productOfferV2(keyword: \$keyword, itemId: \$itemId, productCatId: \$productCatId, page: \$page, limit: \$limit) {
                 nodes {
                     itemId
                     productCatIds
@@ -153,21 +215,26 @@ class ShopeeIntegration
             }
         }
         GQL;
-    
+
         // Criar array de variáveis sem incluir `productCatId` se for `null`
         $variables = [
-            "keyword" => $keyword,
             "page" => $page,
             "limit" => $limit
         ];
-    
+
+        if (!is_null($keyword)) {
+            $variables["keyword"] = $keyword;
+        }
+
+        if (!is_null($itemId)) {
+            $variables["itemId"] = $itemId; // Garante que seja um Int
+        }
         if (!is_null($productCatId)) {
             $variables["productCatId"] = (int) $productCatId; // Garante que seja um Int
         }
-    
+
         return $this->sendRequest($query, "GetProductsOffers", $variables);
     }
-    
 
 
 
@@ -177,6 +244,96 @@ class ShopeeIntegration
 
 
 
+
+    public function normalizeInCategories($results)
+    {
+        if (!isset($results['data']['shopeeOfferV2']['nodes'])) {
+            return [];
+        }
+
+        return array_map(function ($item) {
+            return [
+                'name' => str_replace('20221014 -  KOL - 2022 - ', '', $item['offerName']) ?? 'Sem nome',
+                'category_id' => $item['categoryId'] ?? null,
+            ];
+        }, $results['data']['shopeeOfferV2']['nodes']);
+    }
+
+    public function normalizeShopeeOffers($results)
+    {
+        if (!isset($results['data']['shopeeOfferV2']['nodes'])) {
+            return [];
+        }
+
+        return array_map(function ($item) {
+            return [
+                'name' => $item['offerName'] ?? 'Sem nome',
+                'image' => $item['imageUrl'] ?? '',
+                'commission' => $item['commissionRate'] ?? '0',
+                'offer_link' => $item['offerLink'] ?? '',
+                'original_link' => $item['originalLink'] ?? '',
+                'category_id' => $item['categoryId'] ?? null,
+                'period_start' => date('d/m/Y', $item['periodStartTime'] ?? time()),
+                'period_end' => date('d/m/Y', $item['periodEndTime'] ?? time()),
+            ];
+        }, $results['data']['shopeeOfferV2']['nodes']);
+    }
+
+    public function normalizeShopOffers($results)
+    {
+        if (!isset($results['data']['shopOfferV2']['nodes'])) {
+            return [];
+        }
+
+        return array_map(function ($item) {
+            return [
+                'shop_id' => $item['shopId'] ?? null,
+                'shop_name' => $item['shopName'] ?? 'Loja sem nome',
+                'image' => $item['imageUrl'] ?? '',
+                'commission' => $item['commissionRate'] ?? '0',
+                'offer_link' => $item['offerLink'] ?? '',
+                'original_link' => $item['originalLink'] ?? '',
+                'rating' => $item['ratingStar'] ?? 'N/A',
+                'shop_type' => implode(', ', $item['shopType'] ?? []),
+                'remaining_budget' => $this->formatBudget($item['remainingBudget'] ?? 0),
+                'period_start' => date('d/m/Y', $item['periodStartTime'] ?? time()),
+                'period_end' => date('d/m/Y', $item['periodEndTime'] ?? time()),
+                'seller_comm_ratio' => $item['sellerCommCoveRatio'] ?? '0',
+            ];
+        }, $results['data']['shopOfferV2']['nodes']);
+    }
+
+    public function formatBudget($budget)
+    {
+        $budgetLabels = [
+            0 => 'Ilimitado',
+            3 => 'Normal (Acima de 50%)',
+            2 => 'Baixo (Abaixo de 50%)',
+            1 => 'Muito Baixo (Abaixo de 30%)'
+        ];
+        return $budgetLabels[$budget] ?? 'Desconhecido';
+    }
+
+    public function normalizeProductOffers($results)
+    {
+        if (!isset($results['data']['productOfferV2']['nodes'])) {
+            return [];
+        }
+
+        return array_map(function ($item) {
+            return [
+                'id' => $item['itemId'] ?? null,
+                'name' => $item['productName'] ?? 'Sem nome',
+                'image' => $item['imageUrl'] ?? '',
+                'price_min' => $item['priceMin'] ?? '0.00',
+                'price_max' => $item['priceMax'] ?? '0.00',
+                'commission' => $item['commissionRate'] ?? '0',
+                'product_link' => $item['productLink'] ?? '',
+                'offer_link' => $item['offerLink'] ?? '',
+                'categories' => $item['productCatIds'] ?? [],
+            ];
+        }, $results['data']['productOfferV2']['nodes']);
+    }
 
 
     private function handleClientException(ClientException $e)

@@ -67,4 +67,9 @@ class Integration extends Model
                 return $this->type; // Retorna o valor original se não encontrar uma correspondência
         }
     }
+
+    public function integrationCategories()
+    {
+        return $this->hasMany(IntegrationCategory::class);
+    }
 }

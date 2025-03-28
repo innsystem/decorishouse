@@ -161,15 +161,18 @@
 @endif
 
 
+<li class="side-nav-title">Ferarmentas Rápidas</li>
+
 <li class="side-nav-item">
     <a href="#" class="side-nav-link" id="suggestProductsBtn">
-        <i class="ri-price-tag-line"></i>
-        <span> Gerar Roteiro </span>
+        <i class="ri-magic-line"></i>
+        <span> Roteiro de Produtos </span>
     </a>
 </li>
+
 <li class="side-nav-item">
     <a href="#" class="side-nav-link" id="randomProductsBtn">
-        <i class="ri-image-line"></i>
-        <span> Gerar Imagem </span>
+        <i class="ri-history-line"></i>
+        <span> Gerar Story Aleatório </span>
     </a>
 </li>

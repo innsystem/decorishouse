@@ -1,0 +1,189 @@
+@extends('admin.base')
+
+@section('title', 'Playground ' . $title)
+
+@section('content')
+<div class="container">
+    <div class="py-2 gap-2 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">@yield('title')</h4>
+        </div>
+    </div>
+    <div id="content_filters" class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form id="filter-form">
+                        <input type="hidden" name="slug" value="{{ $slug }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="type">Tipo:</label>
+                                <select id="type" name="type" class="form-control">
+                                    <option value="shopee_offers">Shopee Ofertas</option>
+                                    <!-- <option value="shop_offers">Ofertas de Lojas</option> -->
+                                    <option value="products_offers">Produtos em Oferta</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="keyword">Palavra chave do Produto:</label>
+                                <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Ex: Home Appliances">
+                            </div>
+                            <div class="col-md-3 input_products_offers d-none">
+                                <label for="category_id">Category ID <a href="https://seller.shopee.com.br/edu/category-guide" target="_Blank"><i class="fa fa-link"></i></a>:</label>
+                                <select name="category_id" id="category_id" class="form-select">
+                                    <option value=""></option>
+                                    @foreach($categoriesShopee as $category_shopee)
+                                    <option value="{{ $category_shopee['api_category_id'] }}">{{ str_replace('20221014 -  KOL - 2022 - ', '', $category_shopee['api_category_name']) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3 input_products_offers d-none">
+                                <label for="item_id">Item ID:</label>
+                                <input type="text" id="item_id" name="item_id" class="form-control" placeholder="Ex: 19472058506">
+                            </div>
+
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Página</span>
+                                    <select id="page" name="page" class="form-control">
+                                        @for ($i = 1; $i <= 50; $i++)
+                                            <option value="{{$i}}">{{$i}}</option>
+                                            @endfor
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <span class="input-group-text">Limite</span>
+                                    <select id="limit" name="limit" class="form-control">
+                                        <option value="5">5 resultados</option>
+                                        <option value="10">10 resultados</option>
+                                        <option value="15">15 resultados</option>
+                                        <option value="20">20 resultados</option>
+                                        <option value="25">25 resultados</option>
+                                        <option value="30">30 resultados</option>
+                                        <option value="50">50 resultados</option>
+                                        <option value="100">100 resultados</option>
+                                        <option value="200">200 resultados</option>
+                                        <option value="500">500 resultados</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" id="button-integrations-filters" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> Filtrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div id="content-load-page" class="row">
+                    </div><!-- row -->
+                </div> <!-- end card body -->
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('pageMODAL')
+@endsection
+
+@section('pageCSS')
+<!-- Flatpickr Timepicker css -->
+<link href="{{ asset('/tpl_dashboard/vendor/flatpickr/flatpickr.min.css') }}" rel="stylesheet" type="text/css" />
+@endsection
+
+@section('pageJS')
+<!-- Query String ToSlug - Transforma o titulo em URL amigavel sem acentos ou espaço -->
+<script type="text/javascript" src="{{ asset('/plugins/stringToSlug/jquery.stringToSlug.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/plugins/stringToSlug/speakingurl.js') }}"></script>
+
+<!-- Flatpickr Timepicker Plugin js -->
+<script src="{{ asset('/tpl_dashboard/vendor/flatpickr/flatpickr.min.js') }}"></script>
+<script src="{{ asset('/tpl_dashboard/vendor/flatpickr/l10n/pt.js') }}"></script>
+
+<script>
+    function loadContentPage() {
+        $("#content-load-page").html('');
+        var url = `{{ route('admin.integrations.playground.load', $slug) }}`;
+        var filters = $('#filter-form').serialize();
+
+        var button = $('#button-integrations-filters');
+        
+        // Exibe o spinner de carregamento
+        $("#content-load-page").html('<h3><i class="fa fa-spinner fa-spin"></i> Carregando dados...</h3>');
+
+
+        $.ajax({
+            url: url,
+            data: filters,
+            method: 'GET',
+            beforeSend: function() {
+                //disable the submit button
+                button.attr("disabled", true);
+                button.append('<i class="fa fa-spinner fa-spin ml-3"></i>');
+            },
+            complete: function() {
+                button.prop("disabled", false);
+                button.find('.fa-spinner').addClass('d-none');
+            },
+            success: function(data) {
+                $("#content-load-page").html(data);
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    Swal.fire({
+                        text: 'Validação: ' + xhr.responseJSON,
+                        icon: 'warning',
+                        showClass: {
+                            popup: 'animate_animated animate_wobble'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        text: 'Erro Interno: ' + xhr.responseJSON,
+                        icon: 'error',
+                        showClass: {
+                            popup: 'animate_animated animate_wobble'
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function initMasks() {}
+
+    $(document).on("click", ".button-integrations-toggle-filters", function(e) {
+        e.preventDefault();
+
+        $('#content_filters').toggleClass('d-none');
+    });
+
+    $(document).on("click", "#button-integrations-filters", function(e) {
+        e.preventDefault();
+
+        loadContentPage();
+    });
+
+    $(document).on("change", "select#type", function(e) {
+        e.preventDefault();
+        var type = $(this).val();
+
+        if (type == 'products_offers') {
+            $('.input_products_offers').removeClass('d-none');
+        } else {
+            $('.input_products_offers').addClass('d-none');
+        }
+    });
+</script>
+@endsection

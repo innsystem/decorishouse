@@ -30,4 +30,11 @@ class WebhookController extends Controller
 
         return response()->json(['status' => 'pending'], 200);
     }
+
+    public function shopeeWebhook(Request $request)
+    {
+        \Log::info('WebHook Shopee :: ' . json_encode($request));
+
+        return true;
+    }
 }

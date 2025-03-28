@@ -60,6 +60,11 @@ class IntegrationService
 		return Integration::findOrFail($id);
 	}
 
+	public function getIntegrationBySlug($slug)
+	{
+		return Integration::where('slug', $slug)->first();
+	}
+
 	public function createIntegration($data)
 	{
 		return Integration::create($data);
