@@ -279,6 +279,8 @@ class ProductsController extends Controller
 
         $social_image = $product->images[0];
 
+        \Log::info('Social Image: ' . $social_image);
+
         //$baseUrl = 'http://mayofertas.local:8090/api/facebook';
         $baseUrl = "https://multisocial.chat/api/facebook";
         $queryParams = [
