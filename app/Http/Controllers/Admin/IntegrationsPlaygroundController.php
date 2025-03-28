@@ -39,8 +39,8 @@ class IntegrationsPlaygroundController extends Controller
         $data['title'] = $integration->name;
         $data['slug'] = $integration->slug;
 
-        // Código para importar categorias
-        Excel::import(new CategoryShopeeImport, public_path('galerias/categories_shopee.xlsx'));
+        // // Código para importar categorias
+        // Excel::import(new CategoryShopeeImport, public_path('galerias/categories_shopee.xlsx'));
 
         $data['categoriesShopee'] = $integration->integrationCategories;
 
@@ -120,9 +120,9 @@ class IntegrationsPlaygroundController extends Controller
         // Associar o produto com as categorias usando sync()
         $product->categories()->sync($getIntegrationCategory->pluck('category_id')->toArray());
 
-        // $this->productService->downloadAndStoreImages($product->id);
+        $this->productService->downloadAndStoreImages($product->id);
 
-        // $this->productService->generateProductImage($product->id);
+        $this->productService->generateProductImage($product->id);
 
         $this->productService->publishProductImage($product->id);
 
