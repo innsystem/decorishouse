@@ -277,7 +277,7 @@ class ProductsController extends Controller
 
         $product = Product::find($product_id);
 
-        $social_image = $product->images[0];
+        $social_image = asset($product->images[0]);
 
         \Log::info('Social Image: ' . $social_image);
 
@@ -288,7 +288,7 @@ class ProductsController extends Controller
             'name'              => $product->title,
             'facebook_meta_id'  => 60,
             'content'           => $product->title,
-            'media'             => url($social_image),
+            'media'             => asset($social_image),
             'local'             => ['instagram_post', 'facebook_post'],
             'mark_product'      => false,
             // 'catalog_id'        => '942956091094461',
