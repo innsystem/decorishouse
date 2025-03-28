@@ -297,7 +297,7 @@ class ProductsController extends Controller
         // Constrói a URL com query strings automaticamente
         $urlWithParams = $baseUrl . '?' . http_build_query($queryParams);
 
-        \Log::info('UrlParams: ' . json_encode($urlWithParams));
+        \Log::info('UrlParams: ' . $urlWithParams);
 
         // Fazer a requisição
         $response = Http::post($urlWithParams);
