@@ -401,9 +401,8 @@
             },
             success: function(data) {
                 Swal.fire({
-                    title: data.message,
-                    html: '<a href="' + data.image + '" target="_Blank"><img src="' + data.image + '" class="border border-radius img-fluid" style="max-width: 300px"></a><br><br><p>' + data.link_affiliate + '</p>',
-                    // icon: 'success',
+                    title: data,
+                    icon: 'success',
                     showClass: {
                         popup: 'animate__animated animate__headShake'
                     }
