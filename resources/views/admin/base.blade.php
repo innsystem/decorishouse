@@ -312,7 +312,7 @@
                     }
 
                     let productList = response.products.map(p =>
-                        `<li class="pb-2"><strong>${p.name}</strong><a href="${p.link}" target="_blank">${p.link}</a></li>`
+                        `<li class="pb-2"><strong>${p.name}</strong> <a href="${p.link}" target="_blank">${p.link}</a></li>`
                     ).join('');
 
                     Swal.fire({

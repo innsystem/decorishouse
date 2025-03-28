@@ -271,5 +271,47 @@ class ProductsController extends Controller
 
         return redirect()->route('admin.products.index');
     }
+
+    protected function generateImageFeed($product_id)
+    {
+
+        $product = Product::find($product_id);
+
+        $social_image = $product->images[0];
+
+        //$baseUrl = 'http://mayofertas.local:8090/api/facebook';
+        $baseUrl = "https://multisocial.chat/api/facebook";
+        $queryParams = [
+            'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
+            'name'              => $product->title,
+            'facebook_meta_id'  => 60,
+            'content'           => $product->title,
+            'media'             => asset($social_image),
+            'local'             => ['instagram_post', 'facebook_post'],
+            'mark_product'      => true,
+            // 'catalog_id'        => '942956091094461',
+            // 'retailer_id'       => $product_id,
+
+        ];
+
+        // Constrói a URL com query strings automaticamente
+        $urlWithParams = $baseUrl . '?' . http_build_query($queryParams);
+
+        // dd($urlWithParams);
+
+        // Fazer a requisição
+        $response = Http::post($urlWithParams);
+
+        \Log::info('Response:' . json_encode($response));
+
+        if ($response->successful()) {
+            // Product::where('id', $product_id)->update(['posted' => true]);
+        }
+
+        // Verificar se a requisição foi bem-sucedida
+        if ($response->failed()) {
+            return ['error' => 'Erro ao postar nas redes sociais'];
+        }
+    }
     
 }

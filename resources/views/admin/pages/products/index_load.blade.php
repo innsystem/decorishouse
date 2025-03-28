@@ -42,6 +42,9 @@
 
         {{-- Botões de ação --}}
         <div>
+            <button type="button" class="btn btn-sm btn-secondary button-products-generate-image-feed" data-product-id="{{$product->id}}">
+                <i class="fas fa-magic"></i> Gerar Imagem Feed
+            </button>
             <button type="button" class="btn btn-sm btn-secondary button-products-generate-image" data-product-id="{{$product->id}}">
                 <i class="fas fa-magic"></i> Gerar Imagem
             </button>
