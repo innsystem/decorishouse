@@ -33,7 +33,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 
 Route::controller(WebhookController::class)->prefix('webhook')->group(function () {
     Route::get('/invoices/{invoice_id}/check-payment-status', 'checkPaymentStatus')->name('webhook.invoices.checkPaymentStatus');
-    Route::get('/integration/shopee/webhook', 'shopeeWebhook')->name('webhook.integrations.shopee.webhook');
+    Route::post('/integration/shopee/webhook', 'shopeeWebhook')->name('webhook.integrations.shopee.webhook');
 });
 
 use App\Http\Controllers\Admin\BaseAdminController;
