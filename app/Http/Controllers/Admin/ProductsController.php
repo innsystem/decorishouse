@@ -285,12 +285,12 @@ class ProductsController extends Controller
         $baseUrl = "https://multisocial.chat/api/facebook";
         $queryParams = [
             'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
-            'name'              => $product->title,
             'facebook_meta_id'  => 60,
+            'name'              => $product->title,
             'content'           => $product->title,
             'media'             => $social_image,
             'local'             => json_encode(['instagram_post', 'facebook_post']),
-            'mark_product'      => false,
+            'mark_product'      => 0,
             // 'catalog_id'        => '942956091094461',
             // 'retailer_id'       => $product_id,
 
