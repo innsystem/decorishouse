@@ -13,7 +13,7 @@
 
         {{-- Informações do produto --}}
         <div class="flex-grow-1">
-            <h5 class="h5 mb-1 fw-bold">{{ Str::word($product->name, '8', '...') }}</h5>
+            <h5 class="h5 mb-1 fw-bold">{{ Str::words($product->name, '8', '...') }}</h5>
             <p class="mb-1 d-none">
                 <span class="text-muted">Preço: </span>
                 <strong class="text-dark">{{ number_format($product->price, 2, ',', '.') }}</strong>
