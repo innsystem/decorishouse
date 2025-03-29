@@ -6,6 +6,8 @@ use App\Jobs\ProcessNotificationJob;
 use App\Models\Integration;
 use App\Models\IntegrationCategory;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Geometry\Factories\RectangleFactory;
 use App\Models\Product;
 use App\Models\ProductAffiliateLink;
 use App\Models\ProductImageGenerate;
@@ -118,7 +120,7 @@ class ProductService
 	}
 
 	// Funcao auxiliar para configurações dos templates usado na funcao generateProductStory()
-	private function getTemplateConfig($templateName)
+	private function getTemplateStoryConfig($templateName)
 	{
 		$configs = [
 			'template_modelo_1.png' => [
@@ -128,9 +130,17 @@ class ProductService
 				'image_height' => 800,
 				'text_x' => 525,
 				'text_y' => 1520,
+				'text_width' => 800,
 				'text_size' => 52,
+				'text_color' => '#FFFFFF',
+				'bg_color' => '#4c3018', 
+				'text_price_x' => 395,
+				'text_price_y' => 1650,
+				'text_price_width' => 500,
+				'text_price_size' => 48,
+				'text_price_color' => '#4c3018', 
+				'bg_price_color' => '#FFFFFF', 
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
-				'text_color' => '#4c3018',
 			],
 			'template_modelo_2.png' => [
 				'image_x' => 140,
@@ -139,9 +149,44 @@ class ProductService
 				'image_height' => 800,
 				'text_x' => 525,
 				'text_y' => 1520,
+				'text_width' => 800,
 				'text_size' => 52,
+				'text_color' => '#4c3018', 
+				'bg_color' => '#FFFFFF', 
+				'text_price_x' => 395,
+				'text_price_y' => 1650,
+				'text_price_width' => 500,
+				'text_price_size' => 48,
+				'text_price_color' => '#4c3018', 
+				'bg_price_color' => '#FFFFFF', 
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
-				'text_color' => '#FFFFFF',
+			],
+		];
+
+		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
+	}
+
+	private function getTemplateFeedConfig($templateName)
+	{
+		$configs = [
+			'template_modelo_1.png' => [
+				'image_x' => 0,
+				'image_y' => 00,
+				'image_width' => 1120,
+				'image_height' => 1120,
+				'text_x' => 500,
+				'text_y' => 1050,
+				'text_width' => 800,
+				'text_size' => 54,
+				'text_color' => '#FFFFFF', 
+				'bg_color' => '#4c3018', 
+				'text_price_x' => 395,
+				'text_price_y' => 1175,
+				'text_price_width' => 500,
+				'text_price_size' => 48,
+				'text_price_color' => '#4c3018', 
+				'bg_price_color' => '#FFFFFF', 
+				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
 		];
 
@@ -156,10 +201,6 @@ class ProductService
 		if (!is_array($product->images) || empty($product->images)) {
 			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
 		}
-
-		$product->created_at = now();
-		$product->updated_at = now();
-		$product->save();
 
 		$directory = "public/products/{$product->id}";
 
@@ -189,14 +230,14 @@ class ProductService
 		}
 
 		// Escolhe um template aleatório
-		$templatePath = public_path('galerias/templates/');
+		$templatePath = public_path('galerias/templates/story/');
 		$templates = glob($templatePath . '*.png');
 		$randomTemplate = basename($templates[array_rand($templates)]); // Obtém apenas o nome do arquivo
 
 		// Obtém as configurações do template
-		$config = $this->getTemplateConfig($randomTemplate);
+		$config = $this->getTemplateStoryConfig($randomTemplate);
 
-		$nameOutput = '/social_' . basename($imagePath);
+		$nameOutput = '/story_' . basename($imagePath);
 		$outputPath = $directory . $nameOutput;
 
 		$manager = ImageManager::gd();
@@ -217,6 +258,15 @@ class ProductService
 		$text_x = $config['text_x'];
 		$text_y = $config['text_y'];
 		$text_size = $config['text_size'];
+		$text_width = $config['text_width']; // Largura do fundo
+		$text_height = $text_size + 60; // Altura do fundo
+		$bg_color = isset($config['bg_color']) ? $config['bg_color'] : '#000000';
+
+		// Adiciona fundo retangular atrás do texto
+		$background->drawRectangle($text_x - ($text_width / 2), $text_y - ($text_height / 1.25), function (RectangleFactory $rectangle) use ($text_width, $text_height, $bg_color) {
+			$rectangle->size($text_width, $text_height); // Define tamanho do retângulo
+			$rectangle->background($bg_color); // Define cor de fundo preta
+		});
 
 		$background->text($text, $text_x, $text_y, function ($font) use ($config) {
 			$font->filename($config['font']);
@@ -225,14 +275,41 @@ class ProductService
 			$font->align('center');
 			$font->wrap(700);
 		});
+		// Formatar preços corretamente
+		$price_min = number_format($product->price_promotion, 2, ',', '.');
+		$price_max = number_format($product->price, 2, ',', '.');
+
+		$text_price = "A partir de R$ {$price_min}!\n" .
+		($product->price_promotion > $product->price
+			? "💰 A partir de R$ {$price_min} ~ R$ {$price_max}!\n\n"
+			: "");
+		$text_price_x = $config['text_price_x'];
+		$text_price_y = $config['text_price_y'];
+		$text_price_size = $config['text_price_size'];
+		$text_price_width = $config['text_price_width']; // Largura do fundo
+		$text_price_height = $text_price_size + 30; // Altura do fundo
+		$bg_price_color = isset($config['bg_price_color']) ? $config['bg_price_color'] : '#000000';
+
+		// Adiciona fundo retangular atrás do text_priceo
+		$background->drawRectangle($text_price_x - ($text_price_width / 2), $text_price_y - ($text_price_height / 0.88), function (RectangleFactory $rectangle) use ($text_price_width, $text_price_height, $bg_price_color) {
+			$rectangle->size($text_price_width, $text_price_height); // Define tamanho do retângulo
+			$rectangle->background($bg_price_color); // Define cor de fundo preta
+		});
+
+		// Adiciona o text_priceo por cima do fundo
+		$background->text($text_price, $text_price_x, $text_price_y, function ($font) use ($config) {
+			$font->filename($config['font']);
+			$font->size($config['text_price_size']);
+			$font->color($config['text_price_color']); // Cor do texto
+			$font->align('center');
+			$font->wrap(500);
+		});
 
 		// Salva a imagem gerada
 		// $background->save($outputPath);
 
 		// Salva a imagem no storage de forma pública
 		Storage::put("public/products/{$product->id}{$nameOutput}", $background->encode());
-
-		$url_image_created = Storage::url("products/{$product->id}{$nameOutput}");
 
 		// Registra no banco para evitar duplicação
 		ProductImageGenerate::create(['product_id' => $product->id]);
@@ -264,17 +341,132 @@ class ProductService
 	{
 		$product = Product::find($product_id);
 
-		$social_image = asset($product->images[0]);
+		if (!is_array($product->images) || empty($product->images)) {
+			return response()->json(['error' => 'O produto não tem imagens armazenadas'], 400);
+		}
 
-		// \Log::info('Social Image: ' . $social_image);
+		$directory = "public/products/{$product->id}";
 
+		// Verifica se a pasta já existe antes de criá-la
+		if (!Storage::exists($directory)) {
+			Storage::makeDirectory($directory);
+		}
+
+		// Converte para o caminho físico real no servidor
+		$storagePath = storage_path("app/{$directory}");
+
+		// Garante que a pasta foi realmente criada antes de aplicar permissões
+		if (file_exists($storagePath)) {
+			chmod($storagePath, 0775); // Permissão para leitura/escrita pelo proprietário e grupo
+		}
+
+		$imagePath = public_path($product->images[0]);
+
+		if (!file_exists($imagePath)) {
+			$this->downloadAndStoreImages($product->id);
+			$product->refresh();
+			$imagePath = public_path(str_replace('/storage', 'storage/app/public', $product->images[0]));
+
+			if (!file_exists($imagePath)) {
+				return response()->json(['error' => 'Falha ao baixar a imagem do produto'], 500);
+			}
+		}
+
+		// Escolhe um template aleatório
+		$templatePath = public_path('galerias/templates/feed/');
+		$templates = glob($templatePath . '*.png');
+		$randomTemplate = basename($templates[array_rand($templates)]); // Obtém apenas o nome do arquivo
+
+		// Obtém as configurações do template
+		$config = $this->getTemplateFeedConfig($randomTemplate);
+
+		$nameOutput = '/feed_' . basename($imagePath);
+		$outputPath = $directory . $nameOutput;
+
+		$manager = ImageManager::gd();
+		$background = $manager->read($templatePath . $randomTemplate);
+		$overlay = $manager->read($imagePath);
+
+		// Ajusta tamanho da imagem do produto
+		$overlay->resize($config['image_width'], $config['image_height'], function ($constraint) {
+			$constraint->aspectRatio();
+			$constraint->upsize();
+		});
+
+		// Posiciona a imagem conforme o template
+		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
+
+		// Adiciona título do produto
+		$text = Str::limit($product->name, 60, '...');
+		$text_x = $config['text_x'];
+		$text_y = $config['text_y'];
+		$text_size = $config['text_size'];
+		$text_width = $config['text_width']; // Largura do fundo
+		$text_height = $text_size + 60; // Altura do fundo
+		$bg_color = isset($config['bg_color']) ? $config['bg_color'] : '#000000';
+
+		// Adiciona fundo retangular atrás do texto
+		$background->drawRectangle($text_x - ($text_width / 2), $text_y - ($text_height / 1.25), function (RectangleFactory $rectangle) use ($text_width, $text_height, $bg_color) {
+			$rectangle->size($text_width, $text_height); // Define tamanho do retângulo
+			$rectangle->background($bg_color); // Define cor de fundo preta
+		});
+
+		// Adiciona o texto por cima do fundo
+		$background->text($text, $text_x, $text_y, function ($font) use ($config) {
+			$font->filename($config['font']);
+			$font->size($config['text_size']);
+			$font->color($config['text_color']); // Cor do texto
+			$font->align('center');
+			$font->wrap(700);
+		});
+				
 		// Formatar preços corretamente
 		$price_min = number_format($product->price_promotion, 2, ',', '.');
 		$price_max = number_format($product->price, 2, ',', '.');
 
+		$text_price = "A partir de R$ {$price_min}!\n" .
+		($product->price_promotion > $product->price
+			? "💰 A partir de R$ {$price_min} ~ R$ {$price_max}!\n\n"
+			: "");
+		$text_price_x = $config['text_price_x'];
+		$text_price_y = $config['text_price_y'];
+		$text_price_size = $config['text_price_size'];
+		$text_price_width = $config['text_price_width']; // Largura do fundo
+		$text_price_height = $text_price_size + 30; // Altura do fundo
+		$bg_price_color = isset($config['bg_price_color']) ? $config['bg_price_color'] : '#000000';
+
+		// Adiciona fundo retangular atrás do text_priceo
+		$background->drawRectangle($text_price_x - ($text_price_width / 2), $text_price_y - ($text_price_height / 0.88), function (RectangleFactory $rectangle) use ($text_price_width, $text_price_height, $bg_price_color) {
+			$rectangle->size($text_price_width, $text_price_height); // Define tamanho do retângulo
+			$rectangle->background($bg_price_color); // Define cor de fundo preta
+		});
+
+		// Adiciona o text_priceo por cima do fundo
+		$background->text($text_price, $text_price_x, $text_price_y, function ($font) use ($config) {
+			$font->filename($config['font']);
+			$font->size($config['text_price_size']);
+			$font->color($config['text_price_color']); // Cor do texto
+			$font->align('center');
+			$font->wrap(500);
+		});
+
+		// Salva a imagem gerada
+		// $background->save($outputPath);
+
+		// Salva a imagem no storage de forma pública
+		Storage::put("public/products/{$product->id}{$nameOutput}", $background->encode());
+
+		$url_image_created = asset('/storage/products/' . $product->id . '' . $nameOutput);
+
+		$social_image = asset($url_image_created);
+
+		\Log::info('Social Image: ' . $social_image);
+
+		dd($social_image);
+
 		// Criar hashtags baseadas no nome do produto (limitadas a 6)
-		$productNameWords = explode(' ', str_replace(['e', 'de', 'com', 'kit'], '', $product->name));
-		$hashtags = array_slice(array_map(fn($word) => '#' . preg_replace('/[^A-Za-z0-9]/', '', ucfirst($word)), $productNameWords), 0, 6);
+		$productNameWords = explode(' ', $product->name);
+		$hashtags = array_slice(array_map(fn($word) => '#' . preg_replace('/[^A-Za-z0-9]/', '', ucfirst($word)), $productNameWords), 0, 8);
 
 		// Hashtags fixas
 		$fixedHashtags = ['#decoris', '#house', '#shopee', '#ofertas', '#promocoes', '#descontos'];
