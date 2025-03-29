@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->job(new ProcessProductQueueJob())
             // ->hourly()
-            ->everyFiveMinutesss()
+            ->everyMinute()
             ->between('07:00', '21:00');
 
         // Inicia Fila de Envios em Segundo-Plano
