@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('/favicon.ico?1') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('/favicon.ico?2') }}" type="image/x-icon">
 
     <!-- Theme Config Js -->
     <script src="{{ asset('/tpl_dashboard/js/config.js?2') }}"></script>
