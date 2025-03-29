@@ -460,9 +460,9 @@ class ProductService
 
 		$social_image = asset($url_image_created);
 
-		\Log::info('Social Image: ' . $social_image);
+		// \Log::info('Social Image: ' . $social_image);
 
-		dd($social_image);
+		// dd($social_image);
 
 		// Criar hashtags baseadas no nome do produto (limitadas a 6)
 		$productNameWords = explode(' ', $product->name);

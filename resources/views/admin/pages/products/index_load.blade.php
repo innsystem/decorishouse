@@ -24,7 +24,6 @@
                 @endif
             </p>
             <p class="mb-1">
-                <span class="text-muted">Links</span>
                 @if($product->affiliateLinks)
                 @foreach($product->affiliateLinks as $link)
                 <p class="fs-7 mb-1 text-muted">{{ $link->api_id }} <a href="{{ $link->affiliate_link }}" target="_blank" class="btn btn-sm btn-outline-primary fs-7 py-0 px-1 ms-2">{{ $link->integration->name }}</a></p>

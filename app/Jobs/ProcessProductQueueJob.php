@@ -40,7 +40,7 @@ class ProcessProductQueueJob implements ShouldQueue
             ->first();
 
         if (!$productJob) {
-            Log::info('Nenhum produto na fila para processamento.');
+            // Log::info('Nenhum produto na fila para processamento.');
             return;
         }
 
