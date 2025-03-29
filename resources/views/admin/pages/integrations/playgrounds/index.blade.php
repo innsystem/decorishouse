@@ -256,13 +256,15 @@
                         button.find('.fa-spinner').addClass('d-none');
                     },
                     success: function(data) {
-                        Swal.fire({
-                            text: data,
-                            icon: 'success',
-                            showClass: {
-                                popup: 'animate_animated animate_backInUp'
-                            },
-                        });
+                        sendNotification("Sucesso!", data, "top-center", "rgba(0,0,0,0.05)", "success");
+
+                        // Swal.fire({
+                        //     text: data,
+                        //     icon: 'success',
+                        //     showClass: {
+                        //         popup: 'animate_animated animate_backInUp'
+                        //     },
+                        // });
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
