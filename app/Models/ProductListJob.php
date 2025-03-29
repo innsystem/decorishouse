@@ -17,6 +17,5 @@ class ProductListJob extends Model
 
     protected $casts = [
         'product_data' => 'array',
-        'scheduled_at' => 'datetime',
     ];
 }
