@@ -273,7 +273,7 @@ class ProductService
 		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
 
 		// Adiciona título do produto
-		$text = Str::words($product->name, 6, '...');
+		$text = strlen($product->name) > 50 ? Str::words($product->name, 7, '...') : $product->name;
 		$text_x = $config['text_x'];
 		$text_y = $config['text_y'];
 		$text_size = $config['text_size'];
@@ -416,7 +416,7 @@ class ProductService
 		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
 
 		// Adiciona título do produto
-		$text = Str::limit($product->name, 60, '...');
+		$text = strlen($product->name) > 50 ? Str::words($product->name, 7, '...') : $product->name;
 		$text_x = $config['text_x'];
 		$text_y = $config['text_y'];
 		$text_size = $config['text_size'];
