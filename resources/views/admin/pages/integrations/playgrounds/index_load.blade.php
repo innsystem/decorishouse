@@ -41,7 +41,7 @@
 <h3>Produtos em Oferta</h3>
 <div class="row">
     @foreach($productOffers as $item)
-    <div class="col-6 col-md-4 col-lg-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-3 col-xxl-2 mb-4">
         <a href="{{ $item['offer_link'] }}" target="_Blank"><img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="img-fluid border rounded mb-2 p-1"></a>
 
         <p class="mb-1 fs-7 fw-bold"><a href="{{ $item['offer_link'] }}" target="_Blank">{{ $item['name'] }}</a></p>
