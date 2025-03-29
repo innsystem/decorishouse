@@ -21,7 +21,7 @@
 <h3>Ofertas de Lojas</h3>
 <div class="row">
     @foreach($shopOffers as $shop)
-    <div class="col-6 col-md-4 col-lg-3 mb-4">
+    <div class="col-12 col-md-4 col-lg-3 mb-4">
         <img src="{{ $shop['image'] }}" alt="{{ $shop['shop_name'] }}" class="img-fluid border rounded mb-2 p-1">
 
         <p class="mb-1 fs-7 fw-bold">{{ $shop['shop_name'] }}</p>
