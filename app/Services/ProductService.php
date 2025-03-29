@@ -233,12 +233,12 @@ class ProductService
 		$allHashtags = implode(' ', array_merge($hashtags, $fixedHashtags));
 
 		// Criar conteúdo para redes sociais
-		$content = "🛍️ {$product->name} \n🔥 Oferta Imperdível! 🔥 \n💰 A partir de R$ {$price_min}!\n" .
+		$content = "🛍️ {$product->name} \n\n💰 A partir de R$ {$price_min}!\n" .
 			($product->price_promotion > $product->price
 				? "💰 A partir de R$ {$price_min} ~ R$ {$price_max}!\n\n"
 				: "") .
 			"📲 Link da Promoção ➡️ {$product->affiliateLink->affiliate_link}\n".
-			"🔥 Todas Promoções ➡️ {$url_base}\n\n\n" .
+			"\n\n" .
 			"{$allHashtags}";
 
 
