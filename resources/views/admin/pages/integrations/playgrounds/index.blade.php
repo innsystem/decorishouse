@@ -205,12 +205,12 @@
         let slug_integration = `{{$slug}}`;
 
         Swal.fire({
-            title: 'Como deseja cadastrar?',
+            title: 'Como deseja cadastrar o produto?',
             icon: 'question',
             input: 'radio',
             inputOptions: {
-                'immediate': 'Imediatamente',
-                'queue': 'Agendar'
+                'queue': 'Agendar',
+                'immediate': 'Agora',
             },
             inputValidator: (value) => {
                 if (!value) {
@@ -225,7 +225,7 @@
                 $('.swal2-radio input').on('change', function() {
                     let processType = $(this).val();
                     Swal.close(); // Fecha o Swal atual
-                    
+
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': "{{ csrf_token() }}"
