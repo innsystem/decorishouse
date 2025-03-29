@@ -95,7 +95,7 @@ class IntegrationsPlaygroundController extends Controller
             ProductListJob::create([
                 'product_data' => json_encode($result),
                 'status' => 'pendente',
-                'scheduled_at' => now()->addMinues($randMinutes) // Define para rodar na próxima hora
+                'scheduled_at' => now()->addMinutes($randMinutes) // Define para rodar na próxima hora
             ]);
 
             return response()->json('Produto adicionado à fila de cadastro', 200);
