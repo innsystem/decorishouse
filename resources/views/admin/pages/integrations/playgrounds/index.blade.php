@@ -16,21 +16,25 @@
                     <form id="filter-form">
                         <input type="hidden" name="slug" value="{{ $slug }}">
                         <div class="row">
-                            <div class="col-12 col-md-3 col-lg-2">
-                                <label for="type">Tipo:</label>
+                            <div class="col-6 col-md-3 col-lg-2 mb-2">
+                                <!-- <label for="type">Tipo:</label> -->
                                 <select id="type" name="type" class="form-control">
                                     <option value="products_offers">Produtos em Oferta</option>
                                     <option value="shopee_offers">Shopee Ofertas</option>
                                     <!-- <option value="shop_offers">Ofertas de Lojas</option> -->
                                 </select>
                             </div>
+                            <div class="col-6 col-md-3 col-lg-3 mb-2 input_products_offers">
+                                <!-- <label for="item_id">Item ID:</label> -->
+                                <input type="text" id="item_id" name="item_id" class="form-control" placeholder="Ex: 19472058506">
+                            </div>
 
-                            <div class="col-12 col-md-3 col-lg-3">
-                                <label for="keyword">Palavra chave do Produto:</label>
+                            <div class="col-12 col-md-3 col-lg-3 mb-2">
+                                <!-- <label for="keyword">Palavra chave do Produto:</label> -->
                                 <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Ex: Home Appliances">
                             </div>
-                            <div class="col-12 col-md-3 col-lg-4 input_products_offers">
-                                <label for="category_id">Category ID <a href="https://seller.shopee.com.br/edu/category-guide" target="_Blank"><i class="fa fa-link"></i></a>:</label>
+                            <div class="col-12 col-md-3 col-lg-4 mb-2 input_products_offers">
+                                <!-- <label for="category_id">Category ID <a href="https://seller.shopee.com.br/edu/category-guide" target="_Blank"><i class="fa fa-link"></i></a>:</label> -->
                                 <select name="category_id" id="category_id" class="form-select select2">
                                     <option value=""></option>
                                     @foreach($categoriesShopee as $category_shopee)
@@ -38,11 +42,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-12 col-md-3 col-lg-3 input_products_offers">
-                                <label for="item_id">Item ID:</label>
-                                <input type="text" id="item_id" name="item_id" class="form-control" placeholder="Ex: 19472058506">
-                            </div>
-
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-3">
@@ -89,6 +88,11 @@
                     </div><!-- row -->
                 </div> <!-- end card body -->
             </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <button type="button" id="button-integrations-filters" class="btn btn-sm btn-primary"><i class="fa fa-history"></i> Recarregar</button>
         </div>
     </div>
 </div>
