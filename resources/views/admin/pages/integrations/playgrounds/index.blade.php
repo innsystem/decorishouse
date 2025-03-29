@@ -43,8 +43,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-md-3">
+                        <div class="row mt-1">
+                            <div class="col-6 col-md-3">
                                 <div class="input-group">
                                     <span class="input-group-text">Página</span>
                                     <select id="page" name="page" class="form-control">
@@ -54,7 +54,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-6 col-md-3">
                                 <div class="input-group">
                                     <span class="input-group-text">Limite</span>
                                     <select id="limit" name="limit" class="form-control">
@@ -80,16 +80,14 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div id="content-load-page" class="row">
-                    </div><!-- row -->
-                </div> <!-- end card body -->
-            </div>
-        </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div id="content-load-page">
+            </div><!-- row -->
+        </div> <!-- end card body -->
     </div>
+
     <div class="row mt-4">
         <div class="col-12">
             <button type="button" id="button-integrations-filters" class="btn btn-sm btn-primary"><i class="fa fa-history"></i> Recarregar</button>
