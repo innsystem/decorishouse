@@ -41,12 +41,12 @@
 <h3>Produtos em Oferta</h3>
 <div class="row">
     @foreach($productOffers as $item)
-    <div class="col-6 col-md-4 col-lg-3 col-xxl-2 mb-4">
+    <div class="col-12 col-md-4 col-lg-3 col-xxl-2 mb-4">
         <a href="{{ $item['offer_link'] }}" target="_Blank"><img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="img-fluid border rounded mb-2 p-1"></a>
 
         <p class="mb-1 fs-7 fw-bold"><a href="{{ $item['offer_link'] }}" target="_Blank">{{ $item['name'] }}</a></p>
-        <p class="mb-1 fs-7 fw-bold">ID: {{ $item['id'] }}</p>
-        <p class="mb-1 fs-7 fw-bold">Categories: {{ json_encode($item['categories']) }}</p>
+        <!-- <p class="mb-1 fs-7 fw-bold">ID: {{ $item['id'] }}</p>
+        <p class="mb-1 fs-7 fw-bold">Categories: {{ json_encode($item['categories']) }}</p> -->
         <p class="mb-0 fs-7 text-muted">Preço: R$ {{ $item['price_min'] }} - R$ {{ $item['price_max'] }}</p>
         <p class="mb-0 fs-7 text-muted">Comissão: {{ $item['commission'] * 100 }}%</p>
         <div class="d-flex gap-3 mt-2">
