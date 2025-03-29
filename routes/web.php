@@ -235,11 +235,10 @@ Route::prefix('admin')->group(function () {
             Route::get('/{id}/edit', 'edit')->name('admin.products.edit')->middleware('permission:admin.products.edit');
             Route::post('/{id}/update', 'update')->name('admin.products.update')->middleware('permission:admin.products.update');
             Route::post('/{id}/delete', 'delete')->name('admin.products.delete')->middleware('permission:admin.products.delete');
-            Route::post('/{id}/generate-image', 'generateImage')->name('admin.products.generateImage')->middleware('permission:admin.products.generateImage');
+            Route::post('/{id}/generate-image', 'generateImageStory')->name('admin.products.generateImageStory');
             Route::post('/{id}/generate-image-feed', 'generateImageFeed')->name('admin.products.generateImageFeed');
-            Route::get('/checkImages', 'checkImages')->name('admin.products.checkImages')->middleware('permission:admin.products.checkImages');
-            Route::get('/sugestions', 'sugestions')->name('admin.products.sugestions');
-            Route::get('/randomCreate', 'randomCreate')->name('admin.products.randomCreate');
+
+            Route::get('/generateSuggestions', 'generateSuggestions')->name('admin.products.generateSuggestions');
         });
     });
 });

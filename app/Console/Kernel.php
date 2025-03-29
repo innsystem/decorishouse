@@ -7,8 +7,8 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
 
 use App\Jobs\ProcessWebhookJob;
+use App\Jobs\ProcessProductQueueJob;
 use App\Jobs\QueueJob;
-use App\Jobs\GenerateProductImageJob;
 use App\Models\Product;
 
 class Kernel extends ConsoleKernel
@@ -18,18 +18,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        /* 
-        $schedule->call(function () {
-            // Busca um produto que ainda não teve a imagem gerada
-            $product = Product::whereDoesntHave('generatedImages')->inRandomOrder()->first();
-
-            if ($product) {
-                dispatch(new GenerateProductImageJob($product));
-
-                Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
-            }
-        })->everyFifteenMinutes()->between('09:00', '20:02')->name('generate_product_image')->withoutOverlapping();
-        */
+        $schedule->job(new ProcessProductQueueJob())
+            // ->hourly()
+            ->everyFiveMinutesss()
+            ->between('07:00', '21:00');
 
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();

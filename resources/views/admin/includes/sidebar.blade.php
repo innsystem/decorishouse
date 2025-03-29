@@ -180,13 +180,6 @@
 <li class="side-nav-item">
     <a href="#" class="side-nav-link" id="suggestProductsBtn">
         <i class="ri-magic-line"></i>
-        <span> Roteiro de Produtos </span>
-    </a>
-</li>
-
-<li class="side-nav-item">
-    <a href="#" class="side-nav-link" id="randomProductsBtn">
-        <i class="ri-history-line"></i>
-        <span> Gerar Story Aleatório </span>
+        <span> Sugestões de Produtos </span>
     </a>
 </li>

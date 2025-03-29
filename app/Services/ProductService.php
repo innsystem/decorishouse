@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Jobs\ProcessNotificationJob;
+use App\Models\Integration;
+use App\Models\IntegrationCategory;
 use Intervention\Image\ImageManager;
 use App\Models\Product;
+use App\Models\ProductAffiliateLink;
 use App\Models\ProductImageGenerate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
@@ -54,6 +57,52 @@ class ProductService
 		return $model->delete();
 	}
 
+	// Fuuncao responsável por cadastrar produto API Marketplaces
+	public function processProductNow($result)
+	{
+		$integration = Integration::where('slug', $result['slug_integration'])->first();
+		$getIntegrationCategory = IntegrationCategory::whereIn('api_category_id', $result['product_categories'])->get();
+
+		$existyProduct = Product::where('name', $result['product_name'])->first();
+		if ($existyProduct) {
+			$product = $existyProduct;
+		} else {
+			$product = new Product();
+		}
+		$product->name = $result['product_name'];
+		$product->slug = Str::slug($result['product_name']);
+		$product->description = $result['product_description'] ?? null;
+		$product->images = [$result['product_images'] ?? null];
+		$product->price = $result['product_price_max'] ? $result['product_price_max'] : $result['product_price_min'] ?? 0;
+		$product->price_promotion = $result['product_price_min'] ?? 0;
+		$product->status = 1;
+		$product->save();
+
+		$existyProductAffiliateLink = ProductAffiliateLink::where('api_id', $result['product_id'])->first();
+		if ($existyProductAffiliateLink) {
+			$procut_affiliate_links = $existyProductAffiliateLink;
+		} else {
+			$procut_affiliate_links = new ProductAffiliateLink();
+		}
+		$procut_affiliate_links->product_id = $product->id;
+		$procut_affiliate_links->integration_id = $integration->id;
+		$procut_affiliate_links->affiliate_link = $result['product_link'];
+		$procut_affiliate_links->api_id = $result['product_id'] ?? null;
+		$procut_affiliate_links->save();
+
+		// Associar o produto com as categorias usando sync()
+		$product->categories()->sync($getIntegrationCategory->pluck('category_id')->toArray());
+
+		$this->downloadAndStoreImages($product->id);
+
+		$this->generateProductStory($product->id);
+
+		$this->publishProductImage($product->id);
+
+		return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
+	}
+
+	// Funcao responsável por pesquisar os produtos na base
 	public function searchProducts($query)
 	{
 		return Product::where('name', 'like', "%{$query}%")
@@ -68,6 +117,7 @@ class ProductService
 			});
 	}
 
+	// Funcao auxiliar para configurações dos templates usado na funcao generateProductStory()
 	private function getTemplateConfig($templateName)
 	{
 		$configs = [
@@ -98,6 +148,7 @@ class ProductService
 		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
 	}
 
+	// Funcao responsável por gerar imagem do produto para Story e Enviar no WhatsApp com Link
 	public function generateProductStory($product_id)
 	{
 		$product = Product::findOrFail($product_id);
@@ -208,10 +259,9 @@ class ProductService
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 	}
 
+	// Funcao responsável por gerar imagem do produto para FEED no Instagram e Facebook
 	public function publishProductImage($product_id)
 	{
-		$url_base = env('APP_URL');
-
 		$product = Product::find($product_id);
 
 		$social_image = asset($product->images[0]);
@@ -237,7 +287,7 @@ class ProductService
 			($product->price_promotion > $product->price
 				? "💰 A partir de R$ {$price_min} ~ R$ {$price_max}!\n\n"
 				: "") .
-			"📲 Link da Promoção ➡️ {$product->affiliateLink->affiliate_link}\n".
+			"📲 Link da Promoção ➡️ {$product->affiliateLink->affiliate_link}\n" .
 			"\n\n" .
 			"{$allHashtags}";
 
@@ -273,17 +323,19 @@ class ProductService
 		}
 
 		if (!$response->successful()) {
-			// \Log::info('badRequest:' . $response->body());
+			\Log::info('badRequest:' . $response->body());
 
 			return ['title' => $response->body(), 'status' => 422];
 		}
 
 		// Verificar se a requisição foi bem-sucedida
 		if ($response->failed()) {
+			\Log::info('Response:' . json_encode($response->body()));
 			return ['title' => 'Erro ao postar nas redes sociais', 'status' => 422];
 		}
 	}
 
+	// Função responsável por baixar e atualizar as fotos de produtos quando está em URL Externa
 	public function downloadAndStoreImages($product_id)
 	{
 		$product = Product::findOrFail($product_id);

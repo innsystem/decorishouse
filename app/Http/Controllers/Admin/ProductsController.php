@@ -7,15 +7,10 @@ use App\Models\Category;
 use App\Models\Integration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use App\Models\Status;
-use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
 use Carbon\Carbon;
-use App\Jobs\GenerateProductImageJob;
-use Illuminate\Support\Facades\Log;
 
 class ProductsController extends Controller
 {
@@ -203,32 +198,14 @@ class ProductsController extends Controller
         return $result;
     }
 
-    public function checkImages()
+    public function generateImageFeed($id)
     {
-        // Busca todos os produtos
-        $products = Product::all();
+        $result = $this->productService->publishProductImage($id);
 
-        foreach ($products as $product) {
-            // Verifica se a coluna images é válida
-            if (!is_array($product->images) || empty($product->images)) {
-                continue; // Pula para o próximo produto
-            }
-
-            // Verifica se alguma das imagens ainda está com URL externa (não salva localmente)
-            $hasExternalImage = collect($product->images)->contains(function ($image) {
-                return !Str::startsWith($image, '/storage'); // Verifica se NÃO começa com "/storage"
-            });
-
-            // Se tiver alguma imagem externa, chama a função de download
-            if ($hasExternalImage) {
-                $this->productService->downloadAndStoreImages($product->id);
-            }
-        }
-
-        return response()->json(['message' => 'Verificação concluída!']);
+        return response()->json($result['title'], $result['status']);
     }
 
-    public function sugestions()
+    public function generateSuggestions()
     {
         // Busca uma categoria pai aleatória e carrega as subcategorias e os produtos
         $category = Category::with(['products.affiliateLinks', 'children.products'])->whereNull('parent_id')->inRandomOrder()->first();
@@ -256,26 +233,5 @@ class ProductsController extends Controller
             'category' => $category->name,
             'products' => $products
         ]);
-    }
-
-    public function randomCreate()
-    {
-        // Busca um produto que ainda não teve a imagem gerada
-        $product = Product::whereDoesntHave('generatedImages')->inRandomOrder()->first();
-
-        if ($product) {
-            dispatch(new GenerateProductImageJob($product));
-
-            Log::info("Job de geração de imagem disparada para o produto ID: " . $product->id . " " . $product->name);
-        }
-
-        return redirect()->route('admin.products.index');
-    }
-
-    public function generateImageFeed($product_id)
-    {
-        $response = $this->productService->publishProductImage($product_id);
-
-        return response()->json($response['title'], $response['status']);
     }
 }

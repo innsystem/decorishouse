@@ -201,65 +201,89 @@
 
     $(document).on('click', '.button-create-product', function(e) {
         e.preventDefault();
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            }
-        });
-
         let button = $(this);
         let slug_integration = `{{$slug}}`;
-        var url = `{{ url('/admin/integrations/${slug_integration}/playground/createProduct') }}`;
 
-        $.ajax({
-            url: url,
-            data: {
-                slug_integration: slug_integration,
-                product_id: button.data('product-id'),
-                product_name: button.data('product-name'),
-                product_images: button.data('product-images'),
-                product_categories: button.data('product-categories'),
-                product_price_min: button.data('product-price-min'),
-                product_price_max: button.data('product-price-max'),
-                product_link: button.data('product-link'),
+        Swal.fire({
+            title: 'Como deseja cadastrar?',
+            icon: 'question',
+            input: 'radio',
+            inputOptions: {
+                'immediate': 'Imediatamente',
+                'queue': 'Agendar'
             },
-            method: 'POST',
-            beforeSend: function() {
-                //disable the submit button
-                button.attr("disabled", true);
-                button.append('<i class="fa fa-spinner fa-spin ml-3"></i>');
-            },
-            complete: function() {
-                button.prop("disabled", false);
-                button.find('.fa-spinner').addClass('d-none');
-            },
-            success: function(data) {
-                Swal.fire({
-                    text: data,
-                    icon: 'success',
-                    showClass: {
-                        popup: 'animate_animated animate_backInUp'
-                    },
-                });
-            },
-            error: function(xhr) {
-                if (xhr.status === 422) {
-                    Swal.fire({
-                        text: 'Validação: ' + xhr.responseJSON,
-                        icon: 'warning',
-                        showClass: {
-                            popup: 'animate_animated animate_wobble'
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        text: 'Erro Interno: ' + xhr.responseJSON,
-                        icon: 'error',
-                        showClass: {
-                            popup: 'animate_animated animate_wobble'
-                        }
-                    });
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Você precisa selecionar uma opção!';
                 }
+            },
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Continuar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let processType = result.value; // immediate ou queue
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    }
+                });
+
+                var url = `{{ url('/admin/integrations/${slug_integration}/playground/createProduct') }}`;
+
+                $.ajax({
+                    url: url,
+                    data: {
+                        slug_integration: slug_integration,
+                        process_type: processType,
+                        product_id: button.data('product-id'),
+                        product_name: button.data('product-name'),
+                        product_images: button.data('product-images'),
+                        product_categories: button.data('product-categories'),
+                        product_price_min: button.data('product-price-min'),
+                        product_price_max: button.data('product-price-max'),
+                        product_link: button.data('product-link'),
+                    },
+                    method: 'POST',
+                    beforeSend: function() {
+                        //disable the submit button
+                        button.attr("disabled", true);
+                        button.append('<i class="fa fa-spinner fa-spin ml-3"></i>');
+                    },
+                    complete: function() {
+                        button.prop("disabled", false);
+                        button.find('.fa-spinner').addClass('d-none');
+                    },
+                    success: function(data) {
+                        Swal.fire({
+                            text: data,
+                            icon: 'success',
+                            showClass: {
+                                popup: 'animate_animated animate_backInUp'
+                            },
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            Swal.fire({
+                                text: 'Validação: ' + xhr.responseJSON,
+                                icon: 'warning',
+                                showClass: {
+                                    popup: 'animate_animated animate_wobble'
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                text: 'Erro Interno: ' + xhr.responseJSON,
+                                icon: 'error',
+                                showClass: {
+                                    popup: 'animate_animated animate_wobble'
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
     });

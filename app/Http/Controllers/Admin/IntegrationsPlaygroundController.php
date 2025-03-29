@@ -13,6 +13,7 @@ use App\Models\IntegrationCategory;
 use App\Models\CategoryProduct;
 use App\Models\Product;
 use App\Models\ProductAffiliateLink;
+use App\Models\ProductListJob;
 use App\Services\ProductService;
 use Illuminate\Support\Str;
 
@@ -86,46 +87,18 @@ class IntegrationsPlaygroundController extends Controller
     public function createProduct(Request $request)
     {
         $result = $request->all();
+        $processType = $result['process_type']; // Recebendo a opção do usuário
 
-        $integration = Integration::where('slug', $result['slug_integration'])->first();
-        $getIntegrationCategory = IntegrationCategory::whereIn('api_category_id', $result['product_categories'])->get();
+        if ($processType === 'queue') {
+            ProductListJob::create([
+                'product_data' => json_encode($result),
+                'status' => 'pendente',
+                'scheduled_at' => now()->addHours(1) // Define para rodar na próxima hora
+            ]);
 
-        $existyProduct = Product::where('name', $result['product_name'])->first();
-        if ($existyProduct) {
-            $product = $existyProduct;
-        } else {
-            $product = new Product();
+            return response()->json('Produto adicionado à fila de cadastro', 200);
         }
-        $product->name = $result['product_name'];
-        $product->slug = Str::slug($result['product_name']);
-        $product->description = $result['product_description'] ?? null;
-        $product->images = [$result['product_images'] ?? null];
-        $product->price = $result['product_price_max'] ? $result['product_price_max'] : $result['product_price_min'] ?? 0;
-        $product->price_promotion = $result['product_price_min'] ?? 0;
-        $product->status = 1;
-        $product->save();
 
-        $existyProductAffiliateLink = ProductAffiliateLink::where('api_id', $result['product_id'])->first();
-        if ($existyProductAffiliateLink) {
-            $procut_affiliate_links = $existyProductAffiliateLink;
-        } else {
-            $procut_affiliate_links = new ProductAffiliateLink();
-        }
-        $procut_affiliate_links->product_id = $product->id;
-        $procut_affiliate_links->integration_id = $integration->id;
-        $procut_affiliate_links->affiliate_link = $result['product_link'];
-        $procut_affiliate_links->api_id = $result['product_id'] ?? null;
-        $procut_affiliate_links->save();
-
-        // Associar o produto com as categorias usando sync()
-        $product->categories()->sync($getIntegrationCategory->pluck('category_id')->toArray());
-
-        $this->productService->downloadAndStoreImages($product->id);
-
-        $this->productService->generateProductStory($product->id);
-
-        $this->productService->publishProductImage($product->id);
-
-        return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
+        return $this->productService->processProductNow($result);
     }
 }
