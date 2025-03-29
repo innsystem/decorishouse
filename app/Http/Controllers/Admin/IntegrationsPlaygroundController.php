@@ -90,10 +90,12 @@ class IntegrationsPlaygroundController extends Controller
         $processType = $result['process_type']; // Recebendo a opção do usuário
 
         if ($processType === 'queue') {
+            $randMinutes = rand(2, 15);
+
             ProductListJob::create([
                 'product_data' => json_encode($result),
                 'status' => 'pendente',
-                'scheduled_at' => now()->addHours(1) // Define para rodar na próxima hora
+                'scheduled_at' => now()->addMinues($randMinutes) // Define para rodar na próxima hora
             ]);
 
             return response()->json('Produto adicionado à fila de cadastro', 200);
