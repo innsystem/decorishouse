@@ -171,7 +171,7 @@ class ProductService
 		$configs = [
 			'template_modelo_1.png' => [
 				'image_x' => 0,
-				'image_y' => 00,
+				'image_y' => 0,
 				'image_width' => 1120,
 				'image_height' => 1120,
 				'text_x' => 500,
@@ -182,7 +182,7 @@ class ProductService
 				'bg_color' => '#4c3018', 
 				'text_price_x' => 395,
 				'text_price_y' => 1175,
-				'text_price_width' => 500,
+				'text_price_width' => 550,
 				'text_price_size' => 48,
 				'text_price_color' => '#4c3018', 
 				'bg_price_color' => '#FFFFFF', 
@@ -190,7 +190,7 @@ class ProductService
 			],
 			'template_modelo_2.png' => [
 				'image_x' => 0,
-				'image_y' => 00,
+				'image_y' => 0,
 				'image_width' => 1120,
 				'image_height' => 1120,
 				'text_x' => 500,
@@ -201,7 +201,7 @@ class ProductService
 				'bg_color' => '#FFFFFF', 
 				'text_price_x' => 395,
 				'text_price_y' => 1175,
-				'text_price_width' => 500,
+				'text_price_width' => 550,
 				'text_price_size' => 48,
 				'text_price_color' => '#FFFFFF', 
 				'bg_price_color' => '#4c3018', 
