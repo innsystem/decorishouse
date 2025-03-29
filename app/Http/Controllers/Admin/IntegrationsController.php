@@ -135,26 +135,4 @@ class IntegrationsController extends Controller
 
         return response()->json($this->name . ' excluído com sucesso', 200);
     }
-
-    public function categories(Request $request, $id)
-    {
-        $integration = $this->integrationService->getIntegrationById($id);
-
-        $results = $this->shopeeIntegration->normalizeShopeeOffers($this->shopeeIntegration->getShopeeOffers('', 1, 50));
-
-        foreach ($results as $result) {
-            $getIntegrationCategory = IntegrationCategory::where('api_category_id', $result['category_id'])->first();
-            if (!$getIntegrationCategory) {
-                $integration_category = new IntegrationCategory();
-                $integration_category->integration_id = $integration->id;
-                $integration_category->api_category_id = $result['category_id'];
-                $integration_category->api_category_name = $result['name'];
-                $integration_category->api_category_link_affiliate = $result['offer_link'];
-                $integration_category->api_category_commission = $result['commission'];
-                $integration_category->save();
-            }
-        }
-
-        return response()->json('Categorias importadas com sucesso', 200);
-    }
 }

@@ -33,6 +33,6 @@ class GenerateProductImageJob implements ShouldQueue
     public function handle(ProductService $productService)
     {
         // Gera a imagem do produto
-        $productService->generateProductImage($this->product->id);
+        $productService->generateProductStory($this->product->id);
     }
 }

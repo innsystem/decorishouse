@@ -196,9 +196,9 @@ class ProductsController extends Controller
         return response()->json($this->name . ' excluído com sucesso', 200);
     }
 
-    public function generateImage($id)
+    public function generateImageStory($id)
     {
-        $result = $this->productService->generateProductImage($id);
+        $result = $this->productService->generateProductStory($id);
 
         return $result;
     }

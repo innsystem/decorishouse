@@ -122,7 +122,7 @@ class IntegrationsPlaygroundController extends Controller
 
         $this->productService->downloadAndStoreImages($product->id);
 
-        $this->productService->generateProductImage($product->id);
+        $this->productService->generateProductStory($product->id);
 
         $this->productService->publishProductImage($product->id);
 

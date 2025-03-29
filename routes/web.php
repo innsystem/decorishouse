@@ -162,7 +162,6 @@ Route::prefix('admin')->group(function () {
             Route::get('/{id}/edit', 'edit')->name('admin.integrations.edit')->middleware('permission:admin.integrations.edit');
             Route::post('/{id}/update', 'update')->name('admin.integrations.update')->middleware('permission:admin.integrations.update');
             Route::post('/{id}/delete', 'delete')->name('admin.integrations.delete')->middleware('permission:admin.integrations.delete');
-            Route::post('/{id}/categories', 'categories')->name('admin.integrations.categories');
 
             Route::prefix('{slug}/playground')->controller(IntegrationsPlaygroundController::class)->group(function () {
                 Route::get('/', 'index')->name('admin.integrations.playground.index');

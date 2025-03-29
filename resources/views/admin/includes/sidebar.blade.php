@@ -142,6 +142,20 @@
 </li>
 @endif
 
+<li class="side-nav-item">
+    <a data-bs-toggle="collapse" href="#sidebarShopee" aria-expanded="false" aria-controls="sidebarShopee" class="side-nav-link">
+        <i class="ri-exchange-dollar-line"></i>
+        <span> Shopee </span>
+        <span class="menu-arrow"></span>
+    </a>
+    <div class="collapse" id="sidebarShopee">
+        <ul class="side-nav-second-level">
+            <li><a href="{{ route('admin.integrations.playground.index', 'shopee') }}"><i class="ri-play-circle-line"></i> Playground</a></li>
+            <li><a href="https://affiliate.shopee.com.br/open_api/list" target="_Blank"><i class="ri-cloud-windy-line"></i> API Afiliados</a></li>
+        </ul>
+    </div>
+</li>
+
 @if (auth()->user()->hasPermission('admin.categories.index'))
 <li class="side-nav-item">
     <a href="{{ route('admin.categories.index') }}" class="side-nav-link">

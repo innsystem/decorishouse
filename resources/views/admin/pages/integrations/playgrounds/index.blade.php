@@ -16,20 +16,20 @@
                     <form id="filter-form">
                         <input type="hidden" name="slug" value="{{ $slug }}">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-12 col-md-3 col-lg-2">
                                 <label for="type">Tipo:</label>
                                 <select id="type" name="type" class="form-control">
+                                    <option value="products_offers">Produtos em Oferta</option>
                                     <option value="shopee_offers">Shopee Ofertas</option>
                                     <!-- <option value="shop_offers">Ofertas de Lojas</option> -->
-                                    <option value="products_offers">Produtos em Oferta</option>
                                 </select>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-12 col-md-3 col-lg-3">
                                 <label for="keyword">Palavra chave do Produto:</label>
                                 <input type="text" id="keyword" name="keyword" class="form-control" placeholder="Ex: Home Appliances">
                             </div>
-                            <div class="col-md-3 input_products_offers d-none">
+                            <div class="col-12 col-md-3 col-lg-4 input_products_offers">
                                 <label for="category_id">Category ID <a href="https://seller.shopee.com.br/edu/category-guide" target="_Blank"><i class="fa fa-link"></i></a>:</label>
                                 <select name="category_id" id="category_id" class="form-select select2">
                                     <option value=""></option>
@@ -38,7 +38,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3 input_products_offers d-none">
+                            <div class="col-12 col-md-3 col-lg-3 input_products_offers">
                                 <label for="item_id">Item ID:</label>
                                 <input type="text" id="item_id" name="item_id" class="form-control" placeholder="Ex: 19472058506">
                             </div>

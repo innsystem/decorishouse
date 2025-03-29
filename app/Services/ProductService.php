@@ -98,7 +98,7 @@ class ProductService
 		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
 	}
 
-	public function generateProductImage($product_id)
+	public function generateProductStory($product_id)
 	{
 		$product = Product::findOrFail($product_id);
 
@@ -138,7 +138,7 @@ class ProductService
 		}
 
 		// Escolhe um template aleatório
-		$templatePath = storage_path('app/public/templates/');
+		$templatePath = public_path('galerias/templates/');
 		$templates = glob($templatePath . '*.png');
 		$randomTemplate = basename($templates[array_rand($templates)]); // Obtém apenas o nome do arquivo
 
