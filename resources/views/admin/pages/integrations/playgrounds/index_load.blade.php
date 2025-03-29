@@ -30,7 +30,7 @@
         <p class="mb-0 fs-7 text-muted">Orçamento: {{ $shop['remaining_budget'] }}</p>
         <p class="mb-0 fs-7 text-muted">Válido de {{ $shop['period_start'] }} até {{ $shop['period_end'] }}</p>
         <div class="d-flex gap-3 mt-2">
-            <a href="{{ $shop['offer_link'] }}" class="btn btn-sm btn-primary fs-7 p-1" target="_Blank"><i class="fas fa-link"></i> Abrir</a>
+            <a href="{{ $shop['offer_link'] }}" class="btn btn-sm btn-primary fs-7 p-2" target="_Blank"><i class="fas fa-link"></i> Abrir</a>
         </div>
     </div>
     @endforeach

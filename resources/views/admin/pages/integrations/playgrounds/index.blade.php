@@ -71,8 +71,8 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <button type="button" id="button-integrations-filters" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> Filtrar</button>
+                            <div class="col-12 col-md-6 mt-2">
+                                <button type="button" id="button-integrations-filters" class="btn btn-primary"><i class="fa fa-search"></i> Pesquisa</button>
                             </div>
                         </div>
                     </form>
