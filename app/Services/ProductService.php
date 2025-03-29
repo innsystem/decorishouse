@@ -188,6 +188,25 @@ class ProductService
 				'bg_price_color' => '#FFFFFF', 
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
+			'template_modelo_2.png' => [
+				'image_x' => 0,
+				'image_y' => 00,
+				'image_width' => 1120,
+				'image_height' => 1120,
+				'text_x' => 500,
+				'text_y' => 1050,
+				'text_width' => 800,
+				'text_size' => 54,
+				'text_color' => '#4c3018', 
+				'bg_color' => '#FFFFFF', 
+				'text_price_x' => 395,
+				'text_price_y' => 1175,
+				'text_price_width' => 500,
+				'text_price_size' => 48,
+				'text_price_color' => '#FFFFFF', 
+				'bg_price_color' => '#4c3018', 
+				'font' => public_path('/galerias/fonts/nyala.ttf'),
+			],
 		];
 
 		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
