@@ -273,7 +273,7 @@ class ProductService
 		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
 
 		// Adiciona título do produto
-		$text = Str::words($product->name, 8, '...');
+		$text = Str::words($product->name, 6, '...');
 		$text_x = $config['text_x'];
 		$text_y = $config['text_y'];
 		$text_size = $config['text_size'];
