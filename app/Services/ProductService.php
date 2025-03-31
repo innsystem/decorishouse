@@ -345,7 +345,7 @@ class ProductService
 
 		$numbers = [
 			'16992747526',
-			'16994646551',
+			// '16994646551',
 		]; // Lista de números
 		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
 
