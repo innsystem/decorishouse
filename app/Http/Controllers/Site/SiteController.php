@@ -24,7 +24,7 @@ class SiteController extends Controller
 
     public function index()
     {
-        $promotionsRecents = ProductAffiliateLink::orderBy('created_at', 'DESC')->limit(24)->get();
+        $promotionsRecents = ProductAffiliateLink::orderBy('id', 'DESC')->limit(24)->get();
         $promotionsRandoms = ProductAffiliateLink::inRandomOrder()->limit(12)->get();
 
         return view('site.pages.home', compact('promotionsRecents', 'promotionsRandoms'));
