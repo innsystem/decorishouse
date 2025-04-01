@@ -298,7 +298,7 @@
             e.preventDefault();
 
             $.ajax({
-                url: '/admin/products/sugestions',
+                url: '/admin/products/generateSuggestions',
                 type: 'GET',
                 success: function(response) {
                     if (response.error) {
