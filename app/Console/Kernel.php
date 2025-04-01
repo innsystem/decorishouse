@@ -19,9 +19,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->job(new ProcessProductQueueJob())
-            ->hourly()
+            ->everyThreeHours()
             // ->everyMinute()
-            ->between('07:00', '21:00');
+            ->between('09:00', '21:00');
 
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();
