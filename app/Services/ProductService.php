@@ -65,6 +65,7 @@ class ProductService
 		$integration = Integration::where('slug', $result['slug_integration'])->first();
 		$getIntegrationCategory = IntegrationCategory::whereIn('api_category_id', $result['product_categories'])->get();
 
+		// Cadastra o produto
 		$existyProduct = Product::where('name', $result['product_name'])->first();
 		if ($existyProduct) {
 			$product = $existyProduct;
@@ -80,6 +81,7 @@ class ProductService
 		$product->status = 1;
 		$product->save();
 
+		// cadastra o link do produto de afiliado relacionad a integração
 		$existyProductAffiliateLink = ProductAffiliateLink::where('api_id', $result['product_id'])->first();
 		if ($existyProductAffiliateLink) {
 			$procut_affiliate_links = $existyProductAffiliateLink;
@@ -95,10 +97,13 @@ class ProductService
 		// Associar o produto com as categorias usando sync()
 		$product->categories()->sync($getIntegrationCategory->pluck('category_id')->toArray());
 
+		// download e salva as imagens
 		$this->downloadAndStoreImages($product->id);
 
+		// Gera a imagem do produto para o Story e envia no WhatsApp
 		$this->generateProductStory($product->id);
 
+		// Publica a imagem do produto no Feed - Multi Social
 		$this->publishProductImage($product->id);
 
 		return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
