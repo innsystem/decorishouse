@@ -45,6 +45,7 @@
         <a href="{{ $item['offer_link'] }}" target="_Blank"><img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="img-fluid border rounded mb-2 p-1"></a>
 
         <p class="mb-1 fs-7 fw-bold"><a href="{{ $item['offer_link'] }}" target="_Blank">{{ $item['name'] }}</a></p>
+        <p class="mb-1 fs-7 fw-bold">Vendas: {{ $item['sales'] }} | <i class="fa fa-star text-warning"></i> {{ $item['ratingStar'] }}</p>
         <!-- <p class="mb-1 fs-7 fw-bold">ID: {{ $item['id'] }}</p>
         <p class="mb-1 fs-7 fw-bold">Categories: {{ json_encode($item['categories']) }}</p> -->
         <p class="mb-0 fs-7 text-muted">R$ {{ $item['price_min'] }} ~ R$ {{ $item['price_max'] }}</p>
