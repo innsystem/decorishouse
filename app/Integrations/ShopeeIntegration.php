@@ -207,6 +207,8 @@ class ShopeeIntegration
                     priceMin
                     priceMax
                     commissionRate
+                    sales
+                    ratingStar
                     productLink
                     offerLink
                 }
@@ -323,6 +325,8 @@ class ShopeeIntegration
                 'price_min' => $item['priceMin'] ?? '0.00',
                 'price_max' => $item['priceMax'] ?? '0.00',
                 'commission' => $item['commissionRate'] ?? '0',
+                'sales' => $item['sales'] ?? '0',
+                'ratingStar' => $item['ratingStar'] ?? '0',
                 'product_link' => $item['productLink'] ?? '',
                 'offer_link' => $item['offerLink'] ?? '',
                 'categories' => $item['productCatIds'] ?? [],
