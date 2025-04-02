@@ -351,7 +351,7 @@
                 url: '/admin/products/randomCreate',
                 type: 'GET',
                 success: function(response) {
-                   Swal.fire({
+                    Swal.fire({
                         title: 'Imagem do Produto criado com sucesso!',
                         icon: 'success',
                         confirmButtonText: 'Fechar'
@@ -377,6 +377,33 @@
                     }
                 }
             });
+        });
+    </script>
+
+
+    <script>
+        function loadLazyImages(){
+            const images = document.querySelectorAll('img.lazy-load');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.getAttribute('data-src'); // Defina o src com o valor de data-src
+                        img.classList.remove('lazy-load'); // Remova a classe de lazy-load
+                        observer.unobserve(img); // Pare de observar a imagem
+                    }
+                });
+            }, {
+                threshold: 0.1 // A imagem será carregada quando 10% da sua área for visível
+            });
+
+            images.forEach(image => {
+                observer.observe(image); // Comece a observar as imagens
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            loadLazyImages();
         });
     </script>
 

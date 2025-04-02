@@ -42,7 +42,7 @@
 <div class="row">
     @foreach($productOffers as $item)
     <div class="col-6 col-md-4 col-lg-3 col-xxl-2 mb-4">
-        <a href="{{ $item['offer_link'] }}" target="_Blank"><img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="img-fluid border rounded mb-2 p-1"></a>
+        <a href="{{ $item['offer_link'] }}" target="_Blank"><img src="{{ asset('/galerias/img_loading.gif') }}" data-src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="img-fluid border rounded mb-2 p-1 lazy-load" loading="lazy"></a>
 
         <p class="mb-1 fs-7 fw-bold"><a href="{{ $item['offer_link'] }}" target="_Blank">{{ $item['name'] }}</a></p>
         <p class="mb-1 fs-7 fw-bold">Vendas: {{ $item['sales'] }} | <i class="fa fa-star text-warning"></i> {{ $item['ratingStar'] }}</p>

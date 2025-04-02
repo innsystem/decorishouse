@@ -62,6 +62,7 @@ class IntegrationsPlaygroundController extends Controller
         $category_id = $filters['category_id'] ?? null;
         $limit = (int) ($filters['limit'] ?? 10);
         $page = (int) ($filters['page'] ?? 1);
+        $sortType = (int) ($filters['sortType'] ?? 2);
 
         $shopee = $this->shopeeIntegration;
 
@@ -77,7 +78,7 @@ class IntegrationsPlaygroundController extends Controller
             $results = $shopee->getShopOffers($keyword, null, [1, 4], true, 2, "0.05", $page, $limit);
             $shopOffers = $shopee->normalizeShopOffers($results);
         } elseif ($type == 'products_offers') {
-            $results = $shopee->getProductsOffers($keyword, $item_id, $category_id, $page, $limit);
+            $results = $shopee->getProductsOffers($keyword, $item_id, $category_id, $sortType, $page, $limit);
             $productOffers = $shopee->normalizeProductOffers($results);
         }
 

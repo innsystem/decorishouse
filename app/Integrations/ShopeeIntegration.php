@@ -185,7 +185,7 @@ class ShopeeIntegration
         return $this->sendRequestAffiliate($query, "GetShopOffers", $variables);
     }
 
-    public function getProductsOffers($keyword = null, $itemId = null, $productCatId = null, $page = 1, $limit = 10)
+    public function getProductsOffers($keyword = null, $itemId = null, $productCatId = null, $sortType = 2, $page = 1, $limit = 10)
     {
         // Converte itemId para string
         if ($itemId) {
@@ -197,8 +197,8 @@ class ShopeeIntegration
         }
 
         $query = <<<GQL
-        query GetProductsOffers(\$keyword: String, \$itemId: Int64, \$productCatId: Int, \$page: Int, \$limit: Int) {
-            productOfferV2(keyword: \$keyword, itemId: \$itemId, productCatId: \$productCatId, page: \$page, limit: \$limit) {
+        query GetProductsOffers(\$keyword: String, \$itemId: Int64, \$productCatId: Int, \$sortType: Int, \$page: Int, \$limit: Int) {
+            productOfferV2(keyword: \$keyword, itemId: \$itemId, productCatId: \$productCatId, sortType: \$sortType, page: \$page, limit: \$limit) {
                 nodes {
                     itemId
                     productCatIds
@@ -236,6 +236,9 @@ class ShopeeIntegration
         }
         if (!is_null($productCatId)) {
             $variables["productCatId"] = (int) $productCatId; // Garante que seja um Int
+        }
+        if (!is_null($sortType)) {
+            $variables["sortType"] = (int) $sortType; // Garante que seja um Int
         }
 
         return $this->sendRequestAffiliate($query, "GetProductsOffers", $variables);

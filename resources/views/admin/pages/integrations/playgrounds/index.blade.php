@@ -46,6 +46,17 @@
                         <div class="row mt-1">
                             <div class="col-6 col-md-3">
                                 <div class="input-group">
+                                    <span class="input-group-text">Ordem</span>
+                                    <select id="sortType" name="sortType" class="form-control">
+                                        <option value="2">Mais vendidos</option>
+                                        <option value="3">Preço mais alto</option>
+                                        <option value="4">Preço mais baixo</option>
+                                        <option value="5">Comissão mais alta</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="input-group">
                                     <span class="input-group-text">Página</span>
                                     <select id="page" name="page" class="form-control">
                                         @for ($i = 1; $i <= 50; $i++)
@@ -153,6 +164,7 @@
             },
             success: function(data) {
                 $("#content-load-page").html(data);
+                loadLazyImages();
             },
             error: function(xhr) {
                 if (xhr.status === 422) {
