@@ -100,8 +100,8 @@ class ProductService
 		// download e salva as imagens
 		$this->downloadAndStoreImages($product->id);
 
-		// // Gera a imagem do produto para o Story e envia no WhatsApp
-		// $this->generateProductStory($product->id);
+		// Gera a imagem do produto para o Story e envia no WhatsApp
+		$this->generateProductStory($product->id);
 
 		// // Publica a imagem do produto no Feed - Multi Social
 		// $this->publishProductImage($product->id);
