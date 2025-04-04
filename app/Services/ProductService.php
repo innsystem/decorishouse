@@ -128,6 +128,25 @@ class ProductService
 	private function getTemplateStoryConfig($templateName)
 	{
 		$configs = [
+			'template_modelo_shopee.png' => [
+				'image_x' => 140,
+				'image_y' => 0,
+				'image_width' => 800,
+				'image_height' => 800,
+				'text_x' => 525,
+				'text_y' => 1420,
+				'text_width' => 800,
+				'text_size' => 52,
+				'text_color' => '#FFFFFF',
+				'bg_color' => '#c92f17', 
+				'text_price_x' => 395,
+				'text_price_y' => 1550,
+				'text_price_width' => 500,
+				'text_price_size' => 50,
+				'text_price_color' => '#c92f17', 
+				'bg_price_color' => '#FFFFFF', 
+				'font' => public_path('/galerias/fonts/nyala.ttf'),
+			],
 			'template_modelo_1.png' => [
 				'image_x' => 140,
 				'image_y' => 0,
@@ -168,7 +187,7 @@ class ProductService
 			],
 		];
 
-		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
+		return $configs[$templateName] ?? $configs['template_modelo_shopee.png']; // Retorna um padrão caso não exista
 	}
 
 	private function getTemplateFeedConfig($templateName)
@@ -278,7 +297,7 @@ class ProductService
 		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
 
 		// Adiciona título do produto
-		$text = strlen($product->name) > 50 ? Str::words($product->name, 7, '...') : $product->name;
+		$text = strlen($product->name) > 50 ? Str::words($product->name, 8, '...') : $product->name;
 		$text_x = $config['text_x'];
 		$text_y = $config['text_y'];
 		$text_size = $config['text_size'];
@@ -303,9 +322,9 @@ class ProductService
 		$price_min = number_format($product->price_promotion, 2, ',', '.');
 		$price_max = number_format($product->price, 2, ',', '.');
 
-		$text_price = "A partir de R$ {$price_min}!\n" .
+		$text_price = "Promoção R$ {$price_min}!\n" .
 		($product->price_promotion > $product->price
-			? "💰 A partir de R$ {$price_min} ~ R$ {$price_max}!\n\n"
+			? "💰 Promoção R$ {$price_min} ~ R$ {$price_max}!\n\n"
 			: "");
 		$text_price_x = $config['text_price_x'];
 		$text_price_y = $config['text_price_y'];
