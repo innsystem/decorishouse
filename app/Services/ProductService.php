@@ -536,7 +536,9 @@ class ProductService
 			($product->price_promotion > $product->price
 				? "💰 A partir de R$ {$price_min} ~ R$ {$price_max}!\n\n"
 				: "") .
-			"📲 Link da Promoção ➡️ {$product->affiliateLink->affiliate_link}\n" .
+			"📲 Link Direto ➡️ {$product->affiliateLink->affiliate_link}\n" .
+			"📲 Site Completo ➡️ decorishouse.com.br\n" .
+			"🔥 Story 24 horas com promoções\n" .
 			"\n\n" .
 			"{$allHashtags}";
 
