@@ -72,8 +72,9 @@ class ProductService
 		} else {
 			$product = new Product();
 		}
-		$product->name = $result['product_name'];
-		$product->slug = Str::slug($result['product_name']);
+		$product_name = str_replace('QUEIMA DE ESTOQUE!', '', $result['product_name']);
+		$product->name = $product_name;
+		$product->slug = Str::slug($product_name);
 		$product->description = $result['product_description'] ?? null;
 		$product->images = [$result['product_images'] ?? null];
 		$product->price = $result['product_price_max'] ? $result['product_price_max'] : $result['product_price_min'] ?? 0;
