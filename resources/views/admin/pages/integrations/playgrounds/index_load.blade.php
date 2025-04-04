@@ -51,7 +51,7 @@
         <p class="mb-0 fs-7 text-muted">R$ {{ $item['price_min'] }} ~ R$ {{ $item['price_max'] }}</p>
         <!-- <p class="mb-0 fs-7 text-muted">Comissão: {{ $item['commission'] * 100 }}%</p> -->
         <div class="d-flex gap-3 mt-1">
-            <button type="button" class="btn w-100 btn-sm btn-success fs-7 p-1 button-create-product" data-product-id="{{$item['id']}}" data-product-name="{{$item['name']}}" data-product-images="{{$item['image']}}" data-product-categories="{{json_encode($item['categories'])}}" data-product-price-min="{{$item['price_min']}}" data-product-price-max="{{$item['price_max']}}" data-product-link="{{ $item['offer_link'] }}"><i class="fa fa-{{ $item['existyItem'] ? 'history' : 'check-square'}}"></i> {{ $item['existyItem'] ? 'Atualizar' : 'Cadastrar'}}</button>
+            <button type="button" class="btn w-100 btn-sm {{$item['existyItem'] ? 'btn-info' : 'btn-success' }} fs-7 p-1 button-create-product" data-product-id="{{$item['id']}}" data-product-name="{{$item['name']}}" data-product-images="{{$item['image']}}" data-product-categories="{{json_encode($item['categories'])}}" data-product-price-min="{{$item['price_min']}}" data-product-price-max="{{$item['price_max']}}" data-product-link="{{ $item['offer_link'] }}"><i class="fa fa-{{ $item['existyItem'] ? 'history' : 'check-square'}}"></i> {{ $item['existyItem'] ? 'Atualizar' : 'Cadastrar'}}</button>
         </div>
     </div>
     @endforeach
