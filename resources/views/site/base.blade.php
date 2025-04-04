@@ -10,6 +10,8 @@
 
     <link rel="canonical" href="{{ url()->current() }}">
 
+    <meta name="facebook-domain-verification" content="yu2lf97f5383wz0nusthtnte6ktdns" />
+
     <!-- Open Graph (OG) Meta Tags -->
     <meta property="og:title" content="@yield('title', $getSettings['site_name'])">
     <meta property="og:description" content="@yield('description', $getSettings['meta_description'])">
