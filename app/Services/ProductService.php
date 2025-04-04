@@ -104,8 +104,8 @@ class ProductService
 		// // Gera a imagem do produto para o Story e envia no WhatsApp
 		// $this->generateProductStory($product->id);
 
-		// // Publica a imagem do produto no Feed - Multi Social
-		// $this->publishProductImage($product->id);
+		// Publica a imagem do produto no Feed - Multi Social
+		$this->publishProductImage($product->id);
 
 		return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
 	}
@@ -208,52 +208,6 @@ class ProductService
 		];
 
 		return $configs[$templateName] ?? $configs['template_modelo_shopee.png']; // Retorna um padrão caso não exista
-	}
-
-	private function getTemplateFeedConfig($templateName)
-	{
-		$configs = [
-			'template_modelo_1.png' => [
-				'image_x' => 0,
-				'image_y' => 0,
-				'image_width' => 1120,
-				'image_height' => 1120,
-				'text_x' => 500,
-				'text_y' => 1050,
-				'text_width' => 800,
-				'text_size' => 54,
-				'text_color' => '#FFFFFF', 
-				'bg_color' => '#4c3018', 
-				'text_price_x' => 395,
-				'text_price_y' => 1175,
-				'text_price_width' => 550,
-				'text_price_size' => 48,
-				'text_price_color' => '#4c3018', 
-				'bg_price_color' => '#FFFFFF', 
-				'font' => public_path('/galerias/fonts/nyala.ttf'),
-			],
-			'template_modelo_2.png' => [
-				'image_x' => 0,
-				'image_y' => 0,
-				'image_width' => 1120,
-				'image_height' => 1120,
-				'text_x' => 500,
-				'text_y' => 1050,
-				'text_width' => 800,
-				'text_size' => 54,
-				'text_color' => '#4c3018', 
-				'bg_color' => '#FFFFFF', 
-				'text_price_x' => 395,
-				'text_price_y' => 1175,
-				'text_price_width' => 550,
-				'text_price_size' => 48,
-				'text_price_color' => '#FFFFFF', 
-				'bg_price_color' => '#4c3018', 
-				'font' => public_path('/galerias/fonts/nyala.ttf'),
-			],
-		];
-
-		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
 	}
 
 	// Funcao responsável por gerar imagem do produto para Story e Enviar no WhatsApp com Link
@@ -399,6 +353,41 @@ class ProductService
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 	}
 
+	
+	private function getTemplateFeedConfig($templateName)
+	{
+		$configs = [
+			'template_modelo_1.png' => [
+				'image_x' => 0,
+				'image_y' => 0,
+				'image_width' => 1080,
+				'image_height' => 1080,				
+				'font' => public_path('/galerias/fonts/nyala.ttf'),
+			],
+			// 'template_modelo_2.png' => [
+			// 	'image_x' => 0,
+			// 	'image_y' => 0,
+			// 	'image_width' => 1120,
+			// 	'image_height' => 1120,
+			// 	'text_x' => 500,
+			// 	'text_y' => 1050,
+			// 	'text_width' => 800,
+			// 	'text_size' => 54,
+			// 	'text_color' => '#4c3018', 
+			// 	'bg_color' => '#FFFFFF', 
+			// 	'text_price_x' => 395,
+			// 	'text_price_y' => 1175,
+			// 	'text_price_width' => 550,
+			// 	'text_price_size' => 48,
+			// 	'text_price_color' => '#FFFFFF', 
+			// 	'bg_price_color' => '#4c3018', 
+			// 	'font' => public_path('/galerias/fonts/nyala.ttf'),
+			// ],
+		];
+
+		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
+	}
+
 	// Funcao responsável por gerar imagem do produto para FEED no Instagram e Facebook
 	public function publishProductImage($product_id)
 	{
@@ -459,6 +448,11 @@ class ProductService
 		// Posiciona a imagem conforme o template
 		$background->place($overlay, 'left', $config['image_x'], $config['image_y'], 100);
 
+		// Formatar preços corretamente
+		$price_min = number_format($product->price_promotion, 2, ',', '.');
+		$price_max = number_format($product->price, 2, ',', '.');
+
+		/*
 		// Adiciona título do produto
 		$text = strlen($product->name) > 50 ? Str::words($product->name, 7, '...') : $product->name;
 		$text_x = $config['text_x'];
@@ -483,9 +477,7 @@ class ProductService
 			$font->wrap(700);
 		});
 				
-		// Formatar preços corretamente
-		$price_min = number_format($product->price_promotion, 2, ',', '.');
-		$price_max = number_format($product->price, 2, ',', '.');
+		
 
 		$text_price = "A partir de R$ {$price_min}!\n" .
 		($product->price_promotion > $product->price
@@ -512,6 +504,8 @@ class ProductService
 			$font->align('center');
 			$font->wrap(500);
 		});
+
+		*/
 
 		// Salva a imagem gerada
 		// $background->save($outputPath);
