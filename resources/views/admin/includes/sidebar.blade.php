@@ -151,6 +151,7 @@
     <div class="collapse" id="sidebarShopee">
         <ul class="side-nav-second-level">
             <li><a href="{{ route('admin.integrations.playground.index', 'shopee') }}"><i class="ri-play-circle-line"></i> Playground</a></li>
+            <li><a href="{{ route('admin.integration_categories.index') }}"><i class="ri-list-settings-line"></i> Categorias</a></li>
             <li><a href="https://affiliate.shopee.com.br/open_api/list" target="_Blank"><i class="ri-cloud-windy-line"></i> API Afiliados</a></li>
         </ul>
     </div>

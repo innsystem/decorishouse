@@ -1,15 +1,13 @@
 @extends('site.base')
 
-@section('title', $category->name)
+@section('title', 'Resultados da busca: ' . $query)
 
 @section('content')
 <section class="recommended py-60">
     <div class="container container-lg">
         <div class="section-heading flex-between flex-wrap gap-16">
-            <h5 class="mb-0">@yield('title')</h5>
-            @if($category->children->isNotEmpty())
-            <p class="text-muted">Mostrando produtos desta categoria e suas subcategorias</p>
-            @endif
+            <h5 class="mb-0">Resultados para: "{{ $query }}"</h5>
+            <span>{{ $products->total() }} produto(s) encontrado(s)</span>
         </div>
 
         @if(count($products) > 0)
@@ -56,15 +54,21 @@
             @endforeach
         </div>
 
-        <!-- Paginação -->
+        <!-- Paginação com a query mantida -->
         <div class="row mt-32">
             <div class="col-12 d-flex justify-content-center">
-                {{ $products->links('pagination::bootstrap-5') }}
+                {{ $products->appends(['query' => $query])->links('pagination::bootstrap-5') }}
             </div>
         </div>
         @else
         <div class="alert alert-info">
-            Nenhum produto encontrado para esta categoria.
+            <p>Nenhum produto encontrado com o termo "{{ $query }}".</p>
+            <p>Sugestões:</p>
+            <ul>
+                <li>Verifique a ortografia da palavra</li>
+                <li>Tente usar outras palavras ou sinônimos</li>
+                <li>Use termos mais genéricos</li>
+            </ul>
         </div>
         @endif
     </div>
@@ -114,6 +118,33 @@
     .page-link:hover {
         background-color: var(--bs-main-100);
         color: var(--bs-main-600);
+    }
+    
+    /* Destaque para os termos da busca */
+    .search-term {
+        background-color: rgba(255, 219, 77, 0.3);
+        font-weight: bold;
+    }
+    
+    /* Estilo para mensagem de nenhum resultado */
+    .alert-info {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-left: 5px solid var(--bs-main-600);
+        border-radius: 5px;
+        margin-bottom: 30px;
+    }
+    
+    .alert-info p {
+        margin-bottom: 10px;
+    }
+    
+    .alert-info ul {
+        padding-left: 20px;
+    }
+    
+    .alert-info li {
+        margin-bottom: 5px;
     }
 </style>
 @endsection
@@ -176,6 +207,24 @@
         }
     });
 
+    // Destacar termos da busca no nome do produto
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchTerm = "{{ $query }}";
+        const productTitles = document.querySelectorAll('.product-card .title a');
+        
+        if (searchTerm.length > 0) {
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            
+            productTitles.forEach(function(titleElement) {
+                const originalText = titleElement.textContent;
+                const highlightedText = originalText.replace(regex, '<span class="search-term">$1</span>');
+                if (originalText !== highlightedText) {
+                    titleElement.innerHTML = highlightedText;
+                }
+            });
+        }
+    });
+
     // Rastreamento de cliques em produtos
     $(document).on('click', '.product-link-href', function(e) {
         e.preventDefault();
@@ -203,4 +252,4 @@
         });
     });
 </script>
-@endsection
+@endsection 

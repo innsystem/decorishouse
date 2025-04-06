@@ -17,6 +17,7 @@ Route::controller(SiteController::class)->group(function () {
     Route::post('/produto/click', 'trackClick')->name('site.product.trackClick');
     Route::get('/categoria/{slug}', 'categoryShow')->name('site.category.show');
     Route::get('/busca/products', 'searchProducts')->name('site.products.search');
+    Route::get('/busca', 'search')->name('site.search');
 });
 
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
@@ -47,6 +48,7 @@ use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\ServicesController;
 use App\Http\Controllers\Admin\PortfoliosController;
 use App\Http\Controllers\Admin\IntegrationsController;
+use App\Http\Controllers\Admin\IntegrationCategoriesController;
 use App\Http\Controllers\Admin\IntegrationsPlaygroundController;
 use App\Http\Controllers\Admin\TestimonialsController;
 use App\Http\Controllers\Admin\SlidersController;
@@ -167,8 +169,17 @@ Route::prefix('admin')->group(function () {
                 Route::get('/', 'index')->name('admin.integrations.playground.index');
                 Route::get('/load', 'load')->name('admin.integrations.playground.load');
                 Route::post('/createProduct', 'createProduct')->name('admin.integrations.playground.createProduct');
-
             });
+        });
+
+        Route::prefix('integration_categories')->controller(IntegrationCategoriesController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.integration_categories.index');
+            Route::get('/load', 'load')->name('admin.integration_categories.load');
+            Route::get('/create', 'create')->name('admin.integration_categories.create');
+            Route::post('/store', 'store')->name('admin.integration_categories.store');
+            Route::get('/{id}/edit', 'edit')->name('admin.integration_categories.edit');
+            Route::post('/{id}/update', 'update')->name('admin.integration_categories.update');
+            Route::post('/{id}/delete', 'delete')->name('admin.integration_categories.delete');
         });
 
         Route::prefix('testimonials')->controller(TestimonialsController::class)->group(function () {

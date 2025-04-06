@@ -24,10 +24,43 @@ class SiteController extends Controller
 
     public function index()
     {
-        $promotionsRecents = ProductAffiliateLink::orderBy('id', 'DESC')->limit(24)->get();
-        $promotionsRandoms = ProductAffiliateLink::inRandomOrder()->limit(12)->get();
-
-        return view('site.pages.home', compact('promotionsRecents', 'promotionsRandoms'));
+        // Buscar categorias principais (sem parent_id)
+        $mainCategories = Category::where('parent_id', null)
+            ->where('status', 1)
+            ->get();
+            
+        // Para cada categoria principal, buscar produtos (limitado a 24 por categoria)
+        $categoriesWithProducts = [];
+        
+        foreach ($mainCategories as $category) {
+            // Obter IDs da categoria atual e todas as suas subcategorias
+            $categoryIds = [$category->id];
+            
+            // Adicionar subcategorias
+            $subcategories = $category->children;
+            foreach ($subcategories as $subcategory) {
+                $categoryIds[] = $subcategory->id;
+            }
+            
+            // Buscar produtos destas categorias
+            $products = Product::whereHas('categories', function ($query) use ($categoryIds) {
+                    $query->whereIn('categories.id', $categoryIds);
+                })
+                ->with(['affiliateLinks.integration'])
+                ->orderBy('created_at', 'desc')
+                ->limit(24)
+                ->get();
+                
+            // Adicionar apenas se houver produtos
+            if ($products->count() > 0) {
+                $categoriesWithProducts[] = [
+                    'category' => $category,
+                    'products' => $products
+                ];
+            }
+        }
+        
+        return view('site.pages.home', compact('categoriesWithProducts'));
     }
 
     public function pageShow($slug)
@@ -71,8 +104,26 @@ class SiteController extends Controller
             return redirect()->route('site.index')->with('error', 'Categoria não encontrada.');
         }
         
-        $products = $category->productAffiliateLinks;
-
+        // Criar um array com os IDs da categoria atual e todas as suas subcategorias
+        $categoryIds = [$category->id];
+        
+        // Se for uma categoria principal (sem parent_id), adicionar os IDs de todas as subcategorias
+        if (!$category->parent_id) {
+            $subcategories = $category->children;
+            foreach ($subcategories as $subcategory) {
+                $categoryIds[] = $subcategory->id;
+            }
+        }
+        
+        // Buscar produtos de todas as categorias relevantes com paginação
+        $productsQuery = Product::whereHas('categories', function ($query) use ($categoryIds) {
+                $query->whereIn('categories.id', $categoryIds);
+            })
+            ->with(['affiliateLinks.integration'])
+            ->orderBy('created_at', 'desc');
+            
+        $products = $productsQuery->paginate(24); // 24 produtos por página
+        
         return view('site.pages.category_show', compact('category', 'products'));
     }
 
@@ -87,5 +138,25 @@ class SiteController extends Controller
         $products = $this->productService->searchProducts($query);
 
         return response()->json($products);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        
+        if (empty($query) || strlen($query) < 3) {
+            return redirect()->route('site.index')
+                ->with('error', 'Por favor, digite pelo menos 3 caracteres para realizar a busca.');
+        }
+        
+        // Buscar produtos que contenham a consulta no nome ou descrição
+        $productsQuery = Product::where('name', 'like', '%' . $query . '%')
+            ->orWhere('description', 'like', '%' . $query . '%')
+            ->with(['affiliateLinks.integration'])
+            ->orderBy('created_at', 'desc');
+            
+        $products = $productsQuery->paginate(24); // 24 produtos por página
+        
+        return view('site.pages.search_results', compact('products', 'query'));
     }
 }

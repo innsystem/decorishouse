@@ -49,6 +49,57 @@
     <!-- Font Awesome -->
     <link href="{{ asset('/plugins/fontawesome/css/all.min.css') }}" rel="stylesheet">
 
+    <style>
+        /* Estilos para o dropdown de resultados da busca */
+        .search-results-container {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 5px;
+            padding: 10px 0;
+        }
+        
+        .search-results-container a {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .search-results-container a:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .search-results-container a.view-all-results {
+            background-color: #f5f5f5;
+            text-align: center;
+            font-weight: bold;
+            color: var(--bs-main-600);
+        }
+        
+        .search-results-container .no-results {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            color: #888;
+        }
+        
+        .search-results-container .highlight {
+            background-color: rgba(255, 219, 77, 0.3);
+            font-weight: bold;
+        }
+    </style>
+
     @yield('pageCSS')
 
     <!-- Google tag (gtag.js) -->
@@ -118,11 +169,11 @@
                 <!-- Logo End  -->
 
                 <!-- form location Start -->
-                <form action="#" class="flex-align flex-wrap form-location-wrapper">
+                <form action="{{ route('site.search') }}" method="get" class="flex-align flex-wrap form-location-wrapper">
                     <div class="search-category d-flex h-48 select-border-end-0 radius-end-0 search-form d-sm-flex d-none">
                         <div class="search-form__wrapper position-relative">
-                            <input type="text" id="search-input" class="search-form__input common-input py-13 ps-16 pe-18 rounded-end-pill pe-44" placeholder="Procure por nome do produto">
-                            <button type="button" class="w-32 h-32 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8">
+                            <input type="text" id="search-input" name="query" class="search-form__input common-input py-13 ps-16 pe-18 rounded-end-pill pe-44" placeholder="Procure por nome do produto">
+                            <button type="submit" class="w-32 h-32 bg-main-600 rounded-circle flex-center text-xl text-white position-absolute top-50 translate-middle-y inset-inline-end-0 me-8">
                                 <i class="ph ph-magnifying-glass"></i>
                             </button>
                             <div id="search-results" class="search-results-container"></div>
@@ -195,7 +246,7 @@
                                 @foreach($getCategories as $category)
                                 @if($category->children->isNotEmpty())
                                 <li class="has-submenus-submenu">
-                                    <a href="javascript:void(0)" class="text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0">
+                                    <a href="{{ route('site.category.show', $category->slug) }}" class="text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0">
                                         <span>{{$category->name}}</span>
                                         <span class="icon text-md d-flex ms-auto"><i class="ph ph-caret-right"></i></span>
                                     </a>
@@ -231,7 +282,7 @@
                             @foreach($getCategories as $category)
                             @if($category->children->isNotEmpty())
                             <li class="on-hover-item nav-menu__item has-submenu">
-                                <a href="javascript:void(0)" class="nav-menu__link">{{$category->name}}</a>
+                                <a href="{{ route('site.category.show', $category->slug) }}" class="nav-menu__link">{{$category->name}}</a>
                                 <ul class="on-hover-dropdown common-dropdown nav-submenu scroll-sm">
                                     @foreach($category->children as $child)
                                     <li class="common-dropdown__item nav-submenu__item">
@@ -365,14 +416,25 @@
 
                         if (data.length > 0) {
                             let regex = new RegExp(`(${query})`, 'gi'); // Expressão regular para encontrar a palavra
-                            data.forEach(function(product) {
+                            
+                            // Adicionar link para ver todos os resultados
+                            resultsContainer.append(`<a href="{{ route('site.search') }}?query=${encodeURIComponent(query)}" class="view-all-results">Ver todos os resultados para "${query}"</a>`);
+                            
+                            // Adicionar resultados rápidos (limitados a 6)
+                            data.slice(0, 6).forEach(function(product) {
                                 let highlightedName = product.name.replace(regex, '<span class="highlight">$1</span>'); // Destaca a palavra-chave
                                 resultsContainer.append(`<a href="${product.affiliate_link}" target="_Blank">${highlightedName}</a>`);
                             });
 
+                            if (data.length > 6) {
+                                resultsContainer.append(`<a href="{{ route('site.search') }}?query=${encodeURIComponent(query)}" class="view-all-results">Ver todos os ${data.length} resultados</a>`);
+                            }
+
                             resultsContainer.show();
                         } else {
-                            resultsContainer.hide();
+                            resultsContainer.append(`<span class="no-results">Nenhum resultado para "${query}"</span>`);
+                            resultsContainer.append(`<a href="{{ route('site.search') }}?query=${encodeURIComponent(query)}" class="view-all-results">Buscar "${query}" em todas as categorias</a>`);
+                            resultsContainer.show();
                         }
                     }
                 });
@@ -381,6 +443,15 @@
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.search-form__wrapper').length) {
                     $('#search-results').hide();
+                }
+            });
+            
+            // Impedir envio do formulário se o campo estiver vazio
+            $('form[action="{{ route("site.search") }}"]').on('submit', function(e) {
+                let query = $('#search-input').val().trim();
+                if (query.length < 3) {
+                    e.preventDefault();
+                    alert('Por favor, digite pelo menos 3 caracteres para realizar a busca.');
                 }
             });
         });
