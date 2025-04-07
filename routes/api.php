@@ -86,5 +86,5 @@ Route::apiResource('categories', CategoryController::class);
 // Product
 use App\Http\Controllers\Api\ProductController;
 
-Route::apiResource('products', ProductController::class);
 Route::get('products/search', [ProductController::class, 'search']);
+Route::apiResource('products', ProductController::class);
