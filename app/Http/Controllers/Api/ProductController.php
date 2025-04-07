@@ -96,4 +96,17 @@ class ProductController extends Controller
         $this->productService->deleteProduct($id);
         return response()->json(['message' => 'Product deleted']);
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        
+        if (strlen($query) < 3) {
+            return response()->json(['message' => 'A pesquisa deve ter pelo menos 3 caracteres'], 400);
+        }
+        
+        $products = $this->productService->searchProducts($query);
+        
+        return response()->json($products);
+    }
 }
