@@ -104,8 +104,8 @@ class ProductService
 		// // Gera a imagem do produto para o Story e envia no WhatsApp
 		// $this->generateProductStory($product->id);
 
-		// // Publica a imagem do produto no Feed - Multi Social
-		// $this->publishProductImage($product->id);
+		// Publica a imagem do produto no Feed - Multi Social
+		$this->publishProductImage($product->id);
 
 		return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
 	}
@@ -526,7 +526,7 @@ class ProductService
 		$hashtags = array_slice(array_map(fn($word) => '#' . preg_replace('/[^A-Za-z0-9]/', '', ucfirst($word)), $productNameWords), 0, 8);
 
 		// Hashtags fixas
-		$fixedHashtags = ['#decoris', '#house', '#shopee', '#ofertas', '#promocoes', '#descontos'];
+		$fixedHashtags = ['#decoris', '#house', '#shopee', '#ofertas', '#promocoes', '#descontos', '#achadinhos'];
 
 		// Combinar todas as hashtags
 		$allHashtags = implode(' ', array_merge($hashtags, $fixedHashtags));
@@ -547,7 +547,7 @@ class ProductService
 
 		$queryParams = [
 			'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
-			'facebook_meta_id'  => 60,
+			'facebook_meta_id'  => 61,
 			'name'              => $product->name,
 			'content'           => $content,
 			'media'             => $social_image,
