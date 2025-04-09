@@ -68,8 +68,14 @@ class ProductService
 			->get()
 			->map(function ($product) {
 				return [
+					'id' => $product->id,
 					'name' => $product->name,
+					'price' => $product->price,
+					'price_promotion' => $product->price_promotion,
+					'images' => $product->images,
 					'affiliate_link' => $product->affiliateLink->affiliate_link ?? '#',
+					'categories' => $product->categories->pluck('name')->toArray(),
+					'created_at' => $product->created_at->format('d/m/Y')
 				];
 			});
 	}
