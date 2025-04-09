@@ -15,7 +15,7 @@
     <!-- Open Graph (OG) Meta Tags -->
     <meta property="og:title" content="@yield('title', $getSettings['site_name'])">
     <meta property="og:description" content="@yield('description', $getSettings['meta_description'])">
-    <meta property="og:image" content="@yield('image', asset('/galerias/facebook_decorishouse.png'))">
+    <meta property="og:image" content="@yield('image', asset('/galerias/facebook_decorishouse.png?1'))">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{$getSettings['site_name']}}">
