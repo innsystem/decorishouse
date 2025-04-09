@@ -137,4 +137,96 @@ class ProductController extends Controller
         
         return response()->json($products);
     }
+
+    /**
+     * Formata uma lista de produtos para mensagem no formato WhatsApp
+     * 
+     * Esta API recebe uma lista de produtos e formata como uma mensagem amigável
+     * para compartilhamento no WhatsApp e outras plataformas de mensagens.
+     * 
+     * Parâmetros aceitos:
+     * - produtos: Array de produtos com name, price, price_promotion, affiliate_link
+     * - titulo: Texto de cabeçalho da mensagem (padrão: '🛒 Produtos encontrados:')
+     * - incluir_preco: Boolean para mostrar ou não os preços (padrão: true)
+     * - incluir_link: Boolean para mostrar ou não os links (padrão: true)
+     * - limite: Número máximo de produtos a incluir (padrão: 10)
+     * - rodape: Texto opcional para o rodapé da mensagem
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function formatWhatsAppMessage(Request $request)
+    {
+        $produtos = $request->input('produtos', []);
+        $titulo = $request->input('titulo', '🛒 Produtos encontrados:');
+        $incluirPreco = $request->input('incluir_preco', true);
+        $incluirLink = $request->input('incluir_link', true);
+        $limiteProdutos = $request->input('limite', 10);
+        $rodape = $request->input('rodape', '');
+        
+        if (empty($produtos)) {
+            return response()->json(['message' => 'Nenhum produto foi enviado para formatação'], 400);
+        }
+        
+        // Limitar a quantidade de produtos
+        $produtos = array_slice($produtos, 0, $limiteProdutos);
+        
+        $mensagem = "{$titulo}\n\n";
+        
+        foreach ($produtos as $index => $produto) {
+            $numeroEmoji = $this->numeroParaEmoji($index + 1);
+            
+            // Nome do produto
+            $mensagem .= "{$numeroEmoji} *{$produto['name']}*\n";
+            
+            // Preço (opcional)
+            if ($incluirPreco) {
+                $preco = number_format(floatval($produto['price'] ?? 0), 2, ',', '.');
+                $mensagem .= "💰 R$ {$preco}\n";
+                
+                // Se tiver preço promocional
+                if (!empty($produto['price_promotion']) && $produto['price_promotion'] > 0) {
+                    $precoPromo = number_format(floatval($produto['price_promotion']), 2, ',', '.');
+                    $mensagem .= "🔥 Promoção: R$ {$precoPromo}\n";
+                }
+            }
+            
+            // Link afiliado (opcional)
+            if ($incluirLink && !empty($produto['affiliate_link']) && $produto['affiliate_link'] != '#') {
+                $mensagem .= "🔗 [Ver produto]({$produto['affiliate_link']})\n\n";
+            } else {
+                $mensagem .= "\n";
+            }
+        }
+        
+        // Adicionar rodapé se existir
+        if (!empty($rodape)) {
+            $mensagem .= "{$rodape}\n";
+        }
+        
+        return response()->json([
+            'mensagem' => $mensagem,
+            'produtos_formatados' => count($produtos)
+        ]);
+    }
+    
+    /**
+     * Converte um número para emoji de número
+     *
+     * @param int $numero
+     * @return string
+     */
+    private function numeroParaEmoji($numero)
+    {
+        $emojis = [
+            '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
+            '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
+        ];
+        
+        if ($numero >= 1 && $numero <= 10) {
+            return $emojis[$numero - 1];
+        }
+        
+        return $numero . '⃣';
+    }
 }

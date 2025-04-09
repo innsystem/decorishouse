@@ -89,4 +89,5 @@ use App\Http\Controllers\Api\ProductController;
 Route::get('products/search', [ProductController::class, 'search']);
 Route::get('products/recent', [ProductController::class, 'recent']);
 Route::get('products/promotions', [ProductController::class, 'promotions']);
+Route::post('products/format-whatsapp', [ProductController::class, 'formatWhatsAppMessage']);
 Route::apiResource('products', ProductController::class);
