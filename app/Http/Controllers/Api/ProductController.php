@@ -256,7 +256,7 @@ class ProductController extends Controller
                 $mensagem .= "💰 R$ {$preco}\n";
                 
                 // Se tiver preço promocional
-                if (!empty($produto['price_promotion']) && $produto['price_promotion'] > 0) {
+                if (!empty($produto['price_promotion']) && $produto['price_promotion'] > 0 && $produto['price_promotion'] != $produto['price']) {
                     $precoPromo = number_format(floatval($produto['price_promotion']), 2, ',', '.');
                     $mensagem .= "🔥 Promoção: R$ {$precoPromo}\n";
                 }
