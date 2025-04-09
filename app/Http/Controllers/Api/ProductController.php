@@ -172,7 +172,7 @@ class ProductController extends Controller
         if (!empty($search_results_json) && empty($produtos)) {
             try {
                 // Registra no log o que foi recebido
-                Log::info('Recebido search_results_json: ' . $search_results_json);
+                // Log::info('Recebido search_results_json: ' . $search_results_json);
                 
                 // Corrige o JSON adicionando colchetes e tratando objetos sequenciais
                 $jsonCorrigido = $this->corrigirJsonMalformado($search_results_json);
@@ -186,18 +186,18 @@ class ProductController extends Controller
                     // Tentativa com regex para extrair produtos individuais
                     $produtos = $this->extrairProdutosPorRegex($search_results_json);
                     if (!empty($produtos)) {
-                        Log::info('Produtos extraídos por regex: ' . count($produtos));
+                        // Log::info('Produtos extraídos por regex: ' . count($produtos));
                     }
                 } 
                 // Se for um objeto único, transforma em array com um item
                 elseif (is_array($decoded) && isset($decoded['name'])) {
                     $produtos = [$decoded];
-                    Log::info('Produto único decodificado com sucesso');
+                    // Log::info('Produto único decodificado com sucesso');
                 } 
                 // Se já for um array de produtos
                 elseif (is_array($decoded) && !empty($decoded)) {
                     $produtos = $decoded;
-                    Log::info('Array de produtos decodificado com sucesso: ' . count($produtos) . ' produtos');
+                    // Log::info('Array de produtos decodificado com sucesso: ' . count($produtos) . ' produtos');
                 }
                 // Se não for nenhum dos formatos esperados
                 else {
@@ -304,39 +304,11 @@ class ProductController extends Controller
         }
         
         // Registra a correção
-        Log::info('JSON corrigido: ' . $jsonCorrigido);
+        // Log::info('JSON corrigido: ' . $jsonCorrigido);
         
         return $jsonCorrigido;
     }
-    
-    /**
-     * Tenta encontrar o último objeto JSON válido em uma string truncada
-     *
-     * @param string $jsonString
-     * @return string
-     */
-    private function encontrarUltimoObjetoValido($jsonString)
-    {
-        // Verifica se a string parece estar no formato de um array de objetos
-        if (substr(trim($jsonString), 0, 1) === '[') {
-            // Encontra o último objeto completo em um array
-            $matches = [];
-            preg_match_all('/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/', $jsonString, $matches);
-            
-            if (!empty($matches[0])) {
-                // Reconstroí o array com objetos válidos
-                return '[' . implode(',', $matches[0]) . ']';
-            }
-        } elseif (substr(trim($jsonString), 0, 1) === '{') {
-            // Para um único objeto, tenta extrair o objeto completo
-            $matches = [];
-            if (preg_match('/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/', $jsonString, $matches)) {
-                return $matches[0];
-            }
-        }
-        
-        return '';
-    }
+
     
     /**
      * Extrai produtos de um JSON malformado usando regex
@@ -381,6 +353,6 @@ class ProductController extends Controller
             return $emojis[$numero - 1];
         }
         
-        return $numero . '⃣';
+        return $numero . '';
     }
 }
