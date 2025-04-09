@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -146,6 +147,7 @@ class ProductController extends Controller
      * 
      * Parâmetros aceitos:
      * - produtos: Array de produtos com name, price, price_promotion, affiliate_link
+     * - search_results_json: String JSON com resultados de pesquisa (alternativa para produtos)
      * - titulo: Texto de cabeçalho da mensagem (padrão: '🛒 Produtos encontrados:')
      * - incluir_preco: Boolean para mostrar ou não os preços (padrão: true)
      * - incluir_link: Boolean para mostrar ou não os links (padrão: true)
@@ -157,8 +159,7 @@ class ProductController extends Controller
      */
     public function formatWhatsAppMessage(Request $request)
     {
-        \Log::info('Request :: ' . json_encode($request->all()));
-        
+        $search_results_json = $request->input('search_results_json', '');
         $produtos = $request->input('produtos', []);
         $titulo = $request->input('titulo', '🛒 Produtos encontrados:');
         $incluirPreco = $request->input('incluir_preco', true);
@@ -166,8 +167,43 @@ class ProductController extends Controller
         $limiteProdutos = $request->input('limite', 10);
         $rodape = $request->input('rodape', '');
         
+        // Se recebermos JSON de resultados de pesquisa, tentamos decodificar
+        if (!empty($search_results_json) && empty($produtos)) {
+            try {
+                // Registra no log o que foi recebido
+                Log::info('Recebido search_results_json: ' . $search_results_json);
+                
+                // Tenta decodificar como JSON
+                $decoded = json_decode($search_results_json, true);
+                
+                if ($decoded === null) {
+                    Log::error('Falha ao decodificar JSON: ' . json_last_error_msg());
+                } 
+                // Se for um objeto único, transforma em array com um item
+                elseif (is_array($decoded) && isset($decoded['name'])) {
+                    $produtos = [$decoded];
+                    Log::info('Produto único decodificado com sucesso');
+                } 
+                // Se já for um array de produtos
+                elseif (is_array($decoded) && !empty($decoded)) {
+                    $produtos = $decoded;
+                    Log::info('Array de produtos decodificado com sucesso: ' . count($produtos) . ' produtos');
+                }
+                // Se não for nenhum dos formatos esperados
+                else {
+                    Log::info('JSON em formato não esperado: ' . print_r($decoded, true));
+                }
+            } catch (\Exception $e) {
+                Log::error('Erro ao processar JSON: ' . $e->getMessage());
+            }
+        }
+        
+        // Se não tiver produtos, retorna mensagem de não encontrado
         if (empty($produtos)) {
-            return response()->json(['message' => 'Nenhum produto foi enviado para formatação'], 400);
+            return response()->json([
+                'mensagem' => 'Nenhum produto encontrado para sua pesquisa. Tente novamente com outras palavras-chave.',
+                'produtos_formatados' => 0
+            ]);
         }
         
         // Limitar a quantidade de produtos
