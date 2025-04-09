@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -100,7 +101,9 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $query = Str::lower($request->input('query'));
+
+        Log::info($query);
         
         if (strlen($query) < 3) {
             return response()->json(['message' => 'A pesquisa deve ter pelo menos 3 caracteres'], 400);
@@ -264,7 +267,7 @@ class ProductController extends Controller
             
             // Link afiliado (opcional)
             if ($incluirLink && !empty($produto['affiliate_link']) && $produto['affiliate_link'] != '#') {
-                $mensagem .= "🔗 [Ver produto]({$produto['affiliate_link']})\n\n";
+                $mensagem .= "🔗 Link: {$produto['affiliate_link']}\n\n";
             } else {
                 $mensagem .= "\n";
             }
