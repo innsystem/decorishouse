@@ -157,6 +157,8 @@ class ProductController extends Controller
      */
     public function formatWhatsAppMessage(Request $request)
     {
+        \Log::info('Request :: ' . json_encode($request->all()));
+        
         $produtos = $request->input('produtos', []);
         $titulo = $request->input('titulo', '🛒 Produtos encontrados:');
         $incluirPreco = $request->input('incluir_preco', true);
