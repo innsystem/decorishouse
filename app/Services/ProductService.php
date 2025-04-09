@@ -60,11 +60,11 @@ class ProductService
 	}
 
 	// Funcao responsável por pesquisar os produtos na base
-	public function searchProducts($query)
+	public function searchProducts($query, $limit = 5)
 	{
 		return Product::where('name', 'like', "%{$query}%")
 			->with('affiliateLink') // Relacionamento para obter o link afiliado
-			->limit(10) // Limita a 10 resultados
+			->limit($limit) // Limita a 10 resultados
 			->get()
 			->map(function ($product) {
 				return [

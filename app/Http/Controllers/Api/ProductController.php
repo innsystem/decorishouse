@@ -102,8 +102,6 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $query = Str::lower($request->input('query'));
-
-        Log::info($query);
         
         if (strlen($query) < 3) {
             return response()->json(['message' => 'A pesquisa deve ter pelo menos 3 caracteres'], 400);
