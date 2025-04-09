@@ -176,32 +176,8 @@ class ProductController extends Controller
                 // Registra no log o que foi recebido
                 Log::info('Recebido search_results_json: ' . $search_results_json);
                 
-                // Tenta corrigir e decodificar o JSON
-                // Primeiro verifica se precisamos adicionar colchetes para fazer um array
-                $jsonCorrigido = $search_results_json;
-                
-                // Verificar se o JSON parece uma sequência de objetos sem estar em um array
-                // (quando começa com { e contém várias ocorrências de "id":)
-                if (substr(trim($jsonCorrigido), 0, 1) === '{' && 
-                    substr_count($jsonCorrigido, '"id":') > 1) {
-                    // Adiciona colchetes se parecer uma sequência de objetos sem estar em um array
-                    $jsonCorrigido = '[' . $jsonCorrigido . ']';
-                    Log::info('JSON corrigido com colchetes adicionados: ' . $jsonCorrigido);
-                }
-                
-                // Verifica por problemas de truncamento
-                $lastChar = substr(trim($jsonCorrigido), -1);
-                if ($lastChar !== ']' && $lastChar !== '}') {
-                    // Tenta encontrar o último objeto JSON completo
-                    $lastValidJson = $this->encontrarUltimoObjetoValido($jsonCorrigido);
-                    if (!empty($lastValidJson)) {
-                        $jsonCorrigido = $lastValidJson;
-                        Log::info('JSON corrigido após truncamento: ' . $jsonCorrigido);
-                    }
-                }
-                
-                // Trata formatações incorretas conhecidas
-                $jsonCorrigido = str_replace('}{', '},{', $jsonCorrigido);
+                // Corrige o JSON adicionando colchetes e tratando objetos sequenciais
+                $jsonCorrigido = $this->corrigirJsonMalformado($search_results_json);
                 
                 // Tenta decodificar o JSON corrigido
                 $decoded = json_decode($jsonCorrigido, true);
@@ -282,6 +258,57 @@ class ProductController extends Controller
             'mensagem' => $mensagem,
             'produtos_formatados' => count($produtos)
         ]);
+    }
+    
+    /**
+     * Corrige JSON malformado, especialmente para casos de objetos sequenciais sem estarem em array
+     *
+     * @param string $jsonString
+     * @return string
+     */
+    private function corrigirJsonMalformado($jsonString)
+    {
+        // Remove espaços em branco no início e fim
+        $jsonString = trim($jsonString);
+        
+        // Verifica se já é um array válido
+        if (substr($jsonString, 0, 1) === '[' && substr($jsonString, -1) === ']') {
+            return $jsonString;
+        }
+        
+        // Verifica se temos objetos sequenciais (o padrão do erro encontrado)
+        // Padrão: {"prop":"value"},{"prop":"value"} (sem colchetes de array)
+        if (substr($jsonString, 0, 1) === '{' && 
+            (strpos($jsonString, '},{') !== false || substr_count($jsonString, '{') > 1)) {
+            
+            // Adiciona colchetes para transformar em array
+            return '[' . $jsonString . ']';
+        }
+        
+        // Se for apenas um objeto individual
+        if (substr($jsonString, 0, 1) === '{' && substr($jsonString, -1) === '}') {
+            return '[' . $jsonString . ']';
+        }
+        
+        // Caso contrário, tentar corrigir possíveis problemas sintáticos comuns
+        $jsonCorrigido = $jsonString;
+        
+        // Corrige objetos sequenciais sem vírgula
+        $jsonCorrigido = preg_replace('/\}\s*\{/', '},{', $jsonCorrigido);
+        
+        // Adiciona colchetes se ainda não tiver
+        if (substr($jsonCorrigido, 0, 1) !== '[') {
+            $jsonCorrigido = '[' . $jsonCorrigido;
+        }
+        
+        if (substr($jsonCorrigido, -1) !== ']') {
+            $jsonCorrigido .= ']';
+        }
+        
+        // Registra a correção
+        Log::info('JSON corrigido: ' . $jsonCorrigido);
+        
+        return $jsonCorrigido;
     }
     
     /**
