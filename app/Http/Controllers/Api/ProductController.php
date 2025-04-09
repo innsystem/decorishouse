@@ -173,11 +173,44 @@ class ProductController extends Controller
                 // Registra no log o que foi recebido
                 Log::info('Recebido search_results_json: ' . $search_results_json);
                 
-                // Tenta decodificar como JSON
-                $decoded = json_decode($search_results_json, true);
+                // Tenta corrigir e decodificar o JSON
+                // Primeiro verifica se precisamos adicionar colchetes para fazer um array
+                $jsonCorrigido = $search_results_json;
+                
+                // Verificar se o JSON parece uma sequência de objetos sem estar em um array
+                // (quando começa com { e contém várias ocorrências de "id":)
+                if (substr(trim($jsonCorrigido), 0, 1) === '{' && 
+                    substr_count($jsonCorrigido, '"id":') > 1) {
+                    // Adiciona colchetes se parecer uma sequência de objetos sem estar em um array
+                    $jsonCorrigido = '[' . $jsonCorrigido . ']';
+                    Log::info('JSON corrigido com colchetes adicionados: ' . $jsonCorrigido);
+                }
+                
+                // Verifica por problemas de truncamento
+                $lastChar = substr(trim($jsonCorrigido), -1);
+                if ($lastChar !== ']' && $lastChar !== '}') {
+                    // Tenta encontrar o último objeto JSON completo
+                    $lastValidJson = $this->encontrarUltimoObjetoValido($jsonCorrigido);
+                    if (!empty($lastValidJson)) {
+                        $jsonCorrigido = $lastValidJson;
+                        Log::info('JSON corrigido após truncamento: ' . $jsonCorrigido);
+                    }
+                }
+                
+                // Trata formatações incorretas conhecidas
+                $jsonCorrigido = str_replace('}{', '},{', $jsonCorrigido);
+                
+                // Tenta decodificar o JSON corrigido
+                $decoded = json_decode($jsonCorrigido, true);
                 
                 if ($decoded === null) {
-                    Log::error('Falha ao decodificar JSON: ' . json_last_error_msg());
+                    Log::error('Falha ao decodificar JSON mesmo após correções: ' . json_last_error_msg());
+                    
+                    // Tentativa com regex para extrair produtos individuais
+                    $produtos = $this->extrairProdutosPorRegex($search_results_json);
+                    if (!empty($produtos)) {
+                        Log::info('Produtos extraídos por regex: ' . count($produtos));
+                    }
                 } 
                 // Se for um objeto único, transforma em array com um item
                 elseif (is_array($decoded) && isset($decoded['name'])) {
@@ -248,6 +281,61 @@ class ProductController extends Controller
         ]);
     }
     
+    /**
+     * Tenta encontrar o último objeto JSON válido em uma string truncada
+     *
+     * @param string $jsonString
+     * @return string
+     */
+    private function encontrarUltimoObjetoValido($jsonString)
+    {
+        // Verifica se a string parece estar no formato de um array de objetos
+        if (substr(trim($jsonString), 0, 1) === '[') {
+            // Encontra o último objeto completo em um array
+            $matches = [];
+            preg_match_all('/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/', $jsonString, $matches);
+            
+            if (!empty($matches[0])) {
+                // Reconstroí o array com objetos válidos
+                return '[' . implode(',', $matches[0]) . ']';
+            }
+        } elseif (substr(trim($jsonString), 0, 1) === '{') {
+            // Para um único objeto, tenta extrair o objeto completo
+            $matches = [];
+            if (preg_match('/(\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})/', $jsonString, $matches)) {
+                return $matches[0];
+            }
+        }
+        
+        return '';
+    }
+    
+    /**
+     * Extrai produtos de um JSON malformado usando regex
+     *
+     * @param string $jsonString
+     * @return array
+     */
+    private function extrairProdutosPorRegex($jsonString)
+    {
+        $produtos = [];
+        $pattern = '/"id"\s*:\s*(\d+)\s*,\s*"name"\s*:\s*"([^"]+)"\s*,\s*"price"\s*:\s*"([^"]+)"\s*(?:,\s*"price_promotion"\s*:\s*"([^"]+)")?\s*(?:,\s*[^{}]+)?\s*,\s*"affiliate_link"\s*:\s*"([^"]+)"/i';
+        
+        preg_match_all($pattern, $jsonString, $matches, PREG_SET_ORDER);
+        
+        foreach ($matches as $match) {
+            $produtos[] = [
+                'id' => $match[1] ?? '',
+                'name' => $match[2] ?? '',
+                'price' => $match[3] ?? 0,
+                'price_promotion' => $match[4] ?? null,
+                'affiliate_link' => $match[5] ?? '#'
+            ];
+        }
+        
+        return $produtos;
+    }
+
     /**
      * Converte um número para emoji de número
      *
