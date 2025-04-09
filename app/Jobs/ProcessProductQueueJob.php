@@ -35,8 +35,9 @@ class ProcessProductQueueJob implements ShouldQueue
     {
         // Buscar o primeiro produto pendente agendado para o momento atual ou anterior
         $productJob = ProductListJob::where('status', 'pendente')
-            ->where('scheduled_at', '<=', now())
-            ->orderBy('scheduled_at', 'asc')
+            // ->where('scheduled_at', '<=', now())
+            // ->orderBy('scheduled_at', 'asc')
+            ->inRandomOrder()
             ->first();
 
         if (!$productJob) {

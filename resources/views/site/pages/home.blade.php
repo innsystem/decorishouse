@@ -1,6 +1,6 @@
 @extends('site.base')
 
-@section('title', 'Transforme sua Casa')
+@section('title', $getSettings['meta_description'])
 
 @section('content')
 <!-- Slider Principal Fullscreen-->
