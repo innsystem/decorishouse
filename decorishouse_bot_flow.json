@@ -1,0 +1,679 @@
+{
+  "version": "6",
+  "id": "cm96zxeyb0009o7h8bjvotayz",
+  "name": "Decoris House Bot",
+  "events": [
+    {
+      "id": "k6kY6gwRE6noPoYQNGzgUq",
+      "outgoingEdgeId": "xgmrux2bhoa47z0kaaqjtzh7",
+      "graphCoordinates": {
+        "x": 0,
+        "y": 0
+      },
+      "type": "start"
+    }
+  ],
+  "groups": [
+    {
+      "id": "x5kd6px6q3z8ep1u2twg7e7t",
+      "title": "Boas-vindas",
+      "graphCoordinates": {
+        "x": 137.16,
+        "y": 92.61
+      },
+      "blocks": [
+        {
+          "id": "f8pu18z2snnt42toxie0749o",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Olá! Bem-vindo(a) à Decoris House, sua loja de decoração para casa. Como você se chama?"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "aqog8r35lp1sal11itnkfxdl",
+          "outgoingEdgeId": "sav7h5zm3shbbamqz48738m8",
+          "type": "text input",
+          "options": {
+            "labels": {
+              "placeholder": "Digite seu nome",
+              "button": "Enviar"
+            },
+            "variableId": "giiLFGw5xXBCHzvp1qAbdX"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tfuw8qzlma9qh90kc7dl5r2g",
+      "title": "Salvar Número",
+      "graphCoordinates": {
+        "x": 540,
+        "y": 92
+      },
+      "blocks": [
+        {
+          "id": "khmhog8emiak6t07kqoj7mht",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Seja bem-vindo(a) {{Name}}! É um prazer atender você. 😊"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "savePhoneNumber",
+          "type": "set variable",
+          "options": {
+            "variableId": "telefone_cliente",
+            "expressionToEvaluate": "{{whatsapp_number}}"
+          },
+          "outgoingEdgeId": "toMenuPrincipal"
+        }
+      ]
+    },
+    {
+      "id": "menuPrincipal",
+      "title": "Menu Principal",
+      "graphCoordinates": {
+        "x": 940,
+        "y": 92
+      },
+      "blocks": [
+        {
+          "id": "menuPrincipalText",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "O que você gostaria de fazer hoje?"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "menuPrincipalButtons",
+          "type": "choice input",
+          "options": {
+            "buttonLabel": "Enviar",
+            "isMultipleChoice": false,
+            "items": [
+              {
+                "id": "verPromocoes",
+                "content": "Ver Promoções Recentes",
+                "outgoingEdgeId": "toPromocoes"
+              },
+              {
+                "id": "pesquisarProduto",
+                "content": "Pesquisar Produto",
+                "outgoingEdgeId": "toPesquisa"
+              },
+              {
+                "id": "falarAtendente",
+                "content": "Falar com Atendente",
+                "outgoingEdgeId": "toAtendente"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "promocoes",
+      "title": "Promoções Recentes",
+      "graphCoordinates": {
+        "x": 1340,
+        "y": 0
+      },
+      "blocks": [
+        {
+          "id": "promoText",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Estou buscando as melhores promoções para você... 🔍"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "getPromotions",
+          "type": "webhook",
+          "options": {
+            "variableId": "resultados_promocoes",
+            "webhook": {
+              "method": "GET",
+              "url": "https://decorishouse.com.br/api/products/promotions?limit=5",
+              "headers": {},
+              "body": {}
+            }
+          }
+        },
+        {
+          "id": "showPromotions",
+          "type": "code",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "const promocoes = resultados_promocoes || [];\nlet mensagem = \"\";\n\nif (promocoes.length === 0) {\n  mensagem = \"Desculpe, não encontramos promoções no momento. Tente novamente mais tarde ou fale com um de nossos atendentes.\";\n} else {\n  mensagem = \"🔥 *PROMOÇÕES IMPERDÍVEIS* 🔥\\n\\n\";\n  \n  promocoes.forEach((produto, index) => {\n    const precoNormal = produto.price.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});\n    const precoPromo = produto.price_promotion.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});\n    \n    mensagem += `*${index + 1}. ${produto.name}*\\n`;\n    mensagem += `De ${precoNormal} por ${precoPromo} 🏷️\\n`;\n    mensagem += `Desconto: ${produto.discount_percentage}% 😱\\n`;\n    mensagem += `Link: ${produto.affiliate_link}\\n\\n`;\n  });\n}\n\nreturn mensagem;"
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "variableId": "mensagem_promocoes",
+            "responseMapping": []
+          }
+        },
+        {
+          "id": "displayPromotions",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "{{mensagem_promocoes}}"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "backToMenuFromPromo",
+          "type": "choice input",
+          "options": {
+            "buttonLabel": "Enviar",
+            "isMultipleChoice": false,
+            "items": [
+              {
+                "id": "backToMenuPromo",
+                "content": "Voltar ao Menu Principal",
+                "outgoingEdgeId": "backToMenu"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "pesquisaProduto",
+      "title": "Pesquisa de Produto",
+      "graphCoordinates": {
+        "x": 1340,
+        "y": 300
+      },
+      "blocks": [
+        {
+          "id": "askSearchTerm",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "O que você está procurando? Digite o nome do produto."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "searchTermInput",
+          "type": "text input",
+          "options": {
+            "labels": {
+              "placeholder": "Ex: Mesa de centro",
+              "button": "Pesquisar"
+            },
+            "variableId": "termo_pesquisa"
+          }
+        },
+        {
+          "id": "validateSearchTerm",
+          "type": "code",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "const termo = termo_pesquisa || \"\";\n\nif (termo.length < 3) {\n  return {\n    isValid: false,\n    message: \"Por favor, digite pelo menos 3 caracteres para a pesquisa.\"\n  };\n} else {\n  return {\n    isValid: true\n  };\n}"
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "variableId": "validacao_pesquisa",
+            "responseMapping": []
+          }
+        },
+        {
+          "id": "checkValidation",
+          "type": "condition",
+          "items": [
+            {
+              "id": "isValid",
+              "content": "validacao_pesquisa.isValid === true",
+              "outgoingEdgeId": "toSearchProduct"
+            },
+            {
+              "id": "notValid",
+              "content": "validacao_pesquisa.isValid === false",
+              "outgoingEdgeId": "toInvalidSearch"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "invalidsearch",
+      "title": "Termo Inválido",
+      "graphCoordinates": {
+        "x": 1740,
+        "y": 200
+      },
+      "blocks": [
+        {
+          "id": "invalidSearchMessage",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "{{validacao_pesquisa.message}}"
+                  }
+                ]
+              }
+            ]
+          },
+          "outgoingEdgeId": "backToPesquisa"
+        }
+      ]
+    },
+    {
+      "id": "searchProduct",
+      "title": "Buscar Produto",
+      "graphCoordinates": {
+        "x": 1740,
+        "y": 300
+      },
+      "blocks": [
+        {
+          "id": "searchingText",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Procurando por \"{{termo_pesquisa}}\"... 🔍"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "searchProducts",
+          "type": "webhook",
+          "options": {
+            "variableId": "resultados_pesquisa",
+            "webhook": {
+              "method": "GET",
+              "url": "https://decorishouse.com.br/api/products/search?query={{termo_pesquisa}}",
+              "headers": {},
+              "body": {}
+            }
+          }
+        },
+        {
+          "id": "formatSearchResults",
+          "type": "code",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "const produtos = resultados_pesquisa || [];\nlet mensagem = \"\";\n\nif (produtos.length === 0) {\n  mensagem = `Desculpe, não encontramos produtos com o termo \"${termo_pesquisa}\". Tente uma nova pesquisa ou fale com um de nossos atendentes.`;\n} else {\n  mensagem = `🔎 *RESULTADOS PARA \"${termo_pesquisa.toUpperCase()}\"* 🔎\\n\\n`;\n  \n  produtos.forEach((produto, index) => {\n    mensagem += `*${index + 1}. ${produto.name}*\\n`;\n    \n    if (produto.price_promotion) {\n      const precoNormal = produto.price.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});\n      const precoPromo = produto.price_promotion.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});\n      mensagem += `De ${precoNormal} por ${precoPromo} 🏷️\\n`;\n    } else {\n      const preco = produto.price.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});\n      mensagem += `Preço: ${preco}\\n`;\n    }\n    \n    mensagem += `Link: ${produto.affiliate_link}\\n\\n`;\n  });\n}\n\nreturn mensagem;"
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "variableId": "mensagem_pesquisa",
+            "responseMapping": []
+          }
+        },
+        {
+          "id": "displaySearchResults",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "{{mensagem_pesquisa}}"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "searchOptions",
+          "type": "choice input",
+          "options": {
+            "buttonLabel": "Enviar",
+            "isMultipleChoice": false,
+            "items": [
+              {
+                "id": "newSearch",
+                "content": "Nova Pesquisa",
+                "outgoingEdgeId": "toNewSearch"
+              },
+              {
+                "id": "backToMenuSearch",
+                "content": "Voltar ao Menu Principal",
+                "outgoingEdgeId": "backToMenu"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "atendente",
+      "title": "Falar com Atendente",
+      "graphCoordinates": {
+        "x": 1340,
+        "y": 600
+      },
+      "blocks": [
+        {
+          "id": "atendenteText",
+          "type": "text",
+          "content": {
+            "richText": [
+              {
+                "type": "p",
+                "children": [
+                  {
+                    "text": "Perfeito, {{Name}}! Vou transferir você para um de nossos atendentes. Por favor, aguarde um momento. 🙂"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "storeClientData",
+          "type": "webhook",
+          "options": {
+            "webhook": {
+              "method": "POST",
+              "url": "https://hook.eu1.make.com/seu-webhook-aqui",
+              "headers": {
+                "Content-Type": "application/json"
+              },
+              "body": {
+                "nome": "{{Name}}",
+                "telefone": "{{telefone_cliente}}"
+              }
+            }
+          }
+        },
+        {
+          "id": "transferToHuman",
+          "type": "human handoff",
+          "options": {
+            "action": "Transfer to human"
+          }
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "xgmrux2bhoa47z0kaaqjtzh7",
+      "from": {
+        "eventId": "k6kY6gwRE6noPoYQNGzgUq"
+      },
+      "to": {
+        "groupId": "x5kd6px6q3z8ep1u2twg7e7t"
+      }
+    },
+    {
+      "id": "sav7h5zm3shbbamqz48738m8",
+      "from": {
+        "blockId": "aqog8r35lp1sal11itnkfxdl"
+      },
+      "to": {
+        "groupId": "tfuw8qzlma9qh90kc7dl5r2g"
+      }
+    },
+    {
+      "id": "toMenuPrincipal",
+      "from": {
+        "blockId": "savePhoneNumber"
+      },
+      "to": {
+        "groupId": "menuPrincipal"
+      }
+    },
+    {
+      "id": "toPromocoes",
+      "from": {
+        "blockId": "verPromocoes"
+      },
+      "to": {
+        "groupId": "promocoes"
+      }
+    },
+    {
+      "id": "toPesquisa",
+      "from": {
+        "blockId": "pesquisarProduto"
+      },
+      "to": {
+        "groupId": "pesquisaProduto"
+      }
+    },
+    {
+      "id": "toAtendente",
+      "from": {
+        "blockId": "falarAtendente"
+      },
+      "to": {
+        "groupId": "atendente"
+      }
+    },
+    {
+      "id": "backToMenu",
+      "from": {
+        "blockId": "backToMenuPromo"
+      },
+      "to": {
+        "groupId": "menuPrincipal"
+      }
+    },
+    {
+      "id": "backToMenu",
+      "from": {
+        "blockId": "backToMenuSearch"
+      },
+      "to": {
+        "groupId": "menuPrincipal"
+      }
+    },
+    {
+      "id": "toSearchProduct",
+      "from": {
+        "blockId": "isValid"
+      },
+      "to": {
+        "groupId": "searchProduct"
+      }
+    },
+    {
+      "id": "toInvalidSearch",
+      "from": {
+        "blockId": "notValid"
+      },
+      "to": {
+        "groupId": "invalidsearch"
+      }
+    },
+    {
+      "id": "backToPesquisa",
+      "from": {
+        "blockId": "invalidSearchMessage"
+      },
+      "to": {
+        "groupId": "pesquisaProduto"
+      }
+    },
+    {
+      "id": "toNewSearch",
+      "from": {
+        "blockId": "newSearch"
+      },
+      "to": {
+        "groupId": "pesquisaProduto"
+      }
+    }
+  ],
+  "variables": [
+    {
+      "id": "giiLFGw5xXBCHzvp1qAbdX",
+      "name": "Name",
+      "isSessionVariable": false
+    },
+    {
+      "id": "telefone_clienteId",
+      "name": "telefone_cliente",
+      "isSessionVariable": false
+    },
+    {
+      "id": "termo_pesquisaId",
+      "name": "termo_pesquisa",
+      "isSessionVariable": false
+    },
+    {
+      "id": "resultados_promocoesId",
+      "name": "resultados_promocoes",
+      "isSessionVariable": false
+    },
+    {
+      "id": "resultados_pesquisaId",
+      "name": "resultados_pesquisa",
+      "isSessionVariable": false
+    },
+    {
+      "id": "mensagem_promocoesId",
+      "name": "mensagem_promocoes",
+      "isSessionVariable": false
+    },
+    {
+      "id": "mensagem_pesquisaId",
+      "name": "mensagem_pesquisa",
+      "isSessionVariable": false
+    },
+    {
+      "id": "validacao_pesquisaId",
+      "name": "validacao_pesquisa",
+      "isSessionVariable": false
+    },
+    {
+      "id": "whatsapp_numberId",
+      "name": "whatsapp_number",
+      "isSessionVariable": true
+    }
+  ],
+  "theme": {
+    "chat": {
+      "inputs": {
+        "color": "#303235",
+        "backgroundColor": "#FFFFFF",
+        "placeholderColor": "#9095A0"
+      },
+      "buttons": {
+        "color": "#FFFFFF",
+        "backgroundColor": "#006f9e"
+      },
+      "hostBubbles": {
+        "color": "#303235",
+        "backgroundColor": "#F7F8FF"
+      },
+      "guestBubbles": {
+        "color": "#FFFFFF",
+        "backgroundColor": "#006f9e"
+      }
+    }
+  },
+  "selectedThemeTemplateId": null,
+  "settings": {
+    "general": {
+      "isBrandingEnabled": false,
+      "isInputPrefillEnabled": true,
+      "isHideQueryParamsEnabled": true
+    },
+    "whatsapp": {
+      "isEnabled": true,
+      "startCondition": "ALWAYS"
+    }
+  },
+  "createdAt": "2025-04-07T11:36:33.779Z",
+  "updatedAt": "2025-04-09T10:27:00.594Z",
+  "icon": "🏠",
+  "folderId": null,
+  "publicId": "decoris-house-bot",
+  "customDomain": null,
+  "workspaceId": "cm96zu6u90003o7h8bdbqfgi5",
+  "resultsTablePreferences": null,
+  "isArchived": false,
+  "isClosed": false,
+  "whatsAppCredentialsId": null,
+  "riskLevel": null
+} 

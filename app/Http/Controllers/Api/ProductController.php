@@ -109,4 +109,32 @@ class ProductController extends Controller
         
         return response()->json($products);
     }
+
+    /**
+     * Retorna os produtos mais recentes
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function recent(Request $request)
+    {
+        $limit = $request->input('limit', 5);
+        $products = $this->productService->getRecentProducts($limit);
+        
+        return response()->json($products);
+    }
+
+    /**
+     * Retorna os produtos em promoção
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function promotions(Request $request)
+    {
+        $limit = $request->input('limit', 5);
+        $products = $this->productService->getPromotionalProducts($limit);
+        
+        return response()->json($products);
+    }
 }

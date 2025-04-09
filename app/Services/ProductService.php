@@ -59,6 +59,84 @@ class ProductService
 		return $model->delete();
 	}
 
+	// Funcao responsável por pesquisar os produtos na base
+	public function searchProducts($query)
+	{
+		return Product::where('name', 'like', "%{$query}%")
+			->with('affiliateLink') // Relacionamento para obter o link afiliado
+			->limit(10) // Limita a 10 resultados
+			->get()
+			->map(function ($product) {
+				return [
+					'name' => $product->name,
+					'affiliate_link' => $product->affiliateLink->affiliate_link ?? '#',
+				];
+			});
+	}
+	/**
+	 * Retorna os produtos mais recentes
+	 *
+	 * @param int $limit Limite de produtos a serem retornados
+	 * @return \Illuminate\Support\Collection
+	 */
+	public function getRecentProducts($limit = 5)
+	{
+		return Product::where('status', 1) // Somente produtos ativos
+			->with(['affiliateLink', 'categories']) // Relacionamentos para obter o link afiliado e categorias
+			->orderBy('created_at', 'desc') // Ordenados pelos mais recentes
+			->limit($limit) // Limita ao número de resultados solicitados
+			->get()
+			->map(function ($product) {
+				return [
+					'id' => $product->id,
+					'name' => $product->name,
+					'price' => $product->price,
+					'price_promotion' => $product->price_promotion,
+					'images' => $product->images,
+					'affiliate_link' => $product->affiliateLink->affiliate_link ?? '#',
+					'categories' => $product->categories->pluck('name')->toArray(),
+					'created_at' => $product->created_at->format('d/m/Y')
+				];
+			});
+	}
+
+	/**
+	 * Retorna os produtos em promoção
+	 *
+	 * @param int $limit Limite de produtos a serem retornados
+	 * @return \Illuminate\Support\Collection
+	 */
+	public function getPromotionalProducts($limit = 5)
+	{
+		return Product::where('status', 1) // Somente produtos ativos
+			->whereNotNull('price_promotion') // Produtos com preço promocional
+			->where('price_promotion', '>', 0) // Preço promocional maior que zero
+			->where('price_promotion', '<', 'price') // Preço promocional menor que o preço normal
+			->with(['affiliateLink', 'categories']) // Relacionamentos para obter o link afiliado e categorias
+			->orderBy('created_at', 'desc') // Ordenados pelos mais recentes
+			->limit($limit) // Limita ao número de resultados solicitados
+			->get()
+			->map(function ($product) {
+				$discountPercentage = 0;
+				if ($product->price > 0) {
+					$discountPercentage = round((($product->price - $product->price_promotion) / $product->price) * 100);
+				}
+
+				return [
+					'id' => $product->id,
+					'name' => $product->name,
+					'price' => $product->price,
+					'price_promotion' => $product->price_promotion,
+					'discount_percentage' => $discountPercentage,
+					'images' => $product->images,
+					'affiliate_link' => $product->affiliateLink->affiliate_link ?? '#',
+					'categories' => $product->categories->pluck('name')->toArray(),
+					'created_at' => $product->created_at->format('d/m/Y')
+				];
+			});
+	}
+
+
 	// Fuuncao responsável por cadastrar produto API Marketplaces
 	public function processProductNow($result)
 	{
@@ -110,20 +188,6 @@ class ProductService
 		return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
 	}
 
-	// Funcao responsável por pesquisar os produtos na base
-	public function searchProducts($query)
-	{
-		return Product::where('name', 'like', "%{$query}%")
-			->with('affiliateLink') // Relacionamento para obter o link afiliado
-			->limit(10) // Limita a 10 resultados
-			->get()
-			->map(function ($product) {
-				return [
-					'name' => $product->name,
-					'affiliate_link' => $product->affiliateLink->affiliate_link ?? '#',
-				];
-			});
-	}
 
 	// Funcao auxiliar para configurações dos templates usado na funcao generateProductStory()
 	private function getTemplateStoryConfig($templateName)
@@ -139,13 +203,13 @@ class ProductService
 				'text_width' => 800,
 				'text_size' => 52,
 				'text_color' => '#FFFFFF',
-				'bg_color' => '#c92f17', 
+				'bg_color' => '#c92f17',
 				'text_price_x' => 395,
 				'text_price_y' => 1550,
 				'text_price_width' => 500,
 				'text_price_size' => 50,
-				'text_price_color' => '#c92f17', 
-				'bg_price_color' => '#FFFFFF', 
+				'text_price_color' => '#c92f17',
+				'bg_price_color' => '#FFFFFF',
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
 			'template_modelo_shopee_2.png' => [
@@ -158,13 +222,13 @@ class ProductService
 				'text_width' => 800,
 				'text_size' => 52,
 				'text_color' => '#4c3018',
-				'bg_color' => '#FFFFFF', 
+				'bg_color' => '#FFFFFF',
 				'text_price_x' => 395,
 				'text_price_y' => 1550,
 				'text_price_width' => 500,
 				'text_price_size' => 50,
-				'text_price_color' => '#4c3018', 
-				'bg_price_color' => '#FFFFFF', 
+				'text_price_color' => '#4c3018',
+				'bg_price_color' => '#FFFFFF',
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
 			'template_modelo_1.png' => [
@@ -177,13 +241,13 @@ class ProductService
 				'text_width' => 800,
 				'text_size' => 52,
 				'text_color' => '#FFFFFF',
-				'bg_color' => '#4c3018', 
+				'bg_color' => '#4c3018',
 				'text_price_x' => 395,
 				'text_price_y' => 1650,
 				'text_price_width' => 500,
 				'text_price_size' => 48,
-				'text_price_color' => '#4c3018', 
-				'bg_price_color' => '#FFFFFF', 
+				'text_price_color' => '#4c3018',
+				'bg_price_color' => '#FFFFFF',
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
 			'template_modelo_2.png' => [
@@ -195,14 +259,14 @@ class ProductService
 				'text_y' => 1520,
 				'text_width' => 800,
 				'text_size' => 52,
-				'text_color' => '#4c3018', 
-				'bg_color' => '#FFFFFF', 
+				'text_color' => '#4c3018',
+				'bg_color' => '#FFFFFF',
 				'text_price_x' => 395,
 				'text_price_y' => 1650,
 				'text_price_width' => 500,
 				'text_price_size' => 48,
-				'text_price_color' => '#4c3018', 
-				'bg_price_color' => '#FFFFFF', 
+				'text_price_color' => '#4c3018',
+				'bg_price_color' => '#FFFFFF',
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
 		];
@@ -297,9 +361,9 @@ class ProductService
 		$price_max = number_format($product->price, 2, ',', '.');
 
 		$text_price = "Promoção R$ {$price_min}!\n" .
-		($product->price_promotion > $product->price
-			? "💰 Promoção R$ {$price_min} ~ R$ {$price_max}!\n\n"
-			: "");
+			($product->price_promotion > $product->price
+				? "💰 Promoção R$ {$price_min} ~ R$ {$price_max}!\n\n"
+				: "");
 		$text_price_x = $config['text_price_x'];
 		$text_price_y = $config['text_price_y'];
 		$text_price_size = $config['text_price_size'];
@@ -353,7 +417,7 @@ class ProductService
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 	}
 
-	
+
 	private function getTemplateFeedConfig($templateName)
 	{
 		$configs = [
@@ -361,7 +425,7 @@ class ProductService
 				'image_x' => 0,
 				'image_y' => 0,
 				'image_width' => 1080,
-				'image_height' => 1080,				
+				'image_height' => 1080,
 				'font' => public_path('/galerias/fonts/nyala.ttf'),
 			],
 			// 'template_modelo_2.png' => [
