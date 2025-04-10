@@ -248,6 +248,7 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/delete', 'delete')->name('admin.products.delete')->middleware('permission:admin.products.delete');
             Route::post('/{id}/generate-image', 'generateImageStory')->name('admin.products.generateImageStory');
             Route::post('/{id}/generate-image-feed', 'generateImageFeed')->name('admin.products.generateImageFeed');
+            Route::post('/{id}/facebook-catalog', 'facebookCatalog')->name('admin.products.facebookCatalog');
 
             Route::get('/generateSuggestions', 'generateSuggestions')->name('admin.products.generateSuggestions');
         });

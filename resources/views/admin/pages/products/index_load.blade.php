@@ -42,6 +42,9 @@
 
         {{-- Botões de ação --}}
         <div>
+            <button type="button" class="btn btn-sm btn-secondary button-products-facebook-catalog" data-product-id="{{$product->id}}">
+                <i class="fab fa-facebook me-1"></i> <i class="fab fa-instagram"></i> Cadastrar no Catalogo
+            </button>
             <button type="button" class="btn btn-sm btn-secondary button-products-generate-image-feed" data-product-id="{{$product->id}}">
                 <i class="fab fa-facebook me-1"></i> <i class="fab fa-instagram"></i> Postar Feed
             </button>

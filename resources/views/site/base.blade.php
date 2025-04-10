@@ -66,7 +66,7 @@
             margin-top: 5px;
             padding: 10px 0;
         }
-        
+
         .search-results-container a {
             display: block;
             padding: 10px 15px;
@@ -75,25 +75,25 @@
             transition: all 0.2s ease;
             border-bottom: 1px solid #f5f5f5;
         }
-        
+
         .search-results-container a:hover {
             background-color: #f8f9fa;
         }
-        
+
         .search-results-container a.view-all-results {
             background-color: #f5f5f5;
             text-align: center;
             font-weight: bold;
             color: var(--bs-main-600);
         }
-        
+
         .search-results-container .no-results {
             display: block;
             padding: 15px;
             text-align: center;
             color: #888;
         }
-        
+
         .search-results-container .highlight {
             background-color: rgba(255, 219, 77, 0.3);
             font-weight: bold;
@@ -101,6 +101,33 @@
     </style>
 
     @yield('pageCSS')
+
+    <!-- Meta Pixel Code -->
+    <script>
+        ! function(f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1005217031132127');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=1005217031132127&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZH92GES8SL"></script>
@@ -416,10 +443,10 @@
 
                         if (data.length > 0) {
                             let regex = new RegExp(`(${query})`, 'gi'); // Expressão regular para encontrar a palavra
-                            
+
                             // Adicionar link para ver todos os resultados
                             resultsContainer.append(`<a href="{{ route('site.search') }}?query=${encodeURIComponent(query)}" class="view-all-results">Ver todos os resultados para "${query}"</a>`);
-                            
+
                             // Adicionar resultados rápidos (limitados a 6)
                             data.slice(0, 6).forEach(function(product) {
                                 let highlightedName = product.name.replace(regex, '<span class="highlight">$1</span>'); // Destaca a palavra-chave
@@ -445,7 +472,7 @@
                     $('#search-results').hide();
                 }
             });
-            
+
             // Impedir envio do formulário se o campo estiver vazio
             $('form[action="{{ route("site.search") }}"]').on('submit', function(e) {
                 let query = $('#search-input').val().trim();

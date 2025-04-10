@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Integration;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 use App\Models\Status;
 use App\Services\CategoryService;
 use App\Services\ProductService;
@@ -233,5 +235,66 @@ class ProductsController extends Controller
             'category' => $category->name,
             'products' => $products
         ]);
+    }
+
+    protected function putFacebookCatalog($product_id)
+    {
+        $product = Product::find($product_id);
+        dd($product);
+
+        $catalogId = '1359397078637160';
+
+        $accessToken = 'EABZCOLCOKmv4BOZB1PTbpW3BVPWKml4fChmj3rNZAE2AJdwnZBBzICT6f8FqEpVnlxcur0IZBzcKXgYrVAl7ARuPiw6XY7hE6b15OXJPZC9MJoLoE2DnxuOdiXq6PlYvVU7wKW0PLle4VCNiO3CE7VTc5lo9mRwvYVQHzVJjTWU0XCz1UGEhq4oQZBo4rMNeSQ4';
+
+        $data = [
+            'retailer_id' => $product->id,
+            'name' => $product->title,
+            'description' => $product->title,
+            'price' => round($product->price * 100), // Convertendo para centavos
+            'currency' => 'BRL',
+            'availability' => 'in stock', // Exemplo: in stock, out of stock
+            'condition' => 'new', // Exemplo: new, refurbished
+            'image_url' => url($product->image),
+            'url' => $product->link,
+        ];
+
+        //Log::info(json_encode($data));
+
+
+        // Verificar se o produto já existe no catálogo
+
+
+        $responseCheck = Http::withToken($accessToken)
+            ->get("https://graph.facebook.com/v17.0/" . $catalogId . "/products", [
+                'filter' => '{"retailer_id":{"eq":"' . $product_id . '"}}',
+            ]);
+
+        if ($responseCheck->failed()) {
+            Log::error("Erro ao consultar o produto {$product->id}: " . $responseCheck->body());
+        }
+
+        $existingProduct = $responseCheck->json();
+
+        // Se encontrar o produto, tenta atualizar, caso contrário, cria um novo
+        if (isset($existingProduct['data']) && count($existingProduct['data']) > 0) {
+            $existingProductId = $existingProduct['data'][0]['id'];
+            $responseUpdate = Http::withToken($accessToken)
+                ->post("https://graph.facebook.com/v17.0/{$existingProductId}", $data);
+
+            if ($responseUpdate->failed()) {
+                Log::error("Erro ao atualizar produto {$product->id}: " . $responseUpdate->body());
+            } else {
+                Log::info("Produto {$product->id} atualizado com sucesso.");
+            }
+        } else {
+            $responseCreate = Http::withToken($accessToken)
+                ->post("https://graph.facebook.com/v17.0/{$catalogId}/products", $data);
+
+            if ($responseCreate->failed()) {
+                Log::error("Erro ao criar produto {$product->id}: " . $responseCreate->body());
+            } else {
+                Log::info("Produto {$product->id} criado com sucesso.");
+            }
+        }
     }
 }

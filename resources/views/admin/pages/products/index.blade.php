@@ -315,7 +315,64 @@
         })
     });
 
-    // Delete
+    $(document).on('click', '.button-products-facebook-catalog', function(e) {
+        e.preventDefault();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            }
+        });
+
+        let button = $(this);
+        let product_id = $(this).data('product-id');
+        let product_name = $(this).data('product-name');
+
+        $.ajax({
+            url: `{{ url('/admin/products/${product_id}/facebook-catalog') }}`,
+            method: 'POST',
+            beforeSend: function() {
+                //disable the submit button
+                button.attr("disabled", true);
+                button.append('<i class="fa fa-spinner fa-spin ml-3"></i>');
+            },
+            complete: function() {
+                button.prop("disabled", false);
+                button.find('.fa-spinner').addClass('d-none');
+            },
+            success: function(data) {
+                Swal.fire({
+                    title: data.message,
+                    html: '<a href="' + data.image + '" target="_Blank"><img src="' + data.image + '" class="border border-radius img-fluid" style="max-width: 300px"></a><br><br><p>' + data.link_affiliate + '</p>',
+                    // icon: 'success',
+                    showClass: {
+                        popup: 'animate__animated animate__headShake'
+                    }
+                }).then((result) => {});
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    Swal.fire({
+                        text: xhr.responseJSON,
+                        icon: 'warning',
+                        showClass: {
+                            popup: 'animate__animated animate__headShake'
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        text: xhr.responseJSON,
+                        icon: 'error',
+                        showClass: {
+                            popup: 'animate__animated animate__headShake'
+                        }
+                    });
+                }
+            }
+        });
+
+    });
+
     $(document).on('click', '.button-products-generate-image', function(e) {
         e.preventDefault();
 
