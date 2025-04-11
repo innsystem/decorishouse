@@ -57,6 +57,7 @@ use App\Http\Controllers\Admin\InvoicesController;
 use App\Http\Controllers\Admin\TransactionsController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\Admin\ProductsController;
+use App\Http\Controllers\Admin\LogsController;
 
 // Group Admin
 Route::prefix('admin')->group(function () {
@@ -252,6 +253,12 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/facebook-catalog', 'facebookCatalog')->name('admin.products.facebookCatalog');
 
             Route::get('/generateSuggestions', 'generateSuggestions')->name('admin.products.generateSuggestions');
+        });
+        
+        // Rotas para gerenciamento de logs
+        Route::prefix('logs')->controller(LogsController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.logs.index')->middleware('permission:admin.index');
+            Route::post('/clear', 'clear')->name('admin.logs.clear')->middleware('permission:admin.index');
         });
     });
 });

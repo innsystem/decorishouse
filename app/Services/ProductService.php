@@ -277,7 +277,7 @@ class ProductService
 			],
 		];
 
-		return $configs[$templateName] ?? $configs['template_modelo_shopee.png']; // Retorna um padrão caso não exista
+		return $configs[$templateName] ?? $configs['template_modelo_1.png']; // Retorna um padrão caso não exista
 	}
 
 	// Funcao responsável por gerar imagem do produto para Story e Enviar no WhatsApp com Link

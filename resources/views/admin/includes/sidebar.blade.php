@@ -37,6 +37,7 @@
             @if (auth()->user()->hasPermission('admin.user_groups.index'))
             <li><a href="{{ route('admin.user_groups.index') }}">Grupo de Usuários</a></li>
             @endif
+            <li><a href="{{ route('admin.logs.index') }}"><i class="ri-file-list-line"></i> Logs do Sistema</a></li>
         </ul>
     </div>
 </li>
