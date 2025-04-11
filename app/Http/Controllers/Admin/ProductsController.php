@@ -245,7 +245,7 @@ class ProductsController extends Controller
 
         $catalogId = '1359397078637160';
 
-        $accessToken = 'EAAHqUWZCqHiUBO0ypPYLIpZBclTVB0pDytQRY6u8VgbmeedAu6dqRUE0ZBz8FlyhlVPRgWdh0b0ZAsaWKw6RFFaRcJBZCodaWZBFV6U1uo940mjrFWLkxIvSTZBtaL40zLhIwgtRxmaaKvb62ag1BMNsxZCmLsUsc5C1mDPiue1kZBiIgpqNVWWLqZC8H2bJh1VMTMhO7u9SQkDQQ2Azg6RaIh0YN3ahJOWTPSZBwZDZD';
+        $accessToken = 'EAAHqUWZCqHiUBOw8zpCeuDyxgvWNUVCnhQHr2pPITHT9SMwYglZBhtPIUMTX8xw3tdUGXZAdVBvRsaXpDrxR6crFGxsUggUye2t8n4gT2EuekHD3zKtbp7tYdZCEwVtl7opk4fjZB5yP8GVwlJ7JDSozisBHRZBe7P1ORxHlaeqNSR8PMlPIwlED1T6rjrpRUSlYMZAkCG35jwXHE9aAoZA2JGIMO7QgRZA8bVysZD';
 
         $data = [
             'retailer_id' => $product_affiliate->product->id,
