@@ -42,7 +42,8 @@ class WhatsappApiIntegration
             throw new \Exception("Credenciais do WhatsApp não configuradas.");
         }
 
-        $formatted_number = self::formatNumber($content['recipient']);
+        // $formatted_number = self::formatNumber($content['recipient']);
+        $formatted_number = $content['recipient'];
 
         // Verifica se há mídia na mensagem
         if (!empty($content['media'])) {
@@ -56,7 +57,7 @@ class WhatsappApiIntegration
                 "Content-Type" => "application/json",
                 "apikey" => $whatsapp_token,
             ])->post($url_send_media, [
-                "number" => '55' . $formatted_number,
+                "number" => $formatted_number,
                 "options" => [
                     "delay" => 1200,
                     "presence" => "composing"
@@ -74,7 +75,7 @@ class WhatsappApiIntegration
                 "Content-Type" => "application/json",
                 "apikey" => $whatsapp_token,
             ])->post($whatsapp_host, [
-                "number" => '55' . $formatted_number,
+                "number" => $formatted_number,
                 "options" => [
                     "delay" => 1200,
                     "presence" => "composing",
