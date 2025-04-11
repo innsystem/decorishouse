@@ -48,7 +48,7 @@ class SiteController extends Controller
                 })
                 ->with(['affiliateLinks.integration'])
                 ->orderBy('created_at', 'desc')
-                ->limit(24)
+                ->limit(8)
                 ->get();
                 
             // Adicionar apenas se houver produtos
