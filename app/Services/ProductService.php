@@ -617,7 +617,7 @@ class ProductService
 
 		$queryParams = [
 			'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
-			'facebook_meta_id'  => 61,
+			'facebook_meta_id'  => 60,
 			'name'              => $product->name,
 			'content'           => $content,
 			'media'             => $social_image,
