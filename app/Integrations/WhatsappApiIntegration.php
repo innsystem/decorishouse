@@ -60,16 +60,12 @@ class WhatsappApiIntegration
                 "apikey" => $whatsapp_token,
             ])->post($url_send_media, [
                 "number" => $formatted_number,
-                "options" => [
-                    "delay" => 1200,
-                    "presence" => "composing"
-                ],
-                "mediaMessage" => [
-                    "mediatype" => $media_type, // Corrigido para "Image" (com a primeira letra maiúscula)
-                    "fileName" => basename($image_url), // Extrai o nome do arquivo da URL
-                    "caption" => '',
-                    "media" => $image_url
-                ]
+                "mediatype" => $media_type, // Corrigido para "Image" (com a primeira letra maiúscula)
+                "media" => $image_url,
+                "caption" => '',
+                "fileName" => basename($image_url), // Extrai o nome do arquivo da URL
+                "delay" => 1200,
+                "linkPreview" => true,
             ]);
         } else {
             \Log::info($content['message']);
@@ -80,14 +76,9 @@ class WhatsappApiIntegration
                 "apikey" => $whatsapp_token,
             ])->post($whatsapp_host, [
                 "number" => $formatted_number,
-                "options" => [
-                    "delay" => 1200,
-                    "presence" => "composing",
-                    "linkPreview" => true
-                ],
-                "textMessage" => [
-                    'text' => $content['message'],
-                ]
+                'text' => $content['message'],
+                "delay" => 1200,
+                "linkPreview" => true,
             ]);
         }
 
