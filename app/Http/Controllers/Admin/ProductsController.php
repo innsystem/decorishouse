@@ -269,7 +269,7 @@ class ProductsController extends Controller
 
         if ($responseCheck->failed()) {
             Log::error("Erro ao consultar o produto {$product_affiliate->product->id}: " . $responseCheck->body());
-            return response()->json(['error' => 'Erro ao consultar o produto'], 400);
+            return response()->json(['message' => 'Erro ao consultar o produto'], 400);
         }
 
         $existingProduct = $responseCheck->json();
@@ -283,10 +283,10 @@ class ProductsController extends Controller
 
             if ($responseUpdate->failed()) {
                 Log::error("Erro ao atualizar produto {$product_affiliate->product->id}: " . $responseUpdate->body());
-                return response()->json(['error' => 'Erro ao atualizar produto'], 400);
+                return response()->json(['message' => 'Erro ao atualizar produto'], 400);
             } else {
                 Log::info("Produto {$product_affiliate->product->id} atualizado com sucesso.");
-                return response()->json(['success' => 'Produto atualizado com sucesso'], 200);
+                return response()->json(['message' => 'Produto atualizado com sucesso'], 200);
             }
         } else {
             $responseCreate = Http::withToken($accessToken)
@@ -294,10 +294,10 @@ class ProductsController extends Controller
 
             if ($responseCreate->failed()) {
                 Log::error("Erro ao criar produto {$product_affiliate->product->id}: " . $responseCreate->body());
-                return response()->json(['error' => 'Erro ao criar produto'], 400);
+                return response()->json(['message' => 'Erro ao criar produto'], 400);
             } else {
                 Log::info("Produto {$product_affiliate->product->id} criado com sucesso.");
-                return response()->json(['success' => 'Produto criado com sucesso'], 200);
+                return response()->json(['message' => 'Produto criado com sucesso'], 200);
             }
         }
     }
