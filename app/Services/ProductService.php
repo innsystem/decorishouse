@@ -623,7 +623,7 @@ class ProductService
 			'media'             => $social_image,
 			'local'             => ['instagram_post', 'facebook_post'],
 			'mark_product'      => 0,
-			'catalog_id'        => '',
+			'catalog_id'        => '1359397078637160',
 			'retailer_id'       => $product_id,
 
 		];
