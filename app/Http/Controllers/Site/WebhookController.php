@@ -37,4 +37,11 @@ class WebhookController extends Controller
 
         return true;
     }
+    
+    public function mercadoLivreWebhook(Request $request)
+    {
+        \Log::info('WebHook ML :: ' . json_encode($request));
+
+        return true;
+    }
 }
