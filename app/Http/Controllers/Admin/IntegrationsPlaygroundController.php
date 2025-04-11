@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Integrations\ShopeeIntegration;
+use App\Integrations\MercadoLivreIntegration;
 use Illuminate\Http\Request;
 use App\Services\IntegrationService;
 use Maatwebsite\Excel\Facades\Excel;
@@ -23,12 +24,14 @@ class IntegrationsPlaygroundController extends Controller
     public $folder = 'admin.pages.integrations.playgrounds';
 
     protected $shopeeIntegration;
+    protected $mercadoLivreIntegration;
     protected $integrationService;
     protected $productService;
 
-    public function __construct(IntegrationService $integrationService, ShopeeIntegration $shopeeIntegration, ProductService $productService)
+    public function __construct(IntegrationService $integrationService, ShopeeIntegration $shopeeIntegration, MercadoLivreIntegration $mercadoLivreIntegration, ProductService $productService)
     {
         $this->shopeeIntegration = $shopeeIntegration;
+        $this->mercadoLivreIntegration = $mercadoLivreIntegration;
         $this->integrationService = $integrationService;
         $this->productService = $productService;
     }
@@ -40,15 +43,20 @@ class IntegrationsPlaygroundController extends Controller
         $data['title'] = $integration->name;
         $data['slug'] = $integration->slug;
 
-        // // Código para importar categorias
-        // Excel::import(new CategoryShopeeImport, public_path('galerias/categories_shopee.xlsx'));
+        if ($integration->slug == 'mercado-livre') {
+            $data['categoriesMercadoLivre'] = $this->mercadoLivreIntegration->getCategories();
+        }
 
-        $data['categoriesShopee'] = $integration->integrationCategories;
+        if ($integration->slug == 'shopee') {
+            // // Código para importar categorias
+            // Excel::import(new CategoryShopeeImport, public_path('galerias/categories_shopee.xlsx'));
+            $data['categoriesShopee'] = $integration->integrationCategories;
+        }
 
-        return view($this->folder . '.index', $data);
+        return view($this->folder . '.' . $integration->slug . '.index', $data);
     }
 
-    public function load(Request $request)
+    public function load(Request $request, $integration_slug)
     {
         if (!$request->input('type')) {
             return response()->json('Tipo não especificado', 422);
@@ -56,6 +64,17 @@ class IntegrationsPlaygroundController extends Controller
 
         $filters = $request->all();
 
+        if ($integration_slug == 'shopee') {
+            $this->loadShopee($filters);
+        }
+
+        if ($integration_slug == 'mercado-livre') {
+            $this->loadMercadoLivre($filters);
+        }
+    }
+
+    public function loadShopee($filters)
+    {
         $type = $filters['type'] ?? "shopee_offers";
         $keyword = $filters['keyword'] ?? '';
         $item_id = $filters['item_id'] ?? '';
@@ -82,7 +101,30 @@ class IntegrationsPlaygroundController extends Controller
             $productOffers = $shopee->normalizeProductOffers($results);
         }
 
-        return view($this->folder . '.index_load', compact('shopeeOffers', 'shopOffers', 'productOffers'));
+        return view($this->folder . '.shopee.index_load', compact('shopeeOffers', 'shopOffers', 'productOffers'));
+    }
+
+    public function loadMercadoLivre($filters)
+    {
+        $mercadoLivre = $this->mercadoLivreIntegration;
+        $type = $filters['type'] ?? "products";
+
+        // Definir variáveis vazias
+        $categories = [];
+        $products = [];
+        $topProducts = [];
+
+        dd($mercadoLivre->searchProducts());
+
+        if ($type == 'products') {
+            $results = $mercadoLivre->searchProducts($filters);
+            $products = $results['products'] ?? [];
+            $totalProducts = $results['total'] ?? 0;
+        } elseif ($type == 'top_products') {
+            $topProducts = $mercadoLivre->getSellerTopProducts($filters);
+        }
+
+        return view($this->folder . '.mercado-livre.index_load', compact('categories', 'products', 'topProducts', 'totalProducts'));
     }
 
     public function createProduct(Request $request)

@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Integration;
 use App\Models\Product;
+use App\Models\ProductAffiliateLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use App\Models\Status;
 use App\Services\CategoryService;
@@ -237,40 +239,37 @@ class ProductsController extends Controller
         ]);
     }
 
-    protected function putFacebookCatalog($product_id)
+    protected function facebookCatalog($product_id)
     {
-        $product = Product::find($product_id);
-        dd($product);
+        $product_affiliate = ProductAffiliateLink::where('product_id', $product_id)->first();
 
         $catalogId = '1359397078637160';
 
-        $accessToken = 'EABZCOLCOKmv4BOZB1PTbpW3BVPWKml4fChmj3rNZAE2AJdwnZBBzICT6f8FqEpVnlxcur0IZBzcKXgYrVAl7ARuPiw6XY7hE6b15OXJPZC9MJoLoE2DnxuOdiXq6PlYvVU7wKW0PLle4VCNiO3CE7VTc5lo9mRwvYVQHzVJjTWU0XCz1UGEhq4oQZBo4rMNeSQ4';
+        $accessToken = 'EAAHqUWZCqHiUBO0ypPYLIpZBclTVB0pDytQRY6u8VgbmeedAu6dqRUE0ZBz8FlyhlVPRgWdh0b0ZAsaWKw6RFFaRcJBZCodaWZBFV6U1uo940mjrFWLkxIvSTZBtaL40zLhIwgtRxmaaKvb62ag1BMNsxZCmLsUsc5C1mDPiue1kZBiIgpqNVWWLqZC8H2bJh1VMTMhO7u9SQkDQQ2Azg6RaIh0YN3ahJOWTPSZBwZDZD';
 
         $data = [
-            'retailer_id' => $product->id,
-            'name' => $product->title,
-            'description' => $product->title,
-            'price' => round($product->price * 100), // Convertendo para centavos
+            'retailer_id' => $product_affiliate->product->id,
+            'name' => $product_affiliate->product->name,
+            'description' => $product_affiliate->product->name,
+            'price' => round($product_affiliate->product->price * 100), // Convertendo para centavos
             'currency' => 'BRL',
             'availability' => 'in stock', // Exemplo: in stock, out of stock
             'condition' => 'new', // Exemplo: new, refurbished
-            'image_url' => url($product->image),
-            'url' => $product->link,
+            'image_url' => asset($product_affiliate->product->images[0]),
+            'url' => $product_affiliate->affiliate_link,
         ];
 
         //Log::info(json_encode($data));
 
-
         // Verificar se o produto já existe no catálogo
-
-
         $responseCheck = Http::withToken($accessToken)
-            ->get("https://graph.facebook.com/v17.0/" . $catalogId . "/products", [
+            ->get("https://graph.facebook.com/v22.0/" . $catalogId . "/products", [
                 'filter' => '{"retailer_id":{"eq":"' . $product_id . '"}}',
             ]);
 
         if ($responseCheck->failed()) {
-            Log::error("Erro ao consultar o produto {$product->id}: " . $responseCheck->body());
+            Log::error("Erro ao consultar o produto {$product_affiliate->product->id}: " . $responseCheck->body());
+            return response()->json(['error' => 'Erro ao consultar o produto'], 400);
         }
 
         $existingProduct = $responseCheck->json();
@@ -279,21 +278,26 @@ class ProductsController extends Controller
         if (isset($existingProduct['data']) && count($existingProduct['data']) > 0) {
             $existingProductId = $existingProduct['data'][0]['id'];
             $responseUpdate = Http::withToken($accessToken)
-                ->post("https://graph.facebook.com/v17.0/{$existingProductId}", $data);
+                ->post("https://graph.facebook.com/v22.0/{$existingProductId}", $data);
+
 
             if ($responseUpdate->failed()) {
-                Log::error("Erro ao atualizar produto {$product->id}: " . $responseUpdate->body());
+                Log::error("Erro ao atualizar produto {$product_affiliate->product->id}: " . $responseUpdate->body());
+                return response()->json(['error' => 'Erro ao atualizar produto'], 400);
             } else {
-                Log::info("Produto {$product->id} atualizado com sucesso.");
+                Log::info("Produto {$product_affiliate->product->id} atualizado com sucesso.");
+                return response()->json(['success' => 'Produto atualizado com sucesso'], 200);
             }
         } else {
             $responseCreate = Http::withToken($accessToken)
-                ->post("https://graph.facebook.com/v17.0/{$catalogId}/products", $data);
+                ->post("https://graph.facebook.com/v22.0/{$catalogId}/products", $data);
 
             if ($responseCreate->failed()) {
-                Log::error("Erro ao criar produto {$product->id}: " . $responseCreate->body());
+                Log::error("Erro ao criar produto {$product_affiliate->product->id}: " . $responseCreate->body());
+                return response()->json(['error' => 'Erro ao criar produto'], 400);
             } else {
-                Log::info("Produto {$product->id} criado com sucesso.");
+                Log::info("Produto {$product_affiliate->product->id} criado com sucesso.");
+                return response()->json(['success' => 'Produto criado com sucesso'], 200);
             }
         }
     }
