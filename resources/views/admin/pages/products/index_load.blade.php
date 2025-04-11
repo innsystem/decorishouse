@@ -1,5 +1,5 @@
-@if(isset($results) && count($results) > 0)
-@foreach($results as $product)
+@if(isset($products) && count($products) > 0)
+@foreach($products as $product)
 <div id="row_product_{{$product->id}}" class="col-12 pb-2 mb-4 border-bottom rounded">
     <div class="d-flex flex-wrap gap-3 align-items-center">
         {{-- Exibir a primeira imagem do produto --}}
@@ -61,6 +61,42 @@
     </div>
 </div><!-- col-12 -->
 @endforeach
+
+{{-- Paginação --}}
+<div class="col-12 mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <p class="text-muted">Exibindo {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} de {{ $products->total() }} produtos</p>
+        </div>
+        <div>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    {{-- Botão anterior --}}
+                    <li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
+                        <a class="page-link" href="javascript:void(0);" onclick="loadPage('{{ $products->previousPageUrl() }}')" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    
+                    {{-- Números das páginas --}}
+                    @for ($i = 1; $i <= $products->lastPage(); $i++)
+                        <li class="page-item {{ $products->currentPage() == $i ? 'active' : '' }}">
+                            <a class="page-link" href="javascript:void(0);" onclick="loadPage('{{ $products->url($i) }}')">{{ $i }}</a>
+                        </li>
+                    @endfor
+                    
+                    {{-- Botão próximo --}}
+                    <li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
+                        <a class="page-link" href="javascript:void(0);" onclick="loadPage('{{ $products->nextPageUrl() }}')" aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
 @else
 <div class="alert alert-warning mb-0">Nenhum resultado foi localizado...</div>
 @endif

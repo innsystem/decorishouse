@@ -40,7 +40,7 @@ class ProductsController extends Controller
     public function load(Request $request)
     {
         $query = [];
-        $filters = $request->only(['name', 'status', 'date_range']);
+        $filters = $request->only(['name', 'status', 'date_range', 'per_page']);
 
         if (!empty($filters['name'])) {
             $query['name'] = $filters['name'];
@@ -56,10 +56,12 @@ class ProductsController extends Controller
             $query['end_date'] = Carbon::createFromFormat('d/m/Y', $endDate)->format('Y-m-d');
         }
 
-        $results = $this->productService->getAllProducts($filters);
+        // Define o número de produtos por página
+        $query['per_page'] = $filters['per_page'] ?? 10;
 
+        $products = $this->productService->getAllProducts($query);
 
-        return view($this->folder . '.index_load', compact('results'));
+        return view($this->folder . '.index_load', compact('products'));
     }
 
     public function create()

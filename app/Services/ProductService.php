@@ -33,7 +33,13 @@ class ProductService
 			$query->whereBetween('created_at', [$filters['start_date'], $filters['end_date']]);
 		}
 
-		return $query->limit(20)->get();
+		// Ordenar pelos produtos mais recentes
+		$query->orderBy('created_at', 'desc');
+
+		// Limitar o número de registros por página
+		$perPage = $filters['per_page'] ?? 10;
+		
+		return $query->paginate($perPage);
 	}
 
 	public function getProductById($id)

@@ -19,11 +19,11 @@
                 <div class="card-body">
                     <form id="filter-form">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="name">Nome:</label>
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Digite o nome">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="status">Status:</label>
                                 <select id="status" name="status" class="form-control">
                                     <option value="">Todos</option>
@@ -31,9 +31,18 @@
                                     <option value="2">Desabilitado</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="date_range">Período:</label>
                                 <input type="text" id="date_range" name="date_range" class="form-control rangecalendar-period" placeholder="Selecione o intervalo">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="per_page">Itens por página:</label>
+                                <select id="per_page" name="per_page" class="form-control">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -107,6 +116,16 @@
         var filters = $('#filter-form').serialize();
 
         $.get(url + '?' + filters, function(data) {
+            $("#content-load-page").html(data);
+        });
+    }
+
+    function loadPage(url) {
+        if (!url) return;
+        
+        $("#content-load-page").html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div></div>');
+        
+        $.get(url, function(data) {
             $("#content-load-page").html(data);
         });
     }
