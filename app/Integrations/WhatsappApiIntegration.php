@@ -53,6 +53,8 @@ class WhatsappApiIntegration
             $caption = $content['message'] ?? ''; // Legenda opcional
             $url_send_media = str_replace('sendText', 'sendMedia', $whatsapp_host);
 
+            \Log::info($media_type . ' - ' . $image_url);
+
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
                 "apikey" => $whatsapp_token,
@@ -70,6 +72,8 @@ class WhatsappApiIntegration
                 ]
             ]);
         } else {
+            \Log::info($content['message']);
+
             // Envio de texto
             $response = Http::withHeaders([
                 "Content-Type" => "application/json",
