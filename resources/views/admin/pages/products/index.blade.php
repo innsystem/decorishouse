@@ -342,13 +342,12 @@
             },
             success: function(data) {
                 Swal.fire({
-                    title: data.message,
-                    html: '<a href="' + data.image + '" target="_Blank"><img src="' + data.image + '" class="border border-radius img-fluid" style="max-width: 300px"></a><br><br><p>' + data.link_affiliate + '</p>',
-                    // icon: 'success',
+                    text: data.message,
+                    icon: 'success',
                     showClass: {
                         popup: 'animate__animated animate__headShake'
                     }
-                }).then((result) => {});
+                });
             },
             error: function(xhr) {
                 if (xhr.status === 422) {
