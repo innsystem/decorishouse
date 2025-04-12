@@ -69,8 +69,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text">Limite</span>
                                     <select id="limit" name="limit" class="form-control">
-                                        <option value="5">5 resultados</option>
-                                        <option value="10">10 resultados</option>
+                                        <!-- <option value="5">5 resultados</option>
+                                        <option value="10">10 resultados</option> -->
                                         <option value="15">15 resultados</option>
                                         <option value="20">20 resultados</option>
                                         <option value="25">25 resultados</option>
