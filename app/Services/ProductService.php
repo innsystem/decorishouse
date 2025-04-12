@@ -653,14 +653,14 @@ class ProductService
 		}
 
 		if (!$response->successful()) {
-			\Log::info('badRequest:' . $response->body());
+			Log::info('badRequest:' . $response->body());
 
 			return ['title' => $response->body(), 'status' => 422];
 		}
 
 		// Verificar se a requisição foi bem-sucedida
 		if ($response->failed()) {
-			\Log::info('Response:' . json_encode($response->body()));
+			Log::info('Response:' . json_encode($response->body()));
 			return ['title' => 'Erro ao postar nas redes sociais', 'status' => 422];
 		}
 	}
@@ -726,6 +726,52 @@ class ProductService
                 return response()->json(['message' => 'Produto criado com sucesso'], 200);
             }
         }
+    }
+
+    /**
+     * Sincroniza todos os produtos ou um lote específico com o catálogo do Facebook
+     * 
+     * @param int $batchSize Tamanho do lote a ser processado
+     * @param int $offset Offset para paginação
+     * @return array Informações sobre o processamento
+     */
+    public function syncFacebookCatalog($batchSize = 10, $offset = 0)
+    {
+        // Busca os produtos ativos em lotes para evitar sobrecarga
+        $products = Product::where('status', 1)
+            ->skip($offset)
+            ->take($batchSize)
+            ->get();
+        
+        $total = Product::where('status', 1)->count();
+        $processed = 0;
+        $success = 0;
+        $failed = 0;
+        
+        foreach ($products as $product) {
+            try {
+                // Processa cada produto individualmente
+                $this->facebookCatalog($product->id);
+                $success++;
+                
+                // Adiciona um pequeno delay para evitar bloqueios por muitas requisições
+                sleep(1);
+            } catch (\Exception $e) {
+                Log::error("Erro ao processar produto {$product->id} para catálogo Facebook: " . $e->getMessage());
+                $failed++;
+            }
+            
+            $processed++;
+        }
+        
+        return [
+            'total' => $total,
+            'processed' => $processed,
+            'success' => $success, 
+            'failed' => $failed,
+            'remaining' => $total - ($offset + $processed),
+            'offset_next' => $offset + $batchSize
+        ];
     }
 
 	// Função responsável por baixar e atualizar as fotos de produtos quando está em URL Externa

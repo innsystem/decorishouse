@@ -91,3 +91,9 @@ Route::get('products/recent', [ProductController::class, 'recent']);
 Route::get('products/promotions', [ProductController::class, 'promotions']);
 Route::post('products/format-whatsapp', [ProductController::class, 'formatWhatsAppMessage']);
 Route::apiResource('products', ProductController::class);
+
+// Facebook Catalog
+use App\Http\Controllers\Api\FacebookCatalogController;
+
+Route::post('facebook/sync-catalog', [FacebookCatalogController::class, 'syncCatalog']);
+Route::post('facebook/sync-product/{productId}', [FacebookCatalogController::class, 'syncProduct']);
