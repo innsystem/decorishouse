@@ -194,8 +194,8 @@ class ProductService
 		// Gera a imagem do produto para o Story e envia no WhatsApp
 		$this->generateProductStory($product->id);
 
-		// // Publica a imagem do produto no Feed - Multi Social
-		// $this->publishProductImage($product->id);
+		// Publica a imagem do produto no Feed - Multi Social
+		$this->publishProductImage($product->id);
 
 		return response()->json('Produto Cadastrado/Atualizado com Sucesso', 200);
 	}
@@ -628,8 +628,8 @@ class ProductService
 			'content'           => $content,
 			'media'             => $social_image,
 			'local'             => ['instagram_post', 'facebook_post'],
-			'mark_product'      => 0,
-			'catalog_id'        => '',
+			'mark_product'      => 1,
+			'catalog_id'        => '1359397078637160',
 			'retailer_id'       => $product_id,
 
 		];
