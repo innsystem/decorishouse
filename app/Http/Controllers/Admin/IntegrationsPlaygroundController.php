@@ -65,11 +65,11 @@ class IntegrationsPlaygroundController extends Controller
         $filters = $request->all();
 
         if ($integration_slug == 'shopee') {
-            $this->loadShopee($filters);
+            return $this->loadShopee($filters);
         }
 
         if ($integration_slug == 'mercado-livre') {
-            $this->loadMercadoLivre($filters);
+            return $this->loadMercadoLivre($filters);
         }
     }
 

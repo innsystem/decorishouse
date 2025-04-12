@@ -86,12 +86,17 @@ class ShopeeIntegration
                 'body'    => json_encode($payload) // Garante que o corpo seja JSON válido
             ]);
 
+            \Log::info('Resposta da API da Shopee: ' . $response->getBody());
+
             return json_decode($response->getBody(), true);
         } catch (ClientException $e) {
+            \Log::error('Erro ao enviar requisição para a API da Shopee: ' . $e->getMessage());
             return $this->handleClientException($e);
         } catch (RequestException $e) {
+            \Log::error('Erro ao enviar requisição para a API da Shopee: ' . $e->getMessage());
             return $this->handleRequestException($e);
         } catch (\Exception $e) {
+            \Log::error('Erro ao enviar requisição para a API da Shopee: ' . $e->getMessage());
             return $this->handleGeneralException($e);
         }
     }

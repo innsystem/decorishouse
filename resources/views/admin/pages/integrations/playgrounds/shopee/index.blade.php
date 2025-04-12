@@ -163,6 +163,7 @@
                 button.find('.fa-spinner').addClass('d-none');
             },
             success: function(data) {
+                console.log(data);
                 $("#content-load-page").html(data);
                 loadLazyImages();
             },
