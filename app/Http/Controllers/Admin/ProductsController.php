@@ -241,66 +241,10 @@ class ProductsController extends Controller
         ]);
     }
 
-    protected function facebookCatalog($product_id)
+    public function facebookCatalog($id)
     {
-        $product_affiliate = ProductAffiliateLink::where('product_id', $product_id)->first();
+        $result = $this->productService->facebookCatalog($id);
 
-        $catalogId = '1359397078637160';
-
-        $accessToken = 'EAAHqUWZCqHiUBOZCUyQZBBNeM5ZBUuF4V3UhO9RLnZAJdnWSehbNmtk7rRAzimqWEJibZBKyBmwW4ZBdFh4OjbM6TY1CUg4juUWfZAhkh5Mqu5dsqoNmIfF2SY3HOYSmCE7JUM4CcFLYfX4ZCLX4bda3uCA3ADPZCQ5OZB9W7O7ZAVU5jNt1r2jDTEMy131BwaddCs1esIUC30RvrQZDZD';
-
-        $data = [
-            'retailer_id' => $product_affiliate->product->id,
-            'name' => $product_affiliate->product->name,
-            'description' => $product_affiliate->product->name,
-            'price' => round($product_affiliate->product->price * 100), // Convertendo para centavos
-            'currency' => 'BRL',
-            'availability' => 'in stock', // Exemplo: in stock, out of stock
-            'condition' => 'new', // Exemplo: new, refurbished
-            'image_url' => asset($product_affiliate->product->images[0]),
-            'url' => $product_affiliate->affiliate_link,
-        ];
-
-        //Log::info(json_encode($data));
-
-        // Verificar se o produto já existe no catálogo
-        $responseCheck = Http::withToken($accessToken)
-            ->get("https://graph.facebook.com/v22.0/" . $catalogId . "/products", [
-                'filter' => '{"retailer_id":{"eq":"' . $product_id . '"}}',
-            ]);
-
-        if ($responseCheck->failed()) {
-            Log::error("Erro ao consultar o produto {$product_affiliate->product->id}: " . $responseCheck->body());
-            return response()->json(['message' => 'Erro ao consultar o produto'], 400);
-        }
-
-        $existingProduct = $responseCheck->json();
-
-        // Se encontrar o produto, tenta atualizar, caso contrário, cria um novo
-        if (isset($existingProduct['data']) && count($existingProduct['data']) > 0) {
-            $existingProductId = $existingProduct['data'][0]['id'];
-            $responseUpdate = Http::withToken($accessToken)
-                ->post("https://graph.facebook.com/v22.0/{$existingProductId}", $data);
-
-
-            if ($responseUpdate->failed()) {
-                Log::error("Erro ao atualizar produto {$product_affiliate->product->id}: " . $responseUpdate->body());
-                return response()->json(['message' => 'Erro ao atualizar produto'], 400);
-            } else {
-                Log::info("Produto {$product_affiliate->product->id} atualizado com sucesso.");
-                return response()->json(['message' => 'Produto atualizado com sucesso'], 200);
-            }
-        } else {
-            $responseCreate = Http::withToken($accessToken)
-                ->post("https://graph.facebook.com/v22.0/{$catalogId}/products", $data);
-
-            if ($responseCreate->failed()) {
-                Log::error("Erro ao criar produto {$product_affiliate->product->id}: " . $responseCreate->body());
-                return response()->json(['message' => 'Erro ao criar produto'], 400);
-            } else {
-                Log::info("Produto {$product_affiliate->product->id} criado com sucesso.");
-                return response()->json(['message' => 'Produto criado com sucesso'], 200);
-            }
-        }
+        return $result;
     }
 }
