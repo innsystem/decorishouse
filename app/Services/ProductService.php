@@ -39,7 +39,7 @@ class ProductService
 
 		// Limitar o número de registros por página
 		$perPage = $filters['per_page'] ?? 10;
-		
+
 		return $query->paginate($perPage);
 	}
 
@@ -422,8 +422,7 @@ class ProductService
 		];
 
 		$numbers = [
-			// '5516992747526',
-			'120363391875660032@g.us',
+			'120363398273653245@g.us', // Grupo de Story+link
 		]; // Lista de números
 		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
 
@@ -665,114 +664,134 @@ class ProductService
 		}
 	}
 
+	// Funcao responsável por publicar o produto no Grupo de Promoções
+	public function publishProductGroup($product_id)
+	{
+		$product = Product::find($product_id);
+		$url_image_created = asset('/storage/'.$product->images[0]);
+		$link_product = $product->getAffiliateLinkByIntegration('shopee');
+
+		$notificationDataImageLink = [
+			'image' => $url_image_created,
+			'title' => $product->name,
+			'price' => $product->price_promotion ? $product->price_promotion : $product->price,
+			'link' => $link_product,
+		];
+
+		$numbers = [
+			'120363391875660032@g.us', // Grupo de Promoções
+		]; // Lista de números
+		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
+
+		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_image_link', $notificationDataImageLink));
+
+		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
+		
+	}
+
+	// Funcao responsável por sincronizar o produto com o catálogo do Facebook
 	public function facebookCatalog($product_id)
-    {
-        $product_affiliate = ProductAffiliateLink::where('product_id', $product_id)->first();
+	{
+		$product_affiliate = ProductAffiliateLink::where('product_id', $product_id)->first();
 
-        $catalogId = '1359397078637160';
+		$catalogId = '1359397078637160';
 
-        $accessToken = 'EAAHqUWZCqHiUBO4y4AayR6MZAGUL0bcENAFPA9gZCNq35cjlYwp0w6JwAaOkKMTyKf4QbFtdX3mMnulwIiZCCn1KaY0UQHqTgYNrYPycEjbnlSubipPZBy1aFrDFz7ScHs89IACUgXG7RG2iJ5fBHmqZBBfWoNCavtBN3VRZAOlZCuvLxZCRGvUwqhCjHZCZCqOhyQ7lM5ARRFBlZBPlbjSRcfZApe7NKawXFHcTo8gZDZD';
+		$accessToken = 'EAAHqUWZCqHiUBO4y4AayR6MZAGUL0bcENAFPA9gZCNq35cjlYwp0w6JwAaOkKMTyKf4QbFtdX3mMnulwIiZCCn1KaY0UQHqTgYNrYPycEjbnlSubipPZBy1aFrDFz7ScHs89IACUgXG7RG2iJ5fBHmqZBBfWoNCavtBN3VRZAOlZCuvLxZCRGvUwqhCjHZCZCqOhyQ7lM5ARRFBlZBPlbjSRcfZApe7NKawXFHcTo8gZDZD';
 
-        $data = [
-            'retailer_id' => $product_affiliate->product->id,
-            'name' => $product_affiliate->product->name,
-            'description' => $product_affiliate->product->name,
-            'price' => round($product_affiliate->product->price * 100), // Convertendo para centavos
-            'currency' => 'BRL',
-            'availability' => 'in stock', // Exemplo: in stock, out of stock
-            'condition' => 'new', // Exemplo: new, refurbished
-            'image_url' => asset($product_affiliate->product->images[0]),
-            'url' => $product_affiliate->affiliate_link,
-        ];
+		$data = [
+			'retailer_id' => $product_affiliate->product->id,
+			'name' => $product_affiliate->product->name,
+			'description' => $product_affiliate->product->name,
+			'price' => round($product_affiliate->product->price * 100), // Convertendo para centavos
+			'currency' => 'BRL',
+			'availability' => 'in stock', // Exemplo: in stock, out of stock
+			'condition' => 'new', // Exemplo: new, refurbished
+			'image_url' => asset($product_affiliate->product->images[0]),
+			'url' => $product_affiliate->affiliate_link,
+		];
 
-        //Log::info(json_encode($data));
+		//Log::info(json_encode($data));
 
-        // Verificar se o produto já existe no catálogo
-        $responseCheck = Http::withToken($accessToken)
-            ->get("https://graph.facebook.com/v22.0/" . $catalogId . "/products", [
-                'filter' => '{"retailer_id":{"eq":"' . $product_id . '"}}',
-            ]);
+		// Verificar se o produto já existe no catálogo
+		$responseCheck = Http::withToken($accessToken)
+			->get("https://graph.facebook.com/v22.0/" . $catalogId . "/products", [
+				'filter' => '{"retailer_id":{"eq":"' . $product_id . '"}}',
+			]);
 
-        if ($responseCheck->failed()) {
-            Log::error("Erro ao consultar o produto {$product_affiliate->product->id}: " . $responseCheck->body());
-            return response()->json(['message' => 'Erro ao consultar o produto'], 400);
-        }
+		if ($responseCheck->failed()) {
+			Log::error("Erro ao consultar o produto {$product_affiliate->product->id}: " . $responseCheck->body());
+			return response()->json(['message' => 'Erro ao consultar o produto'], 400);
+		}
 
-        $existingProduct = $responseCheck->json();
+		$existingProduct = $responseCheck->json();
 
-        // Se encontrar o produto, tenta atualizar, caso contrário, cria um novo
-        if (isset($existingProduct['data']) && count($existingProduct['data']) > 0) {
-            $existingProductId = $existingProduct['data'][0]['id'];
-            $responseUpdate = Http::withToken($accessToken)
-                ->post("https://graph.facebook.com/v22.0/{$existingProductId}", $data);
+		// Se encontrar o produto, tenta atualizar, caso contrário, cria um novo
+		if (isset($existingProduct['data']) && count($existingProduct['data']) > 0) {
+			$existingProductId = $existingProduct['data'][0]['id'];
+			$responseUpdate = Http::withToken($accessToken)
+				->post("https://graph.facebook.com/v22.0/{$existingProductId}", $data);
 
 
-            if ($responseUpdate->failed()) {
-                Log::error("Erro ao atualizar produto {$product_affiliate->product->id}: " . $responseUpdate->body());
-                return response()->json(['message' => 'Erro ao atualizar produto'], 400);
-            } else {
-                Log::info("Produto {$product_affiliate->product->id} atualizado com sucesso.");
-                return response()->json(['message' => 'Produto atualizado com sucesso'], 200);
-            }
-        } else {
-            $responseCreate = Http::withToken($accessToken)
-                ->post("https://graph.facebook.com/v22.0/{$catalogId}/products", $data);
+			if ($responseUpdate->failed()) {
+				Log::error("Erro ao atualizar produto {$product_affiliate->product->id}: " . $responseUpdate->body());
+				return response()->json(['message' => 'Erro ao atualizar produto'], 400);
+			} else {
+				Log::info("Produto {$product_affiliate->product->id} atualizado com sucesso.");
+				return response()->json(['message' => 'Produto atualizado com sucesso'], 200);
+			}
+		} else {
+			$responseCreate = Http::withToken($accessToken)
+				->post("https://graph.facebook.com/v22.0/{$catalogId}/products", $data);
 
-            if ($responseCreate->failed()) {
-                Log::error("Erro ao criar produto {$product_affiliate->product->id}: " . $responseCreate->body());
-                return response()->json(['message' => 'Erro ao criar produto'], 400);
-            } else {
-                Log::info("Produto {$product_affiliate->product->id} criado com sucesso.");
-                return response()->json(['message' => 'Produto criado com sucesso'], 200);
-            }
-        }
-    }
+			if ($responseCreate->failed()) {
+				Log::error("Erro ao criar produto {$product_affiliate->product->id}: " . $responseCreate->body());
+				return response()->json(['message' => 'Erro ao criar produto'], 400);
+			} else {
+				Log::info("Produto {$product_affiliate->product->id} criado com sucesso.");
+				return response()->json(['message' => 'Produto criado com sucesso'], 200);
+			}
+		}
+	}
 
-    /**
-     * Sincroniza todos os produtos ou um lote específico com o catálogo do Facebook
-     * 
-     * @param int $batchSize Tamanho do lote a ser processado
-     * @param int $offset Offset para paginação
-     * @return array Informações sobre o processamento
-     */
-    public function syncFacebookCatalog($batchSize = 10, $offset = 0)
-    {
-        // Busca os produtos ativos em lotes para evitar sobrecarga
-        $products = Product::where('status', 1)
-            ->skip($offset)
-            ->take($batchSize)
-            ->get();
-        
-        $total = Product::where('status', 1)->count();
-        $processed = 0;
-        $success = 0;
-        $failed = 0;
-        
-        foreach ($products as $product) {
-            try {
-                // Processa cada produto individualmente
-                $this->facebookCatalog($product->id);
-                $success++;
-                
-                // Adiciona um pequeno delay para evitar bloqueios por muitas requisições
-                sleep(1);
-            } catch (\Exception $e) {
-                Log::error("Erro ao processar produto {$product->id} para catálogo Facebook: " . $e->getMessage());
-                $failed++;
-            }
-            
-            $processed++;
-        }
-        
-        return [
-            'total' => $total,
-            'processed' => $processed,
-            'success' => $success, 
-            'failed' => $failed,
-            'remaining' => $total - ($offset + $processed),
-            'offset_next' => $offset + $batchSize
-        ];
-    }
+	//Sincroniza todos os produtos ou um lote específico com o catálogo do Facebook
+	public function syncFacebookCatalog($batchSize = 10, $offset = 0)
+	{
+		// Busca os produtos ativos em lotes para evitar sobrecarga
+		$products = Product::where('status', 1)
+			->skip($offset)
+			->take($batchSize)
+			->get();
+
+		$total = Product::where('status', 1)->count();
+		$processed = 0;
+		$success = 0;
+		$failed = 0;
+
+		foreach ($products as $product) {
+			try {
+				// Processa cada produto individualmente
+				$this->facebookCatalog($product->id);
+				$success++;
+
+				// Adiciona um pequeno delay para evitar bloqueios por muitas requisições
+				sleep(1);
+			} catch (\Exception $e) {
+				Log::error("Erro ao processar produto {$product->id} para catálogo Facebook: " . $e->getMessage());
+				$failed++;
+			}
+
+			$processed++;
+		}
+
+		return [
+			'total' => $total,
+			'processed' => $processed,
+			'success' => $success,
+			'failed' => $failed,
+			'remaining' => $total - ($offset + $processed),
+			'offset_next' => $offset + $batchSize
+		];
+	}
 
 	// Função responsável por baixar e atualizar as fotos de produtos quando está em URL Externa
 	public function downloadAndStoreImages($product_id)

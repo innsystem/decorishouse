@@ -251,7 +251,7 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/generate-image', 'generateImageStory')->name('admin.products.generateImageStory');
             Route::post('/{id}/generate-image-feed', 'generateImageFeed')->name('admin.products.generateImageFeed');
             Route::post('/{id}/facebook-catalog', 'facebookCatalog')->name('admin.products.facebookCatalog');
-
+            Route::post('/{id}/publish-product-group', 'publishProductGroup')->name('admin.products.publishProductGroup');
             Route::get('/generateSuggestions', 'generateSuggestions')->name('admin.products.generateSuggestions');
         });
         

@@ -17,5 +17,7 @@ return [
         'password_recovery' => "Olá {{name}}, foi solicitada uma recuperação de senha para seu e-mail. \nDigite o código abaixo para redefinir sua senha: \n*{{password_code}}*",
         'product_send_image' => "{{image}}",
         'product_send_link' => "{{link}}",
+
+        'product_send_image_link' => "**{{title}}** \nPreço: R$ {{price}} \nShopee:{{link}} \n{{image}}",
     ],
 ];

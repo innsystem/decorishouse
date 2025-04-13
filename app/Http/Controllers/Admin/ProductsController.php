@@ -247,4 +247,11 @@ class ProductsController extends Controller
 
         return $result;
     }
+
+    public function publishProductGroup($id)
+    {
+        $result = $this->productService->publishProductGroup($id);
+
+        return $result;
+    }
 }

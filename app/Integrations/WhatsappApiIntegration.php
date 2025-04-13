@@ -62,7 +62,7 @@ class WhatsappApiIntegration
                 "number" => $formatted_number,
                 "mediatype" => $media_type, // Corrigido para "Image" (com a primeira letra maiúscula)
                 "media" => $image_url,
-                "caption" => '',
+                "caption" => $content['message'],
                 "fileName" => basename($image_url), // Extrai o nome do arquivo da URL
                 "delay" => 1200,
                 "linkPreview" => true,
