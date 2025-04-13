@@ -671,8 +671,11 @@ class ProductService
 		$url_image_created = asset('/storage/'.$product->images[0]);
 		$link_product = $product->getAffiliateLinkByIntegration('shopee');
 
-		$notificationDataImageLink = [
+		$notificationDataImage = [
 			'image' => $url_image_created,
+		];
+
+		$notificationDataLink = [
 			'title' => $product->name,
 			'price' => $product->price_promotion ? $product->price_promotion : $product->price,
 			'link' => $link_product,
@@ -683,7 +686,8 @@ class ProductService
 		]; // Lista de números
 		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
 
-		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_image_link', $notificationDataImageLink));
+		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_image_group', $notificationDataImage));
+		dispatch(new ProcessNotificationJob('whatsapp', $randomNumber, 'General', 'whatsapp', 'product_send_link_group', $notificationDataLink));
 
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 		
