@@ -86,7 +86,7 @@ class ShopeeIntegration
                 'body'    => json_encode($payload) // Garante que o corpo seja JSON válido
             ]);
 
-            \Log::info('Resposta da API da Shopee: ' . $response->getBody());
+            // \Log::info('Resposta da API da Shopee: ' . $response->getBody());
 
             return json_decode($response->getBody(), true);
         } catch (ClientException $e) {
