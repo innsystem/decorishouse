@@ -19,6 +19,6 @@ return [
         'product_send_link' => "{{link}}",
         
         'product_send_image_group' => "{{image}}",
-        'product_send_link_group' => "**{{title}}** \nPreço: R$ {{price}} \nShopee:{{link}}",
+        'product_send_link_group' => "*{{title}}* \n\nPreço: R$ {{price}} \n\Link: {{link}}",
     ],
 ];

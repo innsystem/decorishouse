@@ -671,12 +671,14 @@ class ProductService
 		$url_image_created = asset('/storage/'.$product->images[0]);
 		$link_product = $product->getAffiliateLinkByIntegration('shopee');
 
+		Log::info('URL Image: ' . $url_image_created);
+
 		$notificationDataImage = [
 			'image' => $url_image_created,
 		];
 
 		$notificationDataLink = [
-			'title' => $product->name,
+			'title' => Str::words($product->name, 7, ''),
 			'price' => $product->price_promotion ? $product->price_promotion : $product->price,
 			'link' => $link_product,
 		];
