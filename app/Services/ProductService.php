@@ -668,7 +668,7 @@ class ProductService
 	public function publishProductGroup($product_id)
 	{
 		$product = Product::find($product_id);
-		$url_image_created = asset('/storage/'.$product->images[0]);
+		$url_image_created = asset($product->images[0]);
 		$link_product = $product->getAffiliateLinkByIntegration('shopee');
 
 		Log::info('URL Image: ' . $url_image_created);
