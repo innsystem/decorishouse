@@ -626,7 +626,7 @@ class ProductService
 
 		$queryParams = [
 			'token'             => 'm7ThIZbEzdquOsY57IAvoSS6k1ZTdrLZ1u760QZuUF13gHfOLHGA5YWH0dtqccCT',
-			'facebook_meta_id'  => 61,
+			'facebook_meta_id'  => 60,
 			'name'              => $product->name,
 			'content'           => $content,
 			'media'             => $social_image,
@@ -671,7 +671,7 @@ class ProductService
 
         $catalogId = '1359397078637160';
 
-        $accessToken = 'EAAHqUWZCqHiUBOZCUyQZBBNeM5ZBUuF4V3UhO9RLnZAJdnWSehbNmtk7rRAzimqWEJibZBKyBmwW4ZBdFh4OjbM6TY1CUg4juUWfZAhkh5Mqu5dsqoNmIfF2SY3HOYSmCE7JUM4CcFLYfX4ZCLX4bda3uCA3ADPZCQ5OZB9W7O7ZAVU5jNt1r2jDTEMy131BwaddCs1esIUC30RvrQZDZD';
+        $accessToken = 'EAAHqUWZCqHiUBO4y4AayR6MZAGUL0bcENAFPA9gZCNq35cjlYwp0w6JwAaOkKMTyKf4QbFtdX3mMnulwIiZCCn1KaY0UQHqTgYNrYPycEjbnlSubipPZBy1aFrDFz7ScHs89IACUgXG7RG2iJ5fBHmqZBBfWoNCavtBN3VRZAOlZCuvLxZCRGvUwqhCjHZCZCqOhyQ7lM5ARRFBlZBPlbjSRcfZApe7NKawXFHcTo8gZDZD';
 
         $data = [
             'retailer_id' => $product_affiliate->product->id,
