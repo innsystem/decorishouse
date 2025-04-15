@@ -681,7 +681,7 @@ class ProductService
 		];
 
 		$notificationDataLink = [
-			'title' => Str::words($product->name, 7, ''),
+			'title' => $product->name,
 			'price' => $product->price_promotion ? $product->price_promotion : $product->price,
 			'link' => $link_product,
 		];
