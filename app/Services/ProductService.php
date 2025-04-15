@@ -681,7 +681,7 @@ class ProductService
 		];
 
 		$notificationDataLink = [
-			'title' => $product->name,
+			'title' => $this->breakAfterWords($product->name),
 			'price' => $product->price_promotion ? $product->price_promotion : $product->price,
 			'link' => $link_product,
 			'integration_name' => 'Shopee',
@@ -697,6 +697,15 @@ class ProductService
 
 		return response()->json(['message' => 'Imagem gerada com sucesso!', 'link_affiliate' => $link_product, 'image' => $url_image_created]);
 		
+	}
+
+	public function breakAfterWords($text, $limit = 5) {
+		$words = explode(' ', $text);
+		if (count($words) <= $limit) {
+			return $text;
+		}
+	
+		return implode(' ', array_slice($words, 0, $limit)) . "\n" . implode(' ', array_slice($words, $limit));
 	}
 
 	// Funcao responsável por sincronizar o produto com o catálogo do Facebook
