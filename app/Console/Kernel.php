@@ -21,8 +21,8 @@ class Kernel extends ConsoleKernel
         $schedule->job(new ProcessProductQueueJob())
             // ->everyTwoHours()
             // ->everyFifteenMinutes()
-            ->cron('0,30 * * * *')
-            ->between('06:00', '23:00');
+            ->cron('0,59 * * * *')
+            ->between('06:58', '21:02');
 
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();

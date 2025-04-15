@@ -684,6 +684,7 @@ class ProductService
 			'title' => $product->name,
 			'price' => $product->price_promotion ? $product->price_promotion : $product->price,
 			'link' => $link_product,
+			'integration_name' => 'Shopee',
 		];
 
 		$numbers = [

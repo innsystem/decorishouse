@@ -21,6 +21,6 @@ return [
         'product_send_link' => "{{link}}",
 
         'product_send_image_group' => "{{image}}",
-        'product_send_link_group' => "✨ *{{title}}* \n\n🔸 Preço: R$ {{price}} \n📲 Ver mais\n{{link}}",
+        'product_send_link_group' => "✨ *{{title}}* \n\n🔸 Preço: R$ {{price}} \n📲 Compre direto na *{{integration_name}}*\n{{link}}",
     ],
 ];
