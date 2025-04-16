@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
             // ->everyTwoHours()
             // ->everyFifteenMinutes()
             ->cron('0,45 * * * *')
-            ->between('07:00', '21:00');
+            ->between('08:00', '21:00');
 
         // Inicia Fila de Envios em Segundo-Plano
         $schedule->job(new QueueJob())->everyMinute();
