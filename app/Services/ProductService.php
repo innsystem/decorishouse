@@ -699,13 +699,13 @@ class ProductService
 		
 	}
 
-	public function breakAfterWords($text, $limit = 5) {
+	public function breakAfterWords($text, $limit = 8) {
 		$words = explode(' ', $text);
 		if (count($words) <= $limit) {
 			return $text;
 		}
 	
-		return implode(' ', array_slice($words, 0, $limit)) . "\n" . implode(' ', array_slice($words, $limit));
+		return implode(' ', array_slice($words, 0, $limit)) . "*\n*" . implode(' ', array_slice($words, $limit));
 	}
 
 	// Funcao responsável por sincronizar o produto com o catálogo do Facebook
