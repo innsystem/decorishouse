@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Jobs\ProcessWebhookJob;
 use App\Jobs\ProcessProductQueueJob;
+use App\Jobs\ProcessProductImageGenerateJob;
 use App\Jobs\QueueJob;
 use App\Models\Product;
 
@@ -22,6 +23,11 @@ class Kernel extends ConsoleKernel
             ->everyTwoHours()
             // ->everyFifteenMinutes()
             // ->cron('0,45 * * * *')
+            ->between('08:00', '21:00');
+
+        $schedule->job(new ProcessProductImageGenerateJob())
+            ->everyThreeHours()
+            // ->everyMinute()
             ->between('08:00', '21:00');
 
         // Inicia Fila de Envios em Segundo-Plano

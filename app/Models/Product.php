@@ -52,7 +52,7 @@ class Product extends Model
         }
     }
 
-    public function generatedImages()
+    public function imageGenerates()
     {
         return $this->hasMany(ProductImageGenerate::class, 'product_id');
     }

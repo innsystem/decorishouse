@@ -411,9 +411,6 @@ class ProductService
 		// Salva a imagem no storage de forma pública
 		Storage::put("public/products/{$product->id}{$nameOutput}", $background->encode());
 
-		// Registra no banco para evitar duplicação
-		ProductImageGenerate::create(['product_id' => $product->id]);
-
 		$url_image_created = asset('/storage/products/' . $product->id . '' . $nameOutput);
 		$link_product = $product->getAffiliateLinkByIntegration('shopee');
 
@@ -425,6 +422,7 @@ class ProductService
 		];
 
 		$numbers = [
+			// '5516992747526',
 			'120363398273653245@g.us', // Grupo de Story+link
 		]; // Lista de números
 		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório
@@ -688,6 +686,7 @@ class ProductService
 		];
 
 		$numbers = [
+			// '5516992747526',
 			'120363391875660032@g.us', // Grupo de Promoções
 		]; // Lista de números
 		$randomNumber = $numbers[array_rand($numbers)]; // Escolhe um número aleatório

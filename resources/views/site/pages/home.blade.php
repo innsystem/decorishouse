@@ -3,42 +3,6 @@
 @section('title', $getSettings['meta_description'])
 
 @section('content')
-<!-- Slider Principal Fullscreen-->
-<section class="main-slider">
-    <div class="swiper main-swiper">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <div class="slider-img">
-                    <img src="{{ asset('/galerias/slider_home/slide_1.jpg') }}" alt="Decoração para Sala" class="w-100">
-                    <div class="slider-content text-center">
-                        <h2 class="slider-title text-white">Transforme sua Sala</h2>
-                        <p class="slider-text text-white">Encontre os melhores itens para decorar sua sala com estilo e conforto</p>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="slider-img">
-                    <img src="{{ asset('/galerias/loading.gif') }}" data-src="{{ asset('/galerias/slider_home/slide_2.jpg') }}" alt="Decoração para Cozinha" class="w-100 lazy-load" loading="lazy">
-                    <div class="slider-content text-center">
-                        <h2 class="slider-title text-white">Sua Cozinha dos Sonhos</h2>
-                        <p class="slider-text text-white">Descubra itens práticos e elegantes para sua cozinha</p>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="slider-img">
-                    <img src="{{ asset('/galerias/loading.gif') }}" data-src="{{ asset('/galerias/slider_home/slide_3.jpg') }}" alt="Decoração para Banheiro" class="w-100 lazy-load" loading="lazy">
-                    <div class="slider-content text-center">
-                        <h2 class="slider-title text-white">Banheiro Elegante</h2>
-                        <p class="slider-text text-white">Encontre os melhores itens para decorar seu banheiro com conforto e estilo</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="swiper-pagination"></div>
-    </div>
-</section>
-
 <!-- Seções de Produtos por Categoria -->
 @foreach($categoriesWithProducts as $categoryData)
 <section class="recommended py-60">
@@ -98,6 +62,55 @@
 </section>
 @endforeach
 
+@if($testimonials->isNotEmpty())
+<!-- Seção de Depoimentos -->
+<section class="testimonials py-80 bg-light">
+    <div class="container">
+        <div class="section-heading text-center mb-40">
+            <h2 class="fw-bold mb-2">O Que Nossos Clientes Dizem</h2>
+            <p class="text-muted">Depoimentos de quem já comprou e adorou</p>
+        </div>
+        
+        <div class="swiper testimonial-swiper">
+            <div class="swiper-wrapper">
+                @foreach($testimonials as $testimonial)
+                <div class="swiper-slide">
+                    <div class="testimonial-card bg-white p-24 rounded-16 shadow-sm position-relative h-100">
+                        <div class="quote-icon position-absolute text-main-200">
+                            <i class="ph ph-quotes fs-1"></i>
+                        </div>
+                        <div class="testimonial-content mt-30 mb-20">
+                            <p class="testimonial-text text-gray-700">{{ $testimonial->content }}</p>
+                        </div>
+                        <div class="testimonial-author d-flex align-items-center">
+                            <div class="testimonial-avatar me-3">
+                                @if($testimonial->avatar)
+                                    <img src="{{ $testimonial->avatar }}" alt="{{ $testimonial->name }}" class="rounded-circle" width="60" height="60">
+                                @else
+                                    <div class="avatar-placeholder rounded-circle bg-main-100 text-main-600 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <span class="fw-bold">{{ substr($testimonial->name, 0, 1) }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="testimonial-info">
+                                <h6 class="testimonial-name fw-bold mb-1">{{ $testimonial->name }}</h6>
+                                <p class="testimonial-location text-muted mb-1">{{ $testimonial->localization }}</p>
+                                <div class="testimonial-rating">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="ph {{ $i <= $testimonial->rating ? 'ph-star-fill text-warning' : 'ph-star text-gray-300' }}"></i>
+                                    @endfor
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <div class="swiper-pagination mt-30"></div>
+        </div>
+    </div>
+</section>
+@endif
 @endsection
 
 @section('pageMODAL')
@@ -108,40 +121,6 @@
 <link rel="stylesheet" href="{{ asset('/plugins/swiper/swiper-bundle.min.css') }}">
 
 <style>
-    /* Estilos para o Slider Principal */
-    .main-slider {
-        margin-top: -1px;
-    }
-    .main-slider .swiper-slide {
-        height: 80vh;
-    }
-    .slider-img {
-        position: relative;
-        height: 100%;
-    }
-    .slider-img img {
-        height: 100%;
-        object-fit: cover;
-    }
-    .slider-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        max-width: 800px;
-    }
-    .slider-title {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-    }
-    .slider-text {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    }
-    
     /* Estilos para os boxes de categoria */
     .category-box {
         height: 250px;
@@ -188,15 +167,66 @@
         margin-top: 30px;
     }
     
+    /* Estilos para os depoimentos */
+    .testimonials {
+        background-color: #f8f9fa;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .testimonials::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to bottom right, transparent 49%, #f8f9fa 50%);
+    }
+    
+    .py-80 {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+    
+    .testimonial-card {
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .quote-icon {
+        top: 20px;
+        right: 20px;
+        opacity: 0.2;
+    }
+    
+    .testimonial-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        min-height: 80px;
+    }
+    
+    .mb-40 {
+        margin-bottom: 40px;
+    }
+    
+    .testimonial-swiper {
+        padding-bottom: 50px;
+    }
+    
     @media (max-width: 768px) {
-        .main-slider .swiper-slide {
-            height: 60vh;
+        .py-80 {
+            padding-top: 50px;
+            padding-bottom: 50px;
         }
-        .slider-title {
-            font-size: 2rem;
-        }
-        .slider-text {
-            font-size: 1rem;
+        
+        .testimonial-text {
+            min-height: auto;
         }
     }
 </style>
@@ -207,36 +237,93 @@
 <script src="{{ asset('/plugins/swiper/swiper-bundle.min.js') }}"></script>
 
 <script>
-    $(document).ready(function() {
-        // Inicializar o Swiper
-        var mainSwiper = new Swiper('.main-swiper', {
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicialização do Swiper de Depoimentos
+        var testimonialSwiper = new Swiper('.testimonial-swiper', {
             slidesPerView: 1,
-            spaceBetween: 0,
-            autoplay: {
-                delay: 10000, // 10 segundos entre slides
-                disableOnInteraction: false,
-            },
+            spaceBetween: 20,
             pagination: {
-                el: '.swiper-pagination',
+                el: '.testimonial-swiper .swiper-pagination',
                 clickable: true,
             },
-            loop: true,
-            effect: 'fade',
-            fadeEffect: {
-                crossFade: true
+            autoplay: {
+                delay: 6000,
+                disableOnInteraction: false,
             },
-        });
-    });
-
-    // Rastreamento de cliques em produtos
-    $(document).on('click', '.product-link-href', function(e) {
-        e.preventDefault();
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
             }
         });
-
+        
+        // Lazy loading das imagens
+        var lazyLoadImages = document.querySelectorAll('.lazy-load');
+        
+        if ('IntersectionObserver' in window) {
+            let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        let lazyImage = entry.target;
+                        lazyImage.src = lazyImage.dataset.src;
+                        lazyImage.classList.remove("lazy-load");
+                        lazyImageObserver.unobserve(lazyImage);
+                    }
+                });
+            });
+            
+            lazyLoadImages.forEach(function(lazyImage) {
+                lazyImageObserver.observe(lazyImage);
+            });
+        } else {
+            // Fallback para navegadores que não suportam IntersectionObserver
+            let active = false;
+            
+            const lazyLoad = function() {
+                if (active === false) {
+                    active = true;
+                    
+                    setTimeout(function() {
+                        lazyLoadImages.forEach(function(lazyImage) {
+                            if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== "none") {
+                                lazyImage.src = lazyImage.dataset.src;
+                                lazyImage.classList.remove("lazy-load");
+                                
+                                lazyLoadImages = Array.from(lazyLoadImages).filter(function(image) {
+                                    return image !== lazyImage;
+                                });
+                                
+                                if (lazyLoadImages.length === 0) {
+                                    document.removeEventListener("scroll", lazyLoad);
+                                    window.removeEventListener("resize", lazyLoad);
+                                    window.removeEventListener("orientationchange", lazyLoad);
+                                }
+                            }
+                        });
+                        
+                        active = false;
+                    }, 200);
+                }
+            };
+            
+            document.addEventListener("scroll", lazyLoad);
+            window.addEventListener("resize", lazyLoad);
+            window.addEventListener("orientationchange", lazyLoad);
+        }
+    });
+    
+    // Registro de cliques em produtos
+    $('.product-link-href').on('click', function(e) {
+        e.preventDefault();
+        
         let productLinkId = $(this).data('product-link-id');
         let affiliateLink = $(this).data('affiliate-link');
 

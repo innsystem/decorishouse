@@ -60,7 +60,13 @@ class SiteController extends Controller
             }
         }
         
-        return view('site.pages.home', compact('categoriesWithProducts'));
+        // Buscar depoimentos ativos
+        $testimonials = Testimonial::where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->limit(6)
+            ->get();
+        
+        return view('site.pages.home', compact('categoriesWithProducts', 'testimonials'));
     }
 
     public function pageShow($slug)
